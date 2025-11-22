@@ -7,6 +7,25 @@ import { LessonDatabase } from '../types';
 
 type QuizState = 'question' | 'correct' | 'incorrect';
 
+// Helper function to normalize text for comparison (removes trailing punctuation)
+function normalizeText(text: string): string {
+  return text.trim().toLowerCase().replace(/[.!?]+$/, '');
+}
+
+// Text-to-speech function
+function speak(text: string, lang: 'en' | 'sr') {
+  if ('speechSynthesis' in window) {
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang === 'en' ? 'en-US' : 'sr-RS';
+    utterance.rate = 0.85; // Slightly slower for learning
+    
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
 function QuizPage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -97,8 +116,8 @@ function QuizPage() {
     let isCorrect = false;
 
     if (settings.mode === 'type') {
-      // Case-insensitive exact match
-      isCorrect = userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase();
+      // Case-insensitive match, ignoring trailing punctuation
+      isCorrect = normalizeText(userAnswer) === normalizeText(correctAnswer);
     } else {
       // Multiple choice - use passed index or state
       const indexToCheck = selectedIndex !== undefined ? selectedIndex : selectedOptionIndex;
@@ -207,7 +226,19 @@ function QuizPage() {
           {/* Question */}
           <div className="mb-8">
             <div className="text-sm text-gray-600 mb-2">Translate:</div>
-            <div className="text-3xl font-bold text-gray-900">{questionText}</div>
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-bold text-gray-900 flex-1">{questionText}</div>
+              <button
+                onClick={() => speak(questionText, settings.direction === 'source-to-dest' ? 'en' : 'sr')}
+                className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                title="Listen to question"
+                type="button"
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Type Answer Mode */}
@@ -241,9 +272,23 @@ function QuizPage() {
 
               {quizState === 'incorrect' && (
                 <div className="mb-6 p-4 bg-red-100 border border-red-400 rounded-lg">
-                  <div className="text-red-800 font-semibold text-lg">✗ Incorrect</div>
-                  <div className="text-red-600 text-sm mt-2">
-                    The correct answer is shown above. Press Enter to continue.
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="text-red-800 font-semibold text-lg">✗ Incorrect</div>
+                      <div className="text-red-600 text-sm mt-2">
+                        The correct answer is shown above. Press Enter to continue.
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => speak(correctAnswer, settings.direction === 'source-to-dest' ? 'sr' : 'en')}
+                      className="p-2 text-red-600 hover:bg-red-200 rounded-full transition-colors flex-shrink-0"
+                      title="Listen to correct answer"
+                      type="button"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               )}
@@ -283,27 +328,38 @@ function QuizPage() {
                 }
 
                 return (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      if (quizState !== 'question') return;
-                      setSelectedOptionIndex(index);
-                      // Check answer immediately with the selected index
-                      checkAnswer(index);
-                    }}
-                    disabled={quizState !== 'question'}
-                    className={buttonClass}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>{option}</span>
-                      {showFeedback && isCorrect && (
-                        <span className="text-green-600 font-bold">✓</span>
-                      )}
-                      {showFeedback && isSelected && !isCorrect && (
-                        <span className="text-red-600 font-bold">✗</span>
-                      )}
-                    </div>
-                  </button>
+                  <div key={index} className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        if (quizState !== 'question') return;
+                        setSelectedOptionIndex(index);
+                        // Check answer immediately with the selected index
+                        checkAnswer(index);
+                      }}
+                      disabled={quizState !== 'question'}
+                      className={buttonClass + ' flex-1'}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{option}</span>
+                        {showFeedback && isCorrect && (
+                          <span className="text-green-600 font-bold">✓</span>
+                        )}
+                        {showFeedback && isSelected && !isCorrect && (
+                          <span className="text-red-600 font-bold">✗</span>
+                        )}
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => speak(option, settings.direction === 'source-to-dest' ? 'sr' : 'en')}
+                      className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-colors flex-shrink-0"
+                      title="Listen to this option"
+                      type="button"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
                 );
               })}
 
