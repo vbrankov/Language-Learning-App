@@ -9,7 +9,7 @@ export interface Sentence {
 export interface Lesson {
   id: number;
   title: string;
-  words: string[];
+  words: string[] | Array<{ english: string; serbian: string }>;
   sentences: Sentence[];
 }
 
