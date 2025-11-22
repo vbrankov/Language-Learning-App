@@ -4,8 +4,11 @@ import QuizSettingsPage from './pages/QuizSettingsPage';
 import QuizPage from './pages/QuizPage';
 
 function App() {
+  // Use the correct base path for GitHub Pages
+  const basename = import.meta.env.MODE === 'production' ? '/Language-Learning-App' : '/';
+  
   return (
-    <Router>
+    <Router basename={basename}>
       <div className="min-h-screen bg-gray-50">
         <Routes>
           <Route path="/" element={<HomePage />} />
