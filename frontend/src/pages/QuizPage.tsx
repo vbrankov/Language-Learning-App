@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { QuizSettings, Lesson, Sentence } from '../types';
 import { AlgorithmA, createMultipleChoiceQuestion } from '../utils/QuizAlgorithms';
 import { ProgressManager } from '../utils/ProgressManager';
-import lessonData from '../data/lessons_1_to_106_enhanced.json';
+import { LessonDatabase } from '../types';
 
 type QuizState = 'question' | 'correct' | 'incorrect';
 
@@ -14,9 +14,10 @@ function QuizPage() {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const settings = location.state as QuizSettings;
+  const [lessonData, setLessonData] = useState<LessonDatabase | null>(null);
   
   // Get the lesson
-  const lesson: Lesson | undefined = lessonData.lessons.find(l => l.id === settings?.lessonId);
+  const lesson: Lesson | undefined = lessonData?.lessons.find(l => l.id === settings?.lessonId);
   
   // Quiz state
   const [algorithm, setAlgorithm] = useState<AlgorithmA | null>(null);
@@ -28,6 +29,21 @@ function QuizPage() {
   const [multipleChoiceOptions, setMultipleChoiceOptions] = useState<string[]>([]);
   const [correctOptionIndex, setCorrectOptionIndex] = useState(-1);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(-1);
+
+  // Load database
+  useEffect(() => {
+    const loadDatabase = async () => {
+      try {
+        const response = await fetch('/Language-Learning-App/data/lessons_1_to_106_enhanced.json');
+        const data = await response.json();
+        setLessonData(data);
+      } catch (err) {
+        console.error('Error loading database:', err);
+      }
+    };
+    
+    loadDatabase();
+  }, []);
 
   // Initialize algorithm and first question
   useEffect(() => {

@@ -1,13 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { QuizSettings, QuizDirection, QuizMode, QuizAlgorithm } from '../types';
-import lessonData from '../data/lessons_1_to_106_enhanced.json';
+import { QuizSettings, QuizDirection, QuizMode, QuizAlgorithm, LessonDatabase } from '../types';
 
 function QuizSettingsPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
+  const [lessonData, setLessonData] = useState<LessonDatabase | null>(null);
   
-  const lesson = lessonData.lessons.find(l => l.id === parseInt(lessonId || '0'));
+  useEffect(() => {
+    const loadDatabase = async () => {
+      try {
+        const response = await fetch('/Language-Learning-App/data/lessons_1_to_106_enhanced.json');
+        const data = await response.json();
+        setLessonData(data);
+      } catch (err) {
+        console.error('Error loading database:', err);
+      }
+    };
+    
+    loadDatabase();
+  }, []);
+  
+  const lesson = lessonData?.lessons.find(l => l.id === parseInt(lessonId || '0'));
   
   const [direction, setDirection] = useState<QuizDirection>('source-to-dest');
   const [mode, setMode] = useState<QuizMode>('type');

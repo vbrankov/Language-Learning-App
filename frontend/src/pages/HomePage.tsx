@@ -4,28 +4,77 @@ import { LessonDatabase, LessonStats } from '../types';
 import { ProgressManager } from '../utils/ProgressManager';
 import { timeAgo } from '../utils/timeAgo';
 
-// Import the lesson database
-import lessonData from '../data/lessons_1_to_106_enhanced.json';
-
 function HomePage() {
   const navigate = useNavigate();
-  const [database] = useState<LessonDatabase>(lessonData as LessonDatabase);
+  const [database, setDatabase] = useState<LessonDatabase | null>(null);
   const [lessonStats, setLessonStats] = useState<Record<number, LessonStats>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Calculate stats for all lessons
-    const stats: Record<number, LessonStats> = {};
+    const loadDatabase = async () => {
+      try {
+        const response = await fetch('/Language-Learning-App/data/lessons_1_to_106_enhanced.json');
+        if (!response.ok) {
+          throw new Error(`Failed to load database: ${response.status}`);
+        }
+        const data = await response.json();
+        setDatabase(data);
+      } catch (err) {
+        console.error('Error loading database:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    for (const lesson of database.lessons) {
-      stats[lesson.id] = ProgressManager.getLessonStats(lesson.id, lesson.sentences);
+    loadDatabase();
+  }, []);
+
+  useEffect(() => {
+    if (!database || !database.lessons) {
+      return;
     }
     
-    setLessonStats(stats);
+    try {
+      // Calculate stats for all lessons
+      const stats: Record<number, LessonStats> = {};
+      
+      for (const lesson of database.lessons) {
+        stats[lesson.id] = ProgressManager.getLessonStats(lesson.id, lesson.sentences);
+      }
+      
+      setLessonStats(stats);
+    } catch (err) {
+      console.error('Error calculating stats:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    }
   }, [database]);
 
   const handleLessonClick = (lessonId: number) => {
     navigate(`/lesson/${lessonId}/settings`);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !database) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600">Error Loading App</h1>
+          <p className="text-gray-600 mt-2">{error || 'Database not loaded'}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
