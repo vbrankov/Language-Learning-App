@@ -47,15 +47,14 @@ function QuizPage() {
 
   // Initialize algorithm and first question
   useEffect(() => {
-    if (!lesson) {
-      navigate('/');
+    if (!lessonData || !lesson) {
       return;
     }
 
     const algo = new AlgorithmA(lesson.sentences);
     setAlgorithm(algo);
     loadNextQuestion(algo);
-  }, [lesson, navigate]);
+  }, [lessonData, lesson]);
 
   // Focus input or button depending on state
   useEffect(() => {
@@ -143,6 +142,16 @@ function QuizPage() {
       loadNextQuestion(algorithm);
     }
   };
+
+  if (!lessonData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
 
   if (!settings || !lesson) {
     return (
