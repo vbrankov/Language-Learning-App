@@ -1,0 +1,13 @@
+{
+  "name": "language-learning-tools",
+  "version": "1.0.0",
+  "description": "CLI tools for language learning app database management",
+  "type": "module",
+  "scripts": {
+    "assign-ids": "node assign-ids.js",
+    "migrate": "node migrate.js"
+  },
+  "keywords": ["language-learning", "database", "tools"],
+  "author": "",
+  "license": "MIT"
+}

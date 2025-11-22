@@ -1,0 +1,1514 @@
+{
+  "metadata": {
+    "description": "A1 English-Serbian Learning Course - Lessons 81-90",
+    "grammar": "Present Simple only",
+    "constraint": "Each sentence uses only words from current lesson + previous lessons",
+    "target": "5-10 sentences per new word",
+    "total_lessons": 10,
+    "vocabulary_approach": "One Serbian word per English word (no synonyms)",
+    "translation_approach": "Full gender/case agreement in Serbian",
+    "sentence_format": "Array format: [english, serbian]"
+  },
+  "lessons": [
+    {
+      "lesson": 81,
+      "title": "More Places in Town",
+      "words": [
+        {
+          "english": "library",
+          "serbian": "biblioteka"
+        },
+        {
+          "english": "café",
+          "serbian": "kafić"
+        },
+        {
+          "english": "cinema",
+          "serbian": "bioskop"
+        },
+        {
+          "english": "station",
+          "serbian": "stanica"
+        },
+        {
+          "english": "building",
+          "serbian": "zgrada"
+        },
+        {
+          "english": "centre",
+          "serbian": "centar"
+        },
+        {
+          "english": "square",
+          "serbian": "trg"
+        },
+        {
+          "english": "farm",
+          "serbian": "farma"
+        },
+        {
+          "english": "place",
+          "serbian": "mesto"
+        },
+        {
+          "english": "map",
+          "serbian": "mapa"
+        }
+      ],
+      "sentences": [
+        [
+          "I go to the library",
+          "Ja idem u biblioteku"
+        ],
+        [
+          "The library is big",
+          "Biblioteka je velika"
+        ],
+        [
+          "I read at the library every day",
+          "Ja čitam u biblioteci svakog dana"
+        ],
+        [
+          "I like the library",
+          "Ja volim biblioteku"
+        ],
+        [
+          "The library has many books",
+          "Biblioteka ima mnogo knjiga"
+        ],
+        [
+          "I study at the library",
+          "Ja učim u biblioteci"
+        ],
+        [
+          "I go to the café",
+          "Ja idem u kafić"
+        ],
+        [
+          "The café is small",
+          "Kafić je mali"
+        ],
+        [
+          "I drink coffee at the café",
+          "Ja pijem kafu u kafiću"
+        ],
+        [
+          "I meet my friends at the café",
+          "Ja se viđam sa prijateljima u kafiću"
+        ],
+        [
+          "The café is near my house",
+          "Kafić je blizu moje kuće"
+        ],
+        [
+          "I like this café",
+          "Ja volim ovaj kafić"
+        ],
+        [
+          "I go to the cinema",
+          "Ja idem u bioskop"
+        ],
+        [
+          "The cinema is big",
+          "Bioskop je veliki"
+        ],
+        [
+          "I watch films at the cinema",
+          "Ja gledam filmove u bioskopu"
+        ],
+        [
+          "I go to the cinema every week",
+          "Ja idem u bioskop svake nedelje"
+        ],
+        [
+          "The cinema has many films",
+          "Bioskop ima mnogo filmova"
+        ],
+        [
+          "I go to the station",
+          "Ja idem na stanicu"
+        ],
+        [
+          "The station is big",
+          "Stanica je velika"
+        ],
+        [
+          "I wait at the station",
+          "Ja čekam na stanici"
+        ],
+        [
+          "The train station is near here",
+          "Železnička stanica je blizu"
+        ],
+        [
+          "I buy a ticket at the station",
+          "Ja kupujem kartu na stanici"
+        ],
+        [
+          "The building is tall",
+          "Zgrada je visoka"
+        ],
+        [
+          "I live in this building",
+          "Ja živim u ovoj zgradi"
+        ],
+        [
+          "The building is old",
+          "Zgrada je stara"
+        ],
+        [
+          "I work in that building",
+          "Ja radim u onoj zgradi"
+        ],
+        [
+          "The building has many rooms",
+          "Zgrada ima mnogo soba"
+        ],
+        [
+          "I go to the centre",
+          "Ja idem u centar"
+        ],
+        [
+          "The centre is busy",
+          "Centar je zauzet"
+        ],
+        [
+          "I shop at the centre",
+          "Ja kupujem u centru"
+        ],
+        [
+          "The city centre is beautiful",
+          "Centar grada je lep"
+        ],
+        [
+          "I meet friends at the centre",
+          "Ja se viđam sa prijateljima u centru"
+        ],
+        [
+          "The square is big",
+          "Trg je veliki"
+        ],
+        [
+          "I walk in the square",
+          "Ja šetam po trgu"
+        ],
+        [
+          "The square is beautiful",
+          "Trg je lep"
+        ],
+        [
+          "Many people go to the square",
+          "Mnogo ljudi ide na trg"
+        ],
+        [
+          "I visit the farm",
+          "Ja posećujem farmu"
+        ],
+        [
+          "The farm is big",
+          "Farma je velika"
+        ],
+        [
+          "I work on the farm",
+          "Ja radim na farmi"
+        ],
+        [
+          "The farm has many animals",
+          "Farma ima mnogo životinja"
+        ],
+        [
+          "I like the farm",
+          "Ja volim farmu"
+        ],
+        [
+          "This is a good place",
+          "Ovo je dobro mesto"
+        ],
+        [
+          "I know this place",
+          "Ja znam ovo mesto"
+        ],
+        [
+          "I like this place",
+          "Ja volim ovo mesto"
+        ],
+        [
+          "This place is beautiful",
+          "Ovo mesto je lepo"
+        ],
+        [
+          "I have a map",
+          "Ja imam mapu"
+        ],
+        [
+          "I look at the map",
+          "Ja gledam mapu"
+        ],
+        [
+          "The map shows the city",
+          "Mapa pokazuje grad"
+        ],
+        [
+          "I use a map when I travel",
+          "Ja koristim mapu kada putujem"
+        ],
+        [
+          "I buy a map at the shop",
+          "Ja kupujem mapu u prodavnici"
+        ]
+      ]
+    },
+    {
+      "lesson": 82,
+      "title": "Extended Family",
+      "words": [
+        {
+          "english": "grandfather",
+          "serbian": "deda"
+        },
+        {
+          "english": "grandmother",
+          "serbian": "baba"
+        },
+        {
+          "english": "grandpa",
+          "serbian": "deda"
+        },
+        {
+          "english": "grandma",
+          "serbian": "baba"
+        },
+        {
+          "english": "uncle",
+          "serbian": "ujak"
+        },
+        {
+          "english": "aunt",
+          "serbian": "tetka"
+        },
+        {
+          "english": "cousin",
+          "serbian": "rođak"
+        },
+        {
+          "english": "son",
+          "serbian": "sin"
+        },
+        {
+          "english": "daughter",
+          "serbian": "kćer"
+        },
+        {
+          "english": "grandson",
+          "serbian": "unuk"
+        },
+        {
+          "english": "granddaughter",
+          "serbian": "unuka"
+        },
+        {
+          "english": "grandparent",
+          "serbian": "deda i baba"
+        }
+      ],
+      "sentences": [
+        [
+          "My grandfather is old",
+          "Moj deda je star"
+        ],
+        [
+          "I visit my grandfather every week",
+          "Ja posećujem svog dedu svake nedelje"
+        ],
+        [
+          "My grandfather lives on a farm",
+          "Moj deda živi na farmi"
+        ],
+        [
+          "I love my grandfather",
+          "Ja volim svog dedu"
+        ],
+        [
+          "My grandfather tells me stories",
+          "Moj deda mi priča priče"
+        ],
+        [
+          "My grandmother is kind",
+          "Moja baba je ljubazna"
+        ],
+        [
+          "I visit my grandmother",
+          "Ja posećujem svoju babu"
+        ],
+        [
+          "My grandmother cooks good food",
+          "Moja baba kuva dobru hranu"
+        ],
+        [
+          "I love my grandmother",
+          "Ja volim svoju babu"
+        ],
+        [
+          "My grandmother lives with my grandfather",
+          "Moja baba živi sa mojim dedom"
+        ],
+        [
+          "I love my grandpa",
+          "Ja volim svog dedu"
+        ],
+        [
+          "Grandpa is at home",
+          "Deda je kod kuće"
+        ],
+        [
+          "I visit grandpa on Sunday",
+          "Ja posećujem dedu nedeljom"
+        ],
+        [
+          "I love my grandma",
+          "Ja volim svoju babu"
+        ],
+        [
+          "Grandma makes good soup",
+          "Baba pravi dobru supu"
+        ],
+        [
+          "I help grandma in the kitchen",
+          "Ja pomažem babi u kuhinji"
+        ],
+        [
+          "My uncle is funny",
+          "Moj ujak je smešan"
+        ],
+        [
+          "I like my uncle",
+          "Ja volim svog ujaka"
+        ],
+        [
+          "My uncle works at the shop",
+          "Moj ujak radi u prodavnici"
+        ],
+        [
+          "I visit my uncle",
+          "Ja posećujem svog ujaka"
+        ],
+        [
+          "My aunt is kind",
+          "Moja tetka je ljubazna"
+        ],
+        [
+          "I love my aunt",
+          "Ja volim svoju tetku"
+        ],
+        [
+          "My aunt lives in the city",
+          "Moja tetka živi u gradu"
+        ],
+        [
+          "My aunt has two children",
+          "Moja tetka ima dvoje dece"
+        ],
+        [
+          "My cousin is my friend",
+          "Moj rođak je moj prijatelj"
+        ],
+        [
+          "I play with my cousin",
+          "Ja se igram sa svojim rođakom"
+        ],
+        [
+          "My cousin lives on a farm",
+          "Moj rođak živi na farmi"
+        ],
+        [
+          "I visit my cousin every month",
+          "Ja posećujem svog rođaka svakog meseca"
+        ],
+        [
+          "I have a son",
+          "Ja imam sina"
+        ],
+        [
+          "My son is young",
+          "Moj sin je mlad"
+        ],
+        [
+          "My son goes to school",
+          "Moj sin ide u školu"
+        ],
+        [
+          "I love my son",
+          "Ja volim svog sina"
+        ],
+        [
+          "I have a daughter",
+          "Ja imam kćer"
+        ],
+        [
+          "My daughter is beautiful",
+          "Moja kćer je lepa"
+        ],
+        [
+          "My daughter plays piano",
+          "Moja kćer svira klavir"
+        ],
+        [
+          "I love my daughter",
+          "Ja volim svoju kćer"
+        ],
+        [
+          "I have a grandson",
+          "Ja imam unuka"
+        ],
+        [
+          "My grandson is young",
+          "Moj unuk je mlad"
+        ],
+        [
+          "I love my grandson",
+          "Ja volim svog unuka"
+        ],
+        [
+          "I have a granddaughter",
+          "Ja imam unuku"
+        ],
+        [
+          "My granddaughter is beautiful",
+          "Moja unuka je lepa"
+        ],
+        [
+          "I love my granddaughter",
+          "Ja volim svoju unuku"
+        ],
+        [
+          "My grandparents are old",
+          "Moji deda i baba su stari"
+        ],
+        [
+          "I visit my grandparents",
+          "Ja posećujem svog dedu i babu"
+        ],
+        [
+          "I love my grandparents",
+          "Ja volim svog dedu i babu"
+        ],
+        [
+          "My grandparents live on a farm",
+          "Moji deda i baba žive na farmi"
+        ]
+      ]
+    },
+    {
+      "lesson": 83,
+      "title": "More Health Vocabulary",
+      "words": [
+        {
+          "english": "headache",
+          "serbian": "glavobolja"
+        },
+        {
+          "english": "stomach-ache",
+          "serbian": "bol u stomaku"
+        },
+        {
+          "english": "toothache",
+          "serbian": "zubobolja"
+        },
+        {
+          "english": "earache",
+          "serbian": "bol u uhu"
+        },
+        {
+          "english": "cough",
+          "serbian": "kašalj"
+        },
+        {
+          "english": "temperature",
+          "serbian": "temperatura"
+        },
+        {
+          "english": "fall",
+          "serbian": "pasti"
+        }
+      ],
+      "sentences": [
+        [
+          "I have a headache",
+          "Ja imam glavobolju"
+        ],
+        [
+          "My headache is bad",
+          "Moja glavobolja je loša"
+        ],
+        [
+          "I have a headache today",
+          "Ja imam glavobolju danas"
+        ],
+        [
+          "I take medicine for my headache",
+          "Ja uzimam lek za glavobolju"
+        ],
+        [
+          "My head hurts and I have a headache",
+          "Boli me glava i imam glavobolju"
+        ],
+        [
+          "I have a stomach-ache",
+          "Ja imam bol u stomaku"
+        ],
+        [
+          "My stomach hurts",
+          "Boli me stomak"
+        ],
+        [
+          "I have a stomach-ache today",
+          "Ja imam bol u stomaku danas"
+        ],
+        [
+          "I eat too much and now I have a stomach-ache",
+          "Ja jedem previše i sada imam bol u stomaku"
+        ],
+        [
+          "I have a toothache",
+          "Ja imam zubobolju"
+        ],
+        [
+          "My tooth hurts",
+          "Boli me zub"
+        ],
+        [
+          "I have a bad toothache",
+          "Ja imam lošu zubobolju"
+        ],
+        [
+          "I go to the dentist because I have a toothache",
+          "Ja idem kod zubara jer imam zubobolju"
+        ],
+        [
+          "I have an earache",
+          "Ja imam bol u uhu"
+        ],
+        [
+          "My ear hurts",
+          "Boli me uho"
+        ],
+        [
+          "I have an earache today",
+          "Ja imam bol u uhu danas"
+        ],
+        [
+          "I have a cough",
+          "Ja imam kašalj"
+        ],
+        [
+          "My cough is bad",
+          "Moj kašalj je loš"
+        ],
+        [
+          "I have a cough and a headache",
+          "Ja imam kašalj i glavobolju"
+        ],
+        [
+          "I take medicine for my cough",
+          "Ja uzimam lek za kašalj"
+        ],
+        [
+          "I have a temperature",
+          "Ja imam temperaturu"
+        ],
+        [
+          "My temperature is high",
+          "Moja temperatura je visoka"
+        ],
+        [
+          "I have a temperature and I am ill",
+          "Ja imam temperaturu i bolestan sam"
+        ],
+        [
+          "The doctor takes my temperature",
+          "Doktor meri moju temperaturu"
+        ],
+        [
+          "I fall down",
+          "Ja padam"
+        ],
+        [
+          "I fall and hurt my leg",
+          "Ja padam i povređujem nogu"
+        ],
+        [
+          "Be careful or you will fall",
+          "Budi oprezan ili ćeš pasti"
+        ],
+        [
+          "I fall on the ice",
+          "Ja padam na ledu"
+        ]
+      ]
+    },
+    {
+      "lesson": 84,
+      "title": "Health Items",
+      "words": [
+        {
+          "english": "toothbrush",
+          "serbian": "četkica za zube"
+        },
+        {
+          "english": "toothpaste",
+          "serbian": "pasta za zube"
+        }
+      ],
+      "sentences": [
+        [
+          "I have a toothbrush",
+          "Ja imam četkicu za zube"
+        ],
+        [
+          "I use my toothbrush every day",
+          "Ja koristim četkicu za zube svakog dana"
+        ],
+        [
+          "I brush my teeth with a toothbrush",
+          "Ja perem zube četkicom za zube"
+        ],
+        [
+          "My toothbrush is blue",
+          "Moja četkica za zube je plava"
+        ],
+        [
+          "I buy a new toothbrush",
+          "Ja kupujem novu četkicu za zube"
+        ],
+        [
+          "I need a toothbrush",
+          "Ja trebam četkicu za zube"
+        ],
+        [
+          "I have toothpaste",
+          "Ja imam pastu za zube"
+        ],
+        [
+          "I use toothpaste every morning",
+          "Ja koristim pastu za zube svako jutro"
+        ],
+        [
+          "I brush my teeth with toothpaste",
+          "Ja perem zube pastom za zube"
+        ],
+        [
+          "I buy toothpaste at the shop",
+          "Ja kupujem pastu za zube u prodavnici"
+        ],
+        [
+          "I need toothpaste",
+          "Ja trebam pastu za zube"
+        ],
+        [
+          "I use my toothbrush and toothpaste",
+          "Ja koristim četkicu i pastu za zube"
+        ]
+      ]
+    },
+    {
+      "lesson": 85,
+      "title": "Work & Jobs",
+      "words": [
+        {
+          "english": "work",
+          "serbian": "rad"
+        },
+        {
+          "english": "job",
+          "serbian": "posao"
+        },
+        {
+          "english": "teacher",
+          "serbian": "učitelj"
+        },
+        {
+          "english": "doctor",
+          "serbian": "doktor"
+        },
+        {
+          "english": "nurse",
+          "serbian": "medicinska sestra"
+        },
+        {
+          "english": "dentist",
+          "serbian": "zubar"
+        },
+        {
+          "english": "driver",
+          "serbian": "vozač"
+        },
+        {
+          "english": "farmer",
+          "serbian": "farmer"
+        },
+        {
+          "english": "cook",
+          "serbian": "kuvar"
+        }
+      ],
+      "sentences": [
+        [
+          "I go to work",
+          "Ja idem na posao"
+        ],
+        [
+          "I work every day",
+          "Ja radim svakog dana"
+        ],
+        [
+          "I like my work",
+          "Ja volim svoj rad"
+        ],
+        [
+          "My work is good",
+          "Moj rad je dobar"
+        ],
+        [
+          "I have work today",
+          "Ja imam posla danas"
+        ],
+        [
+          "Work is important",
+          "Rad je važan"
+        ],
+        [
+          "I have a job",
+          "Ja imam posao"
+        ],
+        [
+          "I like my job",
+          "Ja volim svoj posao"
+        ],
+        [
+          "My job is good",
+          "Moj posao je dobar"
+        ],
+        [
+          "I need a job",
+          "Ja trebam posao"
+        ],
+        [
+          "I look for a job",
+          "Ja tražim posao"
+        ],
+        [
+          "I am a teacher",
+          "Ja sam učitelj"
+        ],
+        [
+          "The teacher is kind",
+          "Učitelj je ljubazan"
+        ],
+        [
+          "I want to be a teacher",
+          "Ja želim da budem učitelj"
+        ],
+        [
+          "My mother is a teacher",
+          "Moja majka je učitelj"
+        ],
+        [
+          "The teacher works at school",
+          "Učitelj radi u školi"
+        ],
+        [
+          "I go to the doctor",
+          "Ja idem kod doktora"
+        ],
+        [
+          "The doctor is good",
+          "Doktor je dobar"
+        ],
+        [
+          "I want to be a doctor",
+          "Ja želim da budem doktor"
+        ],
+        [
+          "The doctor helps me",
+          "Doktor mi pomaže"
+        ],
+        [
+          "I see the doctor when I am ill",
+          "Ja vidim doktora kada sam bolestan"
+        ],
+        [
+          "The nurse is kind",
+          "Medicinska sestra je ljubazna"
+        ],
+        [
+          "The nurse helps the doctor",
+          "Medicinska sestra pomaže doktoru"
+        ],
+        [
+          "I want to be a nurse",
+          "Ja želim da budem medicinska sestra"
+        ],
+        [
+          "The nurse works at the hospital",
+          "Medicinska sestra radi u bolnici"
+        ],
+        [
+          "I go to the dentist",
+          "Ja idem kod zubara"
+        ],
+        [
+          "The dentist is good",
+          "Zubar je dobar"
+        ],
+        [
+          "The dentist helps my teeth",
+          "Zubar pomaže mojim zubima"
+        ],
+        [
+          "I see the dentist when I have a toothache",
+          "Ja vidim zubara kada imam zubobolju"
+        ],
+        [
+          "The driver drives the bus",
+          "Vozač vozi autobus"
+        ],
+        [
+          "I want to be a driver",
+          "Ja želim da budem vozač"
+        ],
+        [
+          "The driver is careful",
+          "Vozač je oprezan"
+        ],
+        [
+          "My father is a driver",
+          "Moj otac je vozač"
+        ],
+        [
+          "I am a farmer",
+          "Ja sam farmer"
+        ],
+        [
+          "The farmer works on the farm",
+          "Farmer radi na farmi"
+        ],
+        [
+          "My grandfather is a farmer",
+          "Moj deda je farmer"
+        ],
+        [
+          "The farmer has many animals",
+          "Farmer ima mnogo životinja"
+        ],
+        [
+          "I am a cook",
+          "Ja sam kuvar"
+        ],
+        [
+          "The cook makes good food",
+          "Kuvar pravi dobru hranu"
+        ],
+        [
+          "I want to be a cook",
+          "Ja želim da budem kuvar"
+        ],
+        [
+          "The cook works in the kitchen",
+          "Kuvar radi u kuhinji"
+        ]
+      ]
+    },
+    {
+      "lesson": 86,
+      "title": "Appearance & Hair",
+      "words": [
+        {
+          "english": "fair",
+          "serbian": "svetao"
+        },
+        {
+          "english": "blonde",
+          "serbian": "plav"
+        },
+        {
+          "english": "curly",
+          "serbian": "kovrdžav"
+        },
+        {
+          "english": "beard",
+          "serbian": "brada"
+        }
+      ],
+      "sentences": [
+        [
+          "She has fair hair",
+          "Ona ima svetlu kosu"
+        ],
+        [
+          "Her skin is fair",
+          "Njena koža je svetla"
+        ],
+        [
+          "I have fair hair",
+          "Ja imam svetlu kosu"
+        ],
+        [
+          "Fair hair is beautiful",
+          "Svetla kosa je lepa"
+        ],
+        [
+          "She has blonde hair",
+          "Ona ima plavu kosu"
+        ],
+        [
+          "My sister has blonde hair",
+          "Moja sestra ima plavu kosu"
+        ],
+        [
+          "Blonde hair is pretty",
+          "Plava kosa je lepa"
+        ],
+        [
+          "I want blonde hair",
+          "Ja želim plavu kosu"
+        ],
+        [
+          "I have curly hair",
+          "Ja imam kovrdžavu kosu"
+        ],
+        [
+          "Her hair is curly",
+          "Njena kosa je kovrdžava"
+        ],
+        [
+          "Curly hair is beautiful",
+          "Kovrdžava kosa je lepa"
+        ],
+        [
+          "My daughter has curly hair",
+          "Moja kćer ima kovrdžavu kosu"
+        ],
+        [
+          "He has a beard",
+          "On ima bradu"
+        ],
+        [
+          "My father has a beard",
+          "Moj otac ima bradu"
+        ],
+        [
+          "The beard is long",
+          "Brada je duga"
+        ],
+        [
+          "I want to have a beard",
+          "Ja želim da imam bradu"
+        ]
+      ]
+    },
+    {
+      "lesson": 87,
+      "title": "Personality & Character",
+      "words": [
+        {
+          "english": "kind",
+          "serbian": "ljubazan"
+        },
+        {
+          "english": "clever",
+          "serbian": "pametan"
+        },
+        {
+          "english": "silly",
+          "serbian": "glup"
+        },
+        {
+          "english": "funny",
+          "serbian": "smešan"
+        },
+        {
+          "english": "brave",
+          "serbian": "hrabar"
+        },
+        {
+          "english": "naughty",
+          "serbian": "nevalјao"
+        },
+        {
+          "english": "careful",
+          "serbian": "oprezan"
+        },
+        {
+          "english": "boring",
+          "serbian": "dosadan"
+        },
+        {
+          "english": "exciting",
+          "serbian": "uzbudlјiv"
+        }
+      ],
+      "sentences": [
+        [
+          "She is kind",
+          "Ona je ljubazna"
+        ],
+        [
+          "My grandmother is kind",
+          "Moja baba je ljubazna"
+        ],
+        [
+          "I am kind to my friends",
+          "Ja sam ljubazan prema prijateljima"
+        ],
+        [
+          "Kind people are good",
+          "Ljubazni ljudi su dobri"
+        ],
+        [
+          "He is clever",
+          "On je pametan"
+        ],
+        [
+          "My teacher is clever",
+          "Moj učitelj je pametan"
+        ],
+        [
+          "I want to be clever",
+          "Ja želim da budem pametan"
+        ],
+        [
+          "Clever people learn fast",
+          "Pametni ljudi uče brzo"
+        ],
+        [
+          "He is silly",
+          "On je glup"
+        ],
+        [
+          "That is a silly thing",
+          "To je glupa stvar"
+        ],
+        [
+          "I am silly sometimes",
+          "Ja sam ponekad glup"
+        ],
+        [
+          "She is funny",
+          "Ona je smešna"
+        ],
+        [
+          "My uncle is funny",
+          "Moj ujak je smešan"
+        ],
+        [
+          "I like funny people",
+          "Ja volim smešne ljude"
+        ],
+        [
+          "The film is funny",
+          "Film je smešan"
+        ],
+        [
+          "Funny people make me happy",
+          "Smešni ljudi me čine srećnim"
+        ],
+        [
+          "He is brave",
+          "On je hrabar"
+        ],
+        [
+          "I am brave",
+          "Ja sam hrabar"
+        ],
+        [
+          "Brave people are not afraid",
+          "Hrabri ljudi se ne plaše"
+        ],
+        [
+          "I want to be brave",
+          "Ja želim da budem hrabar"
+        ],
+        [
+          "The child is naughty",
+          "Dete je nevaljalo"
+        ],
+        [
+          "My son is naughty sometimes",
+          "Moj sin je ponekad nevalјao"
+        ],
+        [
+          "Naughty children do bad things",
+          "Nevaljala deca rade loše stvari"
+        ],
+        [
+          "Be careful",
+          "Budi oprezan"
+        ],
+        [
+          "I am careful when I walk",
+          "Ja sam oprezan kada hodam"
+        ],
+        [
+          "The driver is careful",
+          "Vozač je oprezan"
+        ],
+        [
+          "Careful people do not fall",
+          "Oprezni ljudi ne padaju"
+        ],
+        [
+          "This is boring",
+          "Ovo je dosadno"
+        ],
+        [
+          "The film is boring",
+          "Film je dosadan"
+        ],
+        [
+          "I do not like boring things",
+          "Ja ne volim dosadne stvari"
+        ],
+        [
+          "This is exciting",
+          "Ovo je uzbudlјivo"
+        ],
+        [
+          "The game is exciting",
+          "Igra je uzbudlјiva"
+        ],
+        [
+          "I like exciting things",
+          "Ja volim uzbudlјive stvari"
+        ],
+        [
+          "Exciting things are fun",
+          "Uzbudlјive stvari su zabavne"
+        ]
+      ]
+    },
+    {
+      "lesson": 88,
+      "title": "More Character Traits",
+      "words": [
+        {
+          "english": "dangerous",
+          "serbian": "opasan"
+        },
+        {
+          "english": "safe",
+          "serbian": "bezbedan"
+        },
+        {
+          "english": "scary",
+          "serbian": "strašan"
+        },
+        {
+          "english": "frightened",
+          "serbian": "uplašen"
+        }
+      ],
+      "sentences": [
+        [
+          "This is dangerous",
+          "Ovo je opasno"
+        ],
+        [
+          "The road is dangerous",
+          "Put je opasan"
+        ],
+        [
+          "Dangerous things are bad",
+          "Opasne stvari su loše"
+        ],
+        [
+          "Be careful with dangerous things",
+          "Budi oprezan sa opasnim stvarima"
+        ],
+        [
+          "I do not like dangerous things",
+          "Ja ne volim opasne stvari"
+        ],
+        [
+          "This is safe",
+          "Ovo je bezbedno"
+        ],
+        [
+          "The place is safe",
+          "Mesto je bezbedno"
+        ],
+        [
+          "I feel safe at home",
+          "Ja se osećam bezbedno kod kuće"
+        ],
+        [
+          "Safe things are good",
+          "Bezbedne stvari su dobre"
+        ],
+        [
+          "This is scary",
+          "Ovo je strašno"
+        ],
+        [
+          "The film is scary",
+          "Film je strašan"
+        ],
+        [
+          "I do not like scary things",
+          "Ja ne volim strašne stvari"
+        ],
+        [
+          "Scary things frighten me",
+          "Strašne stvari me plaše"
+        ],
+        [
+          "I am frightened",
+          "Ja sam uplašen"
+        ],
+        [
+          "I am frightened of scary things",
+          "Ja sam uplašen strašnih stvari"
+        ],
+        [
+          "The child is frightened",
+          "Dete je uplašeno"
+        ],
+        [
+          "I am frightened when I see dangerous things",
+          "Ja sam uplašen kada vidim opasne stvari"
+        ]
+      ]
+    },
+    {
+      "lesson": 89,
+      "title": "Shapes & Dimensions",
+      "words": [
+        {
+          "english": "square",
+          "serbian": "kvadrat"
+        },
+        {
+          "english": "round",
+          "serbian": "okrugao"
+        },
+        {
+          "english": "straight",
+          "serbian": "prav"
+        },
+        {
+          "english": "top",
+          "serbian": "vrh"
+        },
+        {
+          "english": "bottom",
+          "serbian": "dno"
+        }
+      ],
+      "sentences": [
+        [
+          "This is a square",
+          "Ovo je kvadrat"
+        ],
+        [
+          "The square is big",
+          "Kvadrat je veliki"
+        ],
+        [
+          "I draw a square",
+          "Ja crtam kvadrat"
+        ],
+        [
+          "The table is square",
+          "Sto je kvadratan"
+        ],
+        [
+          "The ball is round",
+          "Lopta je okrugla"
+        ],
+        [
+          "The plate is round",
+          "Tanjir je okrugao"
+        ],
+        [
+          "I like round things",
+          "Ja volim okrugle stvari"
+        ],
+        [
+          "Round things roll",
+          "Okrugle stvari se kotrljaju"
+        ],
+        [
+          "The line is straight",
+          "Linija je prava"
+        ],
+        [
+          "I walk in a straight line",
+          "Ja hodam u pravoj liniji"
+        ],
+        [
+          "The road is straight",
+          "Put je prav"
+        ],
+        [
+          "Straight things are not curly",
+          "Prave stvari nisu kovrdžave"
+        ],
+        [
+          "This is the top",
+          "Ovo je vrh"
+        ],
+        [
+          "I am at the top",
+          "Ja sam na vrhu"
+        ],
+        [
+          "The top is high",
+          "Vrh je visok"
+        ],
+        [
+          "I climb to the top",
+          "Ja se penjam na vrh"
+        ],
+        [
+          "This is the bottom",
+          "Ovo je dno"
+        ],
+        [
+          "I am at the bottom",
+          "Ja sam na dnu"
+        ],
+        [
+          "The bottom is low",
+          "Dno je nisko"
+        ],
+        [
+          "I go to the bottom",
+          "Ja idem na dno"
+        ]
+      ]
+    },
+    {
+      "lesson": 90,
+      "title": "More Transport",
+      "words": [
+        {
+          "english": "plane",
+          "serbian": "avion"
+        },
+        {
+          "english": "boat",
+          "serbian": "čamac"
+        },
+        {
+          "english": "ship",
+          "serbian": "brod"
+        },
+        {
+          "english": "travel",
+          "serbian": "putovati"
+        },
+        {
+          "english": "trip",
+          "serbian": "putovanje"
+        }
+      ],
+      "sentences": [
+        [
+          "I fly in a plane",
+          "Ja letim avionom"
+        ],
+        [
+          "The plane is big",
+          "Avion je veliki"
+        ],
+        [
+          "I like planes",
+          "Ja volim avione"
+        ],
+        [
+          "The plane flies fast",
+          "Avion leti brzo"
+        ],
+        [
+          "I travel by plane",
+          "Ja putujem avionom"
+        ],
+        [
+          "I have a boat",
+          "Ja imam čamac"
+        ],
+        [
+          "The boat is small",
+          "Čamac je mali"
+        ],
+        [
+          "I sail in a boat",
+          "Ja plovim čamcem"
+        ],
+        [
+          "I like boats",
+          "Ja volim čamce"
+        ],
+        [
+          "The boat is on the water",
+          "Čamac je na vodi"
+        ],
+        [
+          "The ship is big",
+          "Brod je veliki"
+        ],
+        [
+          "I travel by ship",
+          "Ja putujem brodom"
+        ],
+        [
+          "The ship is on the sea",
+          "Brod je na moru"
+        ],
+        [
+          "Ships are bigger than boats",
+          "Brodovi su veći od čamaca"
+        ],
+        [
+          "I like to travel",
+          "Ja volim da putujem"
+        ],
+        [
+          "I travel every year",
+          "Ja putujem svake godine"
+        ],
+        [
+          "I travel to many places",
+          "Ja putujem na mnoga mesta"
+        ],
+        [
+          "Travel is fun",
+          "Putovanje je zabavno"
+        ],
+        [
+          "I travel with my family",
+          "Ja putujem sa svojom porodicom"
+        ],
+        [
+          "I go on a trip",
+          "Ja idem na putovanje"
+        ],
+        [
+          "The trip is fun",
+          "Putovanje je zabavno"
+        ],
+        [
+          "I take a trip every summer",
+          "Ja idem na putovanje svakog leta"
+        ],
+        [
+          "My trip is exciting",
+          "Moje putovanje je uzbudlјivo"
+        ],
+        [
+          "I like trips",
+          "Ja volim putovanja"
+        ]
+      ]
+    }
+  ]
+}

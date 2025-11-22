@@ -1,0 +1,726 @@
+{
+  "metadata": {
+    "description": "A1 English-Serbian Learning Course - Lessons 101-106 (FINAL)",
+    "grammar": "Present Simple only",
+    "constraint": "Each sentence uses only words from current lesson + previous lessons",
+    "target": "5-10 sentences per new word",
+    "total_lessons": 6,
+    "vocabulary_approach": "One Serbian word per English word (no synonyms)",
+    "translation_approach": "Full gender/case agreement in Serbian",
+    "sentence_format": "Array format: [english, serbian]"
+  },
+  "lessons": [
+    {
+      "lesson": 101,
+      "title": "Regular Verbs - Set 1",
+      "words": [
+        {
+          "english": "add",
+          "serbian": "dodati"
+        },
+        {
+          "english": "answer",
+          "serbian": "odgovoriti"
+        },
+        {
+          "english": "ask",
+          "serbian": "pitati"
+        },
+        {
+          "english": "call",
+          "serbian": "zvati"
+        },
+        {
+          "english": "count",
+          "serbian": "brojati"
+        },
+        {
+          "english": "help",
+          "serbian": "pomoći"
+        },
+        {
+          "english": "listen",
+          "serbian": "slušati"
+        },
+        {
+          "english": "open",
+          "serbian": "otvoriti"
+        },
+        {
+          "english": "point",
+          "serbian": "pokazati"
+        },
+        {
+          "english": "start",
+          "serbian": "početi"
+        },
+        {
+          "english": "stop",
+          "serbian": "stati"
+        },
+        {
+          "english": "talk",
+          "serbian": "govoriti"
+        },
+        {
+          "english": "try",
+          "serbian": "pokušati"
+        },
+        {
+          "english": "walk",
+          "serbian": "hodati"
+        },
+        {
+          "english": "want",
+          "serbian": "želeti"
+        },
+        {
+          "english": "work",
+          "serbian": "raditi"
+        }
+      ],
+      "sentences": [
+        [
+          "I add numbers",
+          "Ja dodajem brojeve"
+        ],
+        [
+          "I add this and that",
+          "Ja dodajem ovo i to"
+        ],
+        [
+          "I add sugar to my tea",
+          "Ja dodajem šećer u čaj"
+        ],
+        [
+          "I count to ten",
+          "Ja brojim do deset"
+        ],
+        [
+          "I count my money",
+          "Ja brojim svoj novac"
+        ],
+        [
+          "I count the toys",
+          "Ja brojim igračke"
+        ],
+        [
+          "I point at the map",
+          "Ja pokazujem na mapu"
+        ],
+        [
+          "I point to the top",
+          "Ja pokazujem na vrh"
+        ],
+        [
+          "I point with my finger",
+          "Ja pokazujem prstom"
+        ],
+        [
+          "I try to do this",
+          "Ja pokušavam da uradim ovo"
+        ],
+        [
+          "I try every day",
+          "Ja pokušavam svakog dana"
+        ],
+        [
+          "I try my best",
+          "Ja pokušavam najbolje što mogu"
+        ],
+        [
+          "I try to be good",
+          "Ja pokušavam da budem dobar"
+        ]
+      ]
+    },
+    {
+      "lesson": 102,
+      "title": "Regular Verbs - Set 2",
+      "words": [
+        {
+          "english": "bounce",
+          "serbian": "skakutati"
+        },
+        {
+          "english": "clap",
+          "serbian": "pljeskati"
+        },
+        {
+          "english": "complete",
+          "serbian": "završiti"
+        },
+        {
+          "english": "colour",
+          "serbian": "bojiti"
+        },
+        {
+          "english": "dance",
+          "serbian": "plesati"
+        },
+        {
+          "english": "dress up",
+          "serbian": "obući se lepo"
+        },
+        {
+          "english": "enjoy",
+          "serbian": "uživati"
+        },
+        {
+          "english": "invite",
+          "serbian": "pozvati"
+        },
+        {
+          "english": "jump",
+          "serbian": "skakati"
+        },
+        {
+          "english": "paint",
+          "serbian": "slikati"
+        },
+        {
+          "english": "play",
+          "serbian": "igrati se"
+        },
+        {
+          "english": "show",
+          "serbian": "pokazati"
+        },
+        {
+          "english": "smile",
+          "serbian": "smešiti se"
+        },
+        {
+          "english": "tick",
+          "serbian": "štiklirti"
+        },
+        {
+          "english": "wave",
+          "serbian": "mahati"
+        }
+      ],
+      "sentences": [
+        [
+          "The ball bounces",
+          "Lopta skakuće"
+        ],
+        [
+          "I bounce the ball",
+          "Ja bacam loptu koja skakuće"
+        ],
+        [
+          "I clap my hands",
+          "Ja plješćem rukama"
+        ],
+        [
+          "I clap when I am happy",
+          "Ja plješćem kada sam srećan"
+        ],
+        [
+          "I complete my work",
+          "Ja završavam svoj posao"
+        ],
+        [
+          "I complete the lesson",
+          "Ja završavam lekciju"
+        ],
+        [
+          "I colour the picture",
+          "Ja bojim sliku"
+        ],
+        [
+          "I colour with my pencils",
+          "Ja bojim svojim olovkama"
+        ],
+        [
+          "I dress up for the party",
+          "Ja se oblačim lepo za žurku"
+        ],
+        [
+          "I dress up in nice clothes",
+          "Ja se oblačim u lepu odeću"
+        ],
+        [
+          "I enjoy this",
+          "Ja uživam u ovome"
+        ],
+        [
+          "I enjoy my holiday",
+          "Ja uživam u svom odmoru"
+        ],
+        [
+          "I invite you to my party",
+          "Ja te pozivam na svoju žurku"
+        ],
+        [
+          "I invite my friends",
+          "Ja pozivam svoje prijatelje"
+        ],
+        [
+          "I jump high",
+          "Ja skačem visoko"
+        ],
+        [
+          "I jump and play",
+          "Ja skačem i igram se"
+        ],
+        [
+          "I paint pictures",
+          "Ja slikam slike"
+        ],
+        [
+          "I paint with colours",
+          "Ja slikam bojama"
+        ],
+        [
+          "I smile when I am happy",
+          "Ja se smešim kada sam srećan"
+        ],
+        [
+          "I smile at you",
+          "Ja ti se smešim"
+        ],
+        [
+          "I tick the box",
+          "Ja štikliram kutiju"
+        ],
+        [
+          "I tick yes or no",
+          "Ja štikliram da ili ne"
+        ],
+        [
+          "I wave goodbye",
+          "Ja mašem za doviđenja"
+        ],
+        [
+          "I wave my hand",
+          "Ja mašem rukom"
+        ]
+      ]
+    },
+    {
+      "lesson": 103,
+      "title": "Regular Verbs - Set 3",
+      "words": [
+        {
+          "english": "email",
+          "serbian": "poslati mejl"
+        },
+        {
+          "english": "film",
+          "serbian": "snimiti"
+        },
+        {
+          "english": "fish",
+          "serbian": "pecati"
+        },
+        {
+          "english": "hop",
+          "serbian": "skakutati"
+        },
+        {
+          "english": "phone",
+          "serbian": "pozvati"
+        },
+        {
+          "english": "pick up",
+          "serbian": "podići"
+        },
+        {
+          "english": "rain",
+          "serbian": "padati kiša"
+        },
+        {
+          "english": "sail",
+          "serbian": "ploviti"
+        },
+        {
+          "english": "shop",
+          "serbian": "kupovati"
+        },
+        {
+          "english": "shout",
+          "serbian": "vikati"
+        },
+        {
+          "english": "skate",
+          "serbian": "klizati se"
+        },
+        {
+          "english": "skip",
+          "serbian": "preskakati"
+        },
+        {
+          "english": "snow",
+          "serbian": "padati sneg"
+        },
+        {
+          "english": "text",
+          "serbian": "poslati poruku"
+        },
+        {
+          "english": "video",
+          "serbian": "snimiti video"
+        },
+        {
+          "english": "water",
+          "serbian": "zalivati"
+        }
+      ],
+      "sentences": [
+        [
+          "I email you",
+          "Ja ti šaljem mejl"
+        ],
+        [
+          "I email my friend",
+          "Ja šaljem mejl svom prijatelju"
+        ],
+        [
+          "I film the party",
+          "Ja snimam žurku"
+        ],
+        [
+          "I film with my camera",
+          "Ja snimam svojom kamerom"
+        ],
+        [
+          "I fish in the river",
+          "Ja pecam u reci"
+        ],
+        [
+          "I fish with my grandfather",
+          "Ja pecam sa svojim dedom"
+        ],
+        [
+          "I phone you",
+          "Ja te zovem"
+        ],
+        [
+          "I phone my mother",
+          "Ja zovem svoju majku"
+        ],
+        [
+          "I pick up the toy",
+          "Ja podiž em igračku"
+        ],
+        [
+          "I pick up my bag",
+          "Ja podižem svoju torbu"
+        ],
+        [
+          "It rains today",
+          "Pada kiša danas"
+        ],
+        [
+          "It rains and I am wet",
+          "Pada kiša i ja sam mokar"
+        ],
+        [
+          "I sail in a boat",
+          "Ja plovim čamcem"
+        ],
+        [
+          "I sail on the sea",
+          "Ja plovim po moru"
+        ],
+        [
+          "I shout loudly",
+          "Ja vikam glasno"
+        ],
+        [
+          "I shout when I am excited",
+          "Ja vikam kada sam uzbuđen"
+        ],
+        [
+          "I text you",
+          "Ja ti šaljem poruku"
+        ],
+        [
+          "I text my friends",
+          "Ja šaljem poruke svojim prijateljima"
+        ],
+        [
+          "I video the game",
+          "Ja snimam video utakmicu"
+        ],
+        [
+          "I video my family",
+          "Ja snimam video svoju porodicu"
+        ],
+        [
+          "I water the plants",
+          "Ja zalivam biljke"
+        ],
+        [
+          "I water the garden",
+          "Ja zalivam baštu"
+        ],
+        [
+          "It snows in winter",
+          "Pada sneg zimi"
+        ],
+        [
+          "It snows and everything is white",
+          "Pada sneg i sve je belo"
+        ]
+      ]
+    },
+    {
+      "lesson": 104,
+      "title": "Materials & Objects",
+      "words": [
+        {
+          "english": "paper",
+          "serbian": "papir"
+        },
+        {
+          "english": "glass",
+          "serbian": "staklo"
+        },
+        {
+          "english": "bottle",
+          "serbian": "flaša"
+        },
+        {
+          "english": "box",
+          "serbian": "kutija"
+        },
+        {
+          "english": "card",
+          "serbian": "karton"
+        },
+        {
+          "english": "model",
+          "serbian": "model"
+        }
+      ],
+      "sentences": [
+        [
+          "I have paper",
+          "Ja imam papir"
+        ],
+        [
+          "I write on paper",
+          "Ja pišem na papiru"
+        ],
+        [
+          "I draw on paper",
+          "Ja crtam na papiru"
+        ],
+        [
+          "The paper is white",
+          "Papir je beo"
+        ],
+        [
+          "Glass is strong",
+          "Staklo je jako"
+        ],
+        [
+          "The window is made of glass",
+          "Prozor je napravljen od stakla"
+        ],
+        [
+          "I put things in a box",
+          "Ja stavljam stvari u kutiju"
+        ],
+        [
+          "The box is big",
+          "Kutija je velika"
+        ],
+        [
+          "I open the box",
+          "Ja otvaram kutiju"
+        ],
+        [
+          "I have a card",
+          "Ja imam karton"
+        ],
+        [
+          "I write on the card",
+          "Ja pišem na kartonu"
+        ],
+        [
+          "I give you a birthday card",
+          "Ja ti dajem rođendansku čestitku"
+        ],
+        [
+          "I have a model",
+          "Ja imam model"
+        ],
+        [
+          "I make a model",
+          "Ja pravim model"
+        ],
+        [
+          "The model is small",
+          "Model je mali"
+        ],
+        [
+          "I build a model plane",
+          "Ja pravim model aviona"
+        ]
+      ]
+    },
+    {
+      "lesson": 105,
+      "title": "Advanced Time",
+      "words": [
+        {
+          "english": "hundred",
+          "serbian": "sto"
+        },
+        {
+          "english": "hour",
+          "serbian": "sat"
+        },
+        {
+          "english": "minute",
+          "serbian": "minut"
+        },
+        {
+          "english": "holiday",
+          "serbian": "odmor"
+        }
+      ],
+      "sentences": [
+        [
+          "I count to one hundred",
+          "Ja brojim do sto"
+        ],
+        [
+          "One hundred is a big number",
+          "Sto je veliki broj"
+        ],
+        [
+          "I have one hundred toys",
+          "Ja imam sto igračaka"
+        ],
+        [
+          "One hour is sixty minutes",
+          "Jedan sat je šezdeset minuta"
+        ],
+        [
+          "I wait for one hour",
+          "Ja čekam jedan sat"
+        ],
+        [
+          "I work for many hours",
+          "Ja radim mnogo sati"
+        ],
+        [
+          "One minute is short",
+          "Jedan minut je kratak"
+        ],
+        [
+          "I wait one minute",
+          "Ja čekam jedan minut"
+        ],
+        [
+          "I am on holiday",
+          "Ja sam na odmoru"
+        ],
+        [
+          "I go on holiday every summer",
+          "Ja idem na odmor svakog leta"
+        ],
+        [
+          "I enjoy my holiday",
+          "Ja uživam u svom odmoru"
+        ],
+        [
+          "Holiday is fun",
+          "Odmor je zabavan"
+        ]
+      ]
+    },
+    {
+      "lesson": 106,
+      "title": "Remaining Miscellaneous",
+      "words": [
+        {
+          "english": "matter",
+          "serbian": "važno"
+        },
+        {
+          "english": "message",
+          "serbian": "poruka"
+        },
+        {
+          "english": "pair",
+          "serbian": "par"
+        },
+        {
+          "english": "cage",
+          "serbian": "kavez"
+        },
+        {
+          "english": "shape",
+          "serbian": "oblik"
+        },
+        {
+          "english": "comb",
+          "serbian": "češalj"
+        }
+      ],
+      "sentences": [
+        [
+          "This is important matter",
+          "Ovo je važna stvar"
+        ],
+        [
+          "It does not matter",
+          "Nije važno"
+        ],
+        [
+          "What is the matter",
+          "Šta je problem"
+        ],
+        [
+          "I have a message for you",
+          "Ja imam poruku za tebe"
+        ],
+        [
+          "I send a message",
+          "Ja šaljem poruku"
+        ],
+        [
+          "I read the message",
+          "Ja čitam poruku"
+        ],
+        [
+          "I have a pair of shoes",
+          "Ja imam par cipela"
+        ],
+        [
+          "I buy a pair of socks",
+          "Ja kupujem par čarapa"
+        ],
+        [
+          "The bird is in a cage",
+          "Ptica je u kavezu"
+        ],
+        [
+          "The cage is small",
+          "Kavez je mali"
+        ],
+        [
+          "What shape is this",
+          "Kog je ovo oblika"
+        ],
+        [
+          "The ball is a round shape",
+          "Lopta je okruglog oblika"
+        ],
+        [
+          "I use a comb",
+          "Ja koristim češalj"
+        ],
+        [
+          "I comb my hair",
+          "Ja češljam kosu"
+        ]
+      ]
+    }
+  ]
+}

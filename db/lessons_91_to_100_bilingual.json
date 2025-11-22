@@ -1,0 +1,1250 @@
+{
+  "metadata": {
+    "description": "A1 English-Serbian Learning Course - Lessons 91-100",
+    "grammar": "Present Simple only",
+    "constraint": "Each sentence uses only words from current lesson + previous lessons",
+    "target": "5-10 sentences per new word",
+    "total_lessons": 10,
+    "vocabulary_approach": "One Serbian word per English word (no synonyms)",
+    "translation_approach": "Full gender/case agreement in Serbian",
+    "sentence_format": "Array format: [english, serbian]"
+  },
+  "lessons": [
+    {
+      "lesson": 91,
+      "title": "Toys & Play",
+      "words": [
+        {
+          "english": "toy",
+          "serbian": "igračka"
+        },
+        {
+          "english": "doll",
+          "serbian": "lutka"
+        },
+        {
+          "english": "balloon",
+          "serbian": "balon"
+        },
+        {
+          "english": "robot",
+          "serbian": "robot"
+        },
+        {
+          "english": "train",
+          "serbian": "voz"
+        },
+        {
+          "english": "kite",
+          "serbian": "zmaj"
+        }
+      ],
+      "sentences": [
+        [
+          "I have a toy",
+          "Ja imam igračku"
+        ],
+        [
+          "My toy is fun",
+          "Moja igračka je zabavna"
+        ],
+        [
+          "I play with my toy",
+          "Ja se igram sa svojom igračkom"
+        ],
+        [
+          "I buy toys at the shop",
+          "Ja kupujem igračke u prodavnici"
+        ],
+        [
+          "Children like toys",
+          "Deca vole igračke"
+        ],
+        [
+          "This is my favorite toy",
+          "Ovo je moja omiljena igračka"
+        ],
+        [
+          "I have a doll",
+          "Ja imam lutku"
+        ],
+        [
+          "The doll is beautiful",
+          "Lutka je lepa"
+        ],
+        [
+          "My daughter plays with her doll",
+          "Moja kćer se igra sa svojom lutkom"
+        ],
+        [
+          "I like dolls",
+          "Ja volim lutke"
+        ],
+        [
+          "The doll has blonde hair",
+          "Lutka ima plavu kosu"
+        ],
+        [
+          "I have a balloon",
+          "Ja imam balon"
+        ],
+        [
+          "The balloon is red",
+          "Balon je crven"
+        ],
+        [
+          "I play with balloons",
+          "Ja se igram sa balonima"
+        ],
+        [
+          "Balloons are round",
+          "Baloni su okrugli"
+        ],
+        [
+          "The balloon flies in the air",
+          "Balon leti u vazduhu"
+        ],
+        [
+          "I have a robot",
+          "Ja imam robota"
+        ],
+        [
+          "The robot is fun",
+          "Robot je zabavan"
+        ],
+        [
+          "My robot is a toy",
+          "Moj robot je igračka"
+        ],
+        [
+          "I play with my robot",
+          "Ja se igram sa svojim robotom"
+        ],
+        [
+          "The robot is exciting",
+          "Robot je uzbudljiv"
+        ],
+        [
+          "I have a toy train",
+          "Ja imam voz igračku"
+        ],
+        [
+          "The train is long",
+          "Voz je dugačak"
+        ],
+        [
+          "I play with my train",
+          "Ja se igram sa svojim vozom"
+        ],
+        [
+          "The train goes fast",
+          "Voz ide brzo"
+        ],
+        [
+          "I like trains",
+          "Ja volim vozove"
+        ],
+        [
+          "I have a kite",
+          "Ja imam zmaja"
+        ],
+        [
+          "The kite is beautiful",
+          "Zmaj je lep"
+        ],
+        [
+          "I fly my kite",
+          "Ja letim zmaja"
+        ],
+        [
+          "The kite flies high",
+          "Zmaj leti visoko"
+        ],
+        [
+          "I fly my kite in the park",
+          "Ja letim zmaja u parku"
+        ]
+      ]
+    },
+    {
+      "lesson": 92,
+      "title": "Celebration & Events",
+      "words": [
+        {
+          "english": "birthday",
+          "serbian": "rođendan"
+        },
+        {
+          "english": "present",
+          "serbian": "poklon"
+        },
+        {
+          "english": "cake",
+          "serbian": "torta"
+        }
+      ],
+      "sentences": [
+        [
+          "Today is my birthday",
+          "Danas je moj rođendan"
+        ],
+        [
+          "I have a birthday party",
+          "Ja imam rođendansku žurku"
+        ],
+        [
+          "Happy birthday",
+          "Srećan rođendan"
+        ],
+        [
+          "I celebrate my birthday every year",
+          "Ja slavim svoj rođendan svake godine"
+        ],
+        [
+          "My birthday is exciting",
+          "Moj rođendan je uzbudljiv"
+        ],
+        [
+          "I love birthdays",
+          "Ja volim rođendane"
+        ],
+        [
+          "I have a present",
+          "Ja imam poklon"
+        ],
+        [
+          "I give you a present",
+          "Ja ti dajem poklon"
+        ],
+        [
+          "The present is for you",
+          "Poklon je za tebe"
+        ],
+        [
+          "I open my presents",
+          "Ja otvaram svoje poklone"
+        ],
+        [
+          "I love presents",
+          "Ja volim poklone"
+        ],
+        [
+          "I buy a present for my friend",
+          "Ja kupujem poklon za svog prijatelja"
+        ],
+        [
+          "I have a cake",
+          "Ja imam tortu"
+        ],
+        [
+          "The cake is good",
+          "Torta je dobra"
+        ],
+        [
+          "I eat cake at my birthday",
+          "Ja jedem tortu na rođendanu"
+        ],
+        [
+          "The birthday cake is beautiful",
+          "Rođendanska torta je lepa"
+        ],
+        [
+          "I make a cake",
+          "Ja pravim tortu"
+        ],
+        [
+          "I love cake",
+          "Ja volim tortu"
+        ]
+      ]
+    },
+    {
+      "lesson": 93,
+      "title": "Adverbs - Manner",
+      "words": [
+        {
+          "english": "badly",
+          "serbian": "loše"
+        },
+        {
+          "english": "quickly",
+          "serbian": "brzo"
+        },
+        {
+          "english": "slowly",
+          "serbian": "sporo"
+        },
+        {
+          "english": "carefully",
+          "serbian": "pažljivo"
+        },
+        {
+          "english": "loudly",
+          "serbian": "glasno"
+        }
+      ],
+      "sentences": [
+        [
+          "I do this badly",
+          "Ja ovo radim loše"
+        ],
+        [
+          "He plays badly",
+          "On igra loše"
+        ],
+        [
+          "I do not want to do this badly",
+          "Ja ne želim da radim ovo loše"
+        ],
+        [
+          "Badly is not good",
+          "Loše nije dobro"
+        ],
+        [
+          "I run quickly",
+          "Ja trčim brzo"
+        ],
+        [
+          "I work quickly",
+          "Ja radim brzo"
+        ],
+        [
+          "The train goes quickly",
+          "Voz ide brzo"
+        ],
+        [
+          "I eat quickly when I am hungry",
+          "Ja jedem brzo kada sam gladan"
+        ],
+        [
+          "Quickly is good",
+          "Brzo je dobro"
+        ],
+        [
+          "I walk slowly",
+          "Ja hodam sporo"
+        ],
+        [
+          "I work slowly",
+          "Ja radim sporo"
+        ],
+        [
+          "The turtle moves slowly",
+          "Kornjača se kreće sporo"
+        ],
+        [
+          "I eat slowly",
+          "Ja jedem sporo"
+        ],
+        [
+          "Slowly is the opposite of quickly",
+          "Sporo je suprotno od brzo"
+        ],
+        [
+          "I walk carefully",
+          "Ja hodam pažljivo"
+        ],
+        [
+          "I drive carefully",
+          "Ja vozim pažljivo"
+        ],
+        [
+          "Be careful",
+          "Budi pažljiv"
+        ],
+        [
+          "I do my work carefully",
+          "Ja radim svoj posao pažljivo"
+        ],
+        [
+          "Carefully is good",
+          "Pažljivo je dobro"
+        ],
+        [
+          "I speak loudly",
+          "Ja govorim glasno"
+        ],
+        [
+          "I sing loudly",
+          "Ja pevam glasno"
+        ],
+        [
+          "The music is loudly",
+          "Muzika je glasna"
+        ],
+        [
+          "Do not speak loudly",
+          "Ne govori glasno"
+        ]
+      ]
+    },
+    {
+      "lesson": 94,
+      "title": "More Adverbs & Questions",
+      "words": [
+        {
+          "english": "how often",
+          "serbian": "koliko često"
+        },
+        {
+          "english": "why",
+          "serbian": "zašto"
+        },
+        {
+          "english": "how many",
+          "serbian": "koliko"
+        },
+        {
+          "english": "how much",
+          "serbian": "koliko"
+        }
+      ],
+      "sentences": [
+        [
+          "How often do you go",
+          "Koliko često ideš"
+        ],
+        [
+          "How often do you play",
+          "Koliko često igraš"
+        ],
+        [
+          "I go to school every day so I go very often",
+          "Ja idem u školu svakog dana tako da idem vrlo često"
+        ],
+        [
+          "How often do you see your friends",
+          "Koliko često vidiš svoje prijatelje"
+        ],
+        [
+          "Why do you do this",
+          "Zašto ovo radiš"
+        ],
+        [
+          "Why are you happy",
+          "Zašto si srećan"
+        ],
+        [
+          "Why do you like this",
+          "Zašto ti se ovo sviđa"
+        ],
+        [
+          "I do not know why",
+          "Ja ne znam zašto"
+        ],
+        [
+          "Why is important",
+          "Zašto je važno"
+        ],
+        [
+          "How many toys do you have",
+          "Koliko igračaka imaš"
+        ],
+        [
+          "How many friends do you have",
+          "Koliko prijatelja imaš"
+        ],
+        [
+          "How many is a question",
+          "Koliko je pitanje"
+        ],
+        [
+          "I want to know how many",
+          "Ja želim da znam koliko"
+        ],
+        [
+          "How much money do you have",
+          "Koliko novca imaš"
+        ],
+        [
+          "How much is this",
+          "Koliko je ovo"
+        ],
+        [
+          "How much do you want",
+          "Koliko želiš"
+        ],
+        [
+          "I do not know how much",
+          "Ja ne znam koliko"
+        ]
+      ]
+    },
+    {
+      "lesson": 95,
+      "title": "Possessive Pronouns",
+      "words": [
+        {
+          "english": "mine",
+          "serbian": "moje"
+        },
+        {
+          "english": "yours",
+          "serbian": "tvoje"
+        },
+        {
+          "english": "hers",
+          "serbian": "njeno"
+        },
+        {
+          "english": "ours",
+          "serbian": "naše"
+        },
+        {
+          "english": "theirs",
+          "serbian": "njihovo"
+        },
+        {
+          "english": "its",
+          "serbian": "njegovo"
+        }
+      ],
+      "sentences": [
+        [
+          "This is mine",
+          "Ovo je moje"
+        ],
+        [
+          "The toy is mine",
+          "Igračka je moja"
+        ],
+        [
+          "This book is mine",
+          "Ova knjiga je moja"
+        ],
+        [
+          "Mine is good",
+          "Moje je dobro"
+        ],
+        [
+          "This is yours",
+          "Ovo je tvoje"
+        ],
+        [
+          "The ball is yours",
+          "Lopta je tvoja"
+        ],
+        [
+          "Is this yours",
+          "Da li je ovo tvoje"
+        ],
+        [
+          "Yours is beautiful",
+          "Tvoje je lepo"
+        ],
+        [
+          "This is hers",
+          "Ovo je njeno"
+        ],
+        [
+          "The doll is hers",
+          "Lutka je njena"
+        ],
+        [
+          "This toy is hers",
+          "Ova igračka je njena"
+        ],
+        [
+          "Hers is pretty",
+          "Njeno je lepo"
+        ],
+        [
+          "This is ours",
+          "Ovo je naše"
+        ],
+        [
+          "The house is ours",
+          "Kuća je naša"
+        ],
+        [
+          "This place is ours",
+          "Ovo mesto je naše"
+        ],
+        [
+          "Ours is the best",
+          "Naše je najbolje"
+        ],
+        [
+          "This is theirs",
+          "Ovo je njihovo"
+        ],
+        [
+          "The farm is theirs",
+          "Farma je njihova"
+        ],
+        [
+          "These toys are theirs",
+          "Ove igračke su njihove"
+        ],
+        [
+          "Theirs is good",
+          "Njihovo je dobro"
+        ],
+        [
+          "The dog has a ball and the ball is its",
+          "Pas ima loptu i lopta je njegova"
+        ],
+        [
+          "The cat has a toy and the toy is its",
+          "Mačka ima igračku i igračka je njena"
+        ]
+      ]
+    },
+    {
+      "lesson": 96,
+      "title": "More Connecting Words",
+      "words": [
+        {
+          "english": "with",
+          "serbian": "sa"
+        },
+        {
+          "english": "without",
+          "serbian": "bez"
+        },
+        {
+          "english": "for",
+          "serbian": "za"
+        },
+        {
+          "english": "about",
+          "serbian": "o"
+        },
+        {
+          "english": "of",
+          "serbian": "od"
+        },
+        {
+          "english": "by",
+          "serbian": "kod"
+        },
+        {
+          "english": "through",
+          "serbian": "kroz"
+        },
+        {
+          "english": "along",
+          "serbian": "duž"
+        },
+        {
+          "english": "around",
+          "serbian": "oko"
+        },
+        {
+          "english": "opposite",
+          "serbian": "nasuprot"
+        }
+      ],
+      "sentences": [
+        [
+          "I go with you",
+          "Ja idem sa tobom"
+        ],
+        [
+          "I play with my friends",
+          "Ja se igram sa svojim prijateljima"
+        ],
+        [
+          "I am with my family",
+          "Ja sam sa svojom porodicom"
+        ],
+        [
+          "I eat with a fork",
+          "Ja jedem sa viljuškom"
+        ],
+        [
+          "I go without you",
+          "Ja idem bez tebe"
+        ],
+        [
+          "I am without money",
+          "Ja sam bez novca"
+        ],
+        [
+          "I eat without a spoon",
+          "Ja jedem bez kašike"
+        ],
+        [
+          "This is for you",
+          "Ovo je za tebe"
+        ],
+        [
+          "I work for my family",
+          "Ja radim za svoju porodicu"
+        ],
+        [
+          "This present is for my mother",
+          "Ovaj poklon je za moju majku"
+        ],
+        [
+          "I talk about my work",
+          "Ja pričam o svom poslu"
+        ],
+        [
+          "I think about you",
+          "Ja mislim o tebi"
+        ],
+        [
+          "This is about my life",
+          "Ovo je o mom životu"
+        ],
+        [
+          "I am a friend of yours",
+          "Ja sam tvoj prijatelj"
+        ],
+        [
+          "This is the top of the building",
+          "Ovo je vrh zgrade"
+        ],
+        [
+          "I live by the sea",
+          "Ja živim kod mora"
+        ],
+        [
+          "I go by train",
+          "Ja idem vozom"
+        ],
+        [
+          "I walk through the park",
+          "Ja šetam kroz park"
+        ],
+        [
+          "I go through the door",
+          "Ja prolazim kroz vrata"
+        ],
+        [
+          "I walk along the road",
+          "Ja hodam duž puta"
+        ],
+        [
+          "I walk along the river",
+          "Ja hodam duž reke"
+        ],
+        [
+          "I walk around the square",
+          "Ja šetam oko trga"
+        ],
+        [
+          "I go around the building",
+          "Ja idem oko zgrade"
+        ],
+        [
+          "The shop is opposite the café",
+          "Prodavnica je nasuprot kafića"
+        ],
+        [
+          "I live opposite the park",
+          "Ja živim nasuprot parka"
+        ]
+      ]
+    },
+    {
+      "lesson": 97,
+      "title": "Useful Common Words",
+      "words": [
+        {
+          "english": "everything",
+          "serbian": "sve"
+        },
+        {
+          "english": "everyone",
+          "serbian": "svi"
+        },
+        {
+          "english": "something",
+          "serbian": "nešto"
+        },
+        {
+          "english": "someone",
+          "serbian": "neko"
+        },
+        {
+          "english": "nothing",
+          "serbian": "ništa"
+        },
+        {
+          "english": "idea",
+          "serbian": "ideja"
+        },
+        {
+          "english": "problem",
+          "serbian": "problem"
+        },
+        {
+          "english": "mistake",
+          "serbian": "greška"
+        },
+        {
+          "english": "noise",
+          "serbian": "buka"
+        }
+      ],
+      "sentences": [
+        [
+          "I know everything",
+          "Ja znam sve"
+        ],
+        [
+          "I have everything",
+          "Ja imam sve"
+        ],
+        [
+          "Everything is good",
+          "Sve je dobro"
+        ],
+        [
+          "I like everything",
+          "Ja volim sve"
+        ],
+        [
+          "Everyone is here",
+          "Svi su ovde"
+        ],
+        [
+          "I know everyone",
+          "Ja znam sve"
+        ],
+        [
+          "Everyone is happy",
+          "Svi su srećni"
+        ],
+        [
+          "I see something",
+          "Ja vidim nešto"
+        ],
+        [
+          "I have something for you",
+          "Ja imam nešto za tebe"
+        ],
+        [
+          "Something is wrong",
+          "Nešto nije u redu"
+        ],
+        [
+          "Someone is here",
+          "Neko je ovde"
+        ],
+        [
+          "I see someone",
+          "Ja vidim nekoga"
+        ],
+        [
+          "Someone calls me",
+          "Neko me zove"
+        ],
+        [
+          "I have nothing",
+          "Ja nemam ništa"
+        ],
+        [
+          "I see nothing",
+          "Ja ne vidim ništa"
+        ],
+        [
+          "Nothing is wrong",
+          "Ništa nije u redu"
+        ],
+        [
+          "I have an idea",
+          "Ja imam ideju"
+        ],
+        [
+          "This is a good idea",
+          "Ovo je dobra ideja"
+        ],
+        [
+          "I have no idea",
+          "Ja nemam ideju"
+        ],
+        [
+          "I have a problem",
+          "Ja imam problem"
+        ],
+        [
+          "The problem is big",
+          "Problem je veliki"
+        ],
+        [
+          "I solve the problem",
+          "Ja rešavam problem"
+        ],
+        [
+          "I make a mistake",
+          "Ja pravim grešku"
+        ],
+        [
+          "This is a mistake",
+          "Ovo je greška"
+        ],
+        [
+          "Everyone makes mistakes",
+          "Svi prave greške"
+        ],
+        [
+          "I hear a noise",
+          "Ja čujem buku"
+        ],
+        [
+          "The noise is loud",
+          "Buka je glasna"
+        ],
+        [
+          "I do not like noise",
+          "Ja ne volim buku"
+        ]
+      ]
+    },
+    {
+      "lesson": 98,
+      "title": "More Useful Words",
+      "words": [
+        {
+          "english": "address",
+          "serbian": "adresa"
+        },
+        {
+          "english": "age",
+          "serbian": "godine"
+        },
+        {
+          "english": "name",
+          "serbian": "ime"
+        },
+        {
+          "english": "number",
+          "serbian": "broj"
+        }
+      ],
+      "sentences": [
+        [
+          "What is your address",
+          "Koja je tvoja adresa"
+        ],
+        [
+          "I know your address",
+          "Ja znam tvoju adresu"
+        ],
+        [
+          "My address is on this map",
+          "Moja adresa je na ovoj mapi"
+        ],
+        [
+          "I write my address",
+          "Ja pišem svoju adresu"
+        ],
+        [
+          "I give you my address",
+          "Ja ti dajem svoju adresu"
+        ],
+        [
+          "What is your age",
+          "Koliko imaš godina"
+        ],
+        [
+          "I am ten years of age",
+          "Ja imam deset godina"
+        ],
+        [
+          "My age is twenty",
+          "Moje godine su dvadeset"
+        ],
+        [
+          "Age is just a number",
+          "Godine su samo broj"
+        ],
+        [
+          "What is your name",
+          "Kako se zoveš"
+        ],
+        [
+          "My name is John",
+          "Moje ime je Džon"
+        ],
+        [
+          "I know your name",
+          "Ja znam tvoje ime"
+        ],
+        [
+          "I write my name",
+          "Ja pišem svoje ime"
+        ],
+        [
+          "What is your number",
+          "Koji je tvoj broj"
+        ],
+        [
+          "My number is five",
+          "Moj broj je pet"
+        ],
+        [
+          "I write the number",
+          "Ja pišem broj"
+        ],
+        [
+          "I know this number",
+          "Ja znam ovaj broj"
+        ]
+      ]
+    },
+    {
+      "lesson": 99,
+      "title": "Additional Expressions & Phrases",
+      "words": [
+        {
+          "english": "come on",
+          "serbian": "hajde"
+        },
+        {
+          "english": "see you",
+          "serbian": "vidimo se"
+        },
+        {
+          "english": "well done",
+          "serbian": "bravo"
+        },
+        {
+          "english": "hooray",
+          "serbian": "ura"
+        },
+        {
+          "english": "wow",
+          "serbian": "vau"
+        },
+        {
+          "english": "oh",
+          "serbian": "oh"
+        },
+        {
+          "english": "oh dear",
+          "serbian": "o ne"
+        },
+        {
+          "english": "me too",
+          "serbian": "i ja"
+        }
+      ],
+      "sentences": [
+        [
+          "Come on",
+          "Hajde"
+        ],
+        [
+          "Come on let us go",
+          "Hajde idemo"
+        ],
+        [
+          "Come on you can do it",
+          "Hajde možeš to"
+        ],
+        [
+          "See you",
+          "Vidimo se"
+        ],
+        [
+          "See you tomorrow",
+          "Vidimo se sutra"
+        ],
+        [
+          "See you at school",
+          "Vidimo se u školi"
+        ],
+        [
+          "Well done",
+          "Bravo"
+        ],
+        [
+          "Well done you are clever",
+          "Bravo pametan si"
+        ],
+        [
+          "Well done on your work",
+          "Bravo za tvoj rad"
+        ],
+        [
+          "Hooray",
+          "Ura"
+        ],
+        [
+          "Hooray we win",
+          "Ura pobedili smo"
+        ],
+        [
+          "Hooray it is my birthday",
+          "Ura moj je rođendan"
+        ],
+        [
+          "Wow",
+          "Vau"
+        ],
+        [
+          "Wow this is beautiful",
+          "Vau ovo je lepo"
+        ],
+        [
+          "Wow you are fast",
+          "Vau brz si"
+        ],
+        [
+          "Oh",
+          "Oh"
+        ],
+        [
+          "Oh I see",
+          "Oh razumem"
+        ],
+        [
+          "Oh that is good",
+          "Oh to je dobro"
+        ],
+        [
+          "Oh dear",
+          "O ne"
+        ],
+        [
+          "Oh dear that is a problem",
+          "O ne to je problem"
+        ],
+        [
+          "Oh dear I make a mistake",
+          "O ne pravim grešku"
+        ],
+        [
+          "Me too",
+          "I ja"
+        ],
+        [
+          "I like this and me too",
+          "Ja volim ovo i ja takođe"
+        ],
+        [
+          "I am happy and me too",
+          "Ja sam srećan i ja takođe"
+        ]
+      ]
+    },
+    {
+      "lesson": 100,
+      "title": "More Irregular Verbs",
+      "words": [
+        {
+          "english": "be called",
+          "serbian": "zvati se"
+        },
+        {
+          "english": "choose",
+          "serbian": "izabrati"
+        },
+        {
+          "english": "feed",
+          "serbian": "hraniti"
+        },
+        {
+          "english": "hide",
+          "serbian": "sakriti se"
+        },
+        {
+          "english": "get on",
+          "serbian": "ući"
+        },
+        {
+          "english": "get off",
+          "serbian": "izaći"
+        }
+      ],
+      "sentences": [
+        [
+          "I am called John",
+          "Ja se zovem Džon"
+        ],
+        [
+          "What are you called",
+          "Kako se zoveš"
+        ],
+        [
+          "She is called Mary",
+          "Ona se zove Meri"
+        ],
+        [
+          "I am called by my name",
+          "Ja se zovem po imenu"
+        ],
+        [
+          "I choose this",
+          "Ja biram ovo"
+        ],
+        [
+          "I choose the red one",
+          "Ja biram crveni"
+        ],
+        [
+          "You can choose",
+          "Ti možeš da biraš"
+        ],
+        [
+          "I choose my favorite toy",
+          "Ja biram svoju omiljenu igračku"
+        ],
+        [
+          "I choose what I want",
+          "Ja biram šta želim"
+        ],
+        [
+          "I feed my dog",
+          "Ja hranim svog psa"
+        ],
+        [
+          "I feed the animals",
+          "Ja hranim životinje"
+        ],
+        [
+          "I feed my baby",
+          "Ja hranim svoju bebu"
+        ],
+        [
+          "The farmer feeds the animals",
+          "Farmer hrani životinje"
+        ],
+        [
+          "I hide",
+          "Ja se krijem"
+        ],
+        [
+          "I hide from you",
+          "Ja se krijem od tebe"
+        ],
+        [
+          "I hide behind the tree",
+          "Ja se krijem iza drveta"
+        ],
+        [
+          "The children hide and play",
+          "Deca se kriju i igraju"
+        ],
+        [
+          "I get on the bus",
+          "Ja ulazim u autobus"
+        ],
+        [
+          "I get on the train",
+          "Ja ulazim u voz"
+        ],
+        [
+          "I get on at the station",
+          "Ja ulazim na stanici"
+        ],
+        [
+          "I get off the bus",
+          "Ja izlazim iz autobusa"
+        ],
+        [
+          "I get off the train",
+          "Ja izlazim iz voza"
+        ],
+        [
+          "I get off at the station",
+          "Ja izlazim na stanici"
+        ]
+      ]
+    }
+  ]
+}
