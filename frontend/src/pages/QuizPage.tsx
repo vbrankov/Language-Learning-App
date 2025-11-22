@@ -185,6 +185,9 @@ function QuizPage() {
                 ← Finish Session
               </button>
               <h1 className="text-xl font-semibold text-gray-900 mt-1">{lesson.title}</h1>
+              {lesson.title_serbian && (
+                <div className="text-sm text-gray-600">{lesson.title_serbian}</div>
+              )}
             </div>
             {progress && (
               <div className="text-right">

@@ -115,6 +115,11 @@ function HomePage() {
                     <h3 className="text-lg font-semibold text-gray-900 mt-1">
                       {lesson.title}
                     </h3>
+                    {lesson.title_serbian && (
+                      <div className="text-sm text-gray-600 mt-0.5">
+                        {lesson.title_serbian}
+                      </div>
+                    )}
                   </div>
                 </div>
 

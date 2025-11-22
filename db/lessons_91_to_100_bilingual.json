@@ -164,7 +164,8 @@
           "I fly my kite in the park",
           "Ja letim zmaja u parku"
         ]
-      ]
+      ],
+      "title_serbian": "Igračke i igra"
     },
     {
       "lesson": 92,
@@ -256,7 +257,8 @@
           "I love cake",
           "Ja volim tortu"
         ]
-      ]
+      ],
+      "title_serbian": "Proslava i događaji"
     },
     {
       "lesson": 93,
@@ -376,7 +378,8 @@
           "Do not speak loudly",
           "Ne govori glasno"
         ]
-      ]
+      ],
+      "title_serbian": "Prilozi - Način"
     },
     {
       "lesson": 94,
@@ -468,7 +471,8 @@
           "I do not know how much",
           "Ja ne znam koliko"
         ]
-      ]
+      ],
+      "title_serbian": "Više priloga i pitanja"
     },
     {
       "lesson": 95,
@@ -588,7 +592,8 @@
           "The cat has a toy and the toy is its",
           "Mačka ima igračku i igračka je njena"
         ]
-      ]
+      ],
+      "title_serbian": "Prisvojne zamenice"
     },
     {
       "lesson": 96,
@@ -736,7 +741,8 @@
           "I live opposite the park",
           "Ja živim nasuprot parka"
         ]
-      ]
+      ],
+      "title_serbian": "Više vezivnih reči"
     },
     {
       "lesson": 97,
@@ -892,7 +898,8 @@
           "I do not like noise",
           "Ja ne volim buku"
         ]
-      ]
+      ],
+      "title_serbian": "Korisne uobičajene reči"
     },
     {
       "lesson": 98,
@@ -984,7 +991,8 @@
           "I know this number",
           "Ja znam ovaj broj"
         ]
-      ]
+      ],
+      "title_serbian": "Više korisnih reči"
     },
     {
       "lesson": 99,
@@ -1120,7 +1128,8 @@
           "I am happy and me too",
           "Ja sam srećan i ja takođe"
         ]
-      ]
+      ],
+      "title_serbian": "Dodatni izrazi i fraze"
     },
     {
       "lesson": 100,
@@ -1244,7 +1253,8 @@
           "I get off at the station",
           "Ja izlazim na stanici"
         ]
-      ]
+      ],
+      "title_serbian": "Više nepravilnih glagola"
     }
   ]
 }

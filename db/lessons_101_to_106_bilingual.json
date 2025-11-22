@@ -132,7 +132,8 @@
           "I try to be good",
           "Ja pokušavam da budem dobar"
         ]
-      ]
+      ],
+      "title_serbian": "Pravilni glagoli - Set 1"
     },
     {
       "lesson": 102,
@@ -296,7 +297,8 @@
           "I wave my hand",
           "Ja mašem rukom"
         ]
-      ]
+      ],
+      "title_serbian": "Pravilni glagoli - Set 2"
     },
     {
       "lesson": 103,
@@ -464,7 +466,8 @@
           "It snows and everything is white",
           "Pada sneg i sve je belo"
         ]
-      ]
+      ],
+      "title_serbian": "Pravilni glagoli - Set 3"
     },
     {
       "lesson": 104,
@@ -560,7 +563,8 @@
           "I build a model plane",
           "Ja pravim model aviona"
         ]
-      ]
+      ],
+      "title_serbian": "Materijali i predmeti"
     },
     {
       "lesson": 105,
@@ -632,7 +636,8 @@
           "Holiday is fun",
           "Odmor je zabavan"
         ]
-      ]
+      ],
+      "title_serbian": "Napredno vreme"
     },
     {
       "lesson": 106,
@@ -720,7 +725,8 @@
           "I comb my hair",
           "Ja češljam kosu"
         ]
-      ]
+      ],
+      "title_serbian": "Ostalo razno"
     }
   ]
 }

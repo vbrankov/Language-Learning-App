@@ -256,7 +256,8 @@
           "I buy a map at the shop",
           "Ja kupujem mapu u prodavnici"
         ]
-      ]
+      ],
+      "title_serbian": "Više mesta u gradu"
     },
     {
       "lesson": 82,
@@ -496,7 +497,8 @@
           "My grandparents live on a farm",
           "Moji deda i baba žive na farmi"
         ]
-      ]
+      ],
+      "title_serbian": "Šira porodica"
     },
     {
       "lesson": 83,
@@ -644,7 +646,8 @@
           "I fall on the ice",
           "Ja padam na ledu"
         ]
-      ]
+      ],
+      "title_serbian": "Više zdravstvenog rečnika"
     },
     {
       "lesson": 84,
@@ -708,7 +711,8 @@
           "I use my toothbrush and toothpaste",
           "Ja koristim četkicu i pastu za zube"
         ]
-      ]
+      ],
+      "title_serbian": "Zdravstveni predmeti"
     },
     {
       "lesson": 85,
@@ -916,7 +920,8 @@
           "The cook works in the kitchen",
           "Kuvar radi u kuhinji"
         ]
-      ]
+      ],
+      "title_serbian": "Rad i poslovi"
     },
     {
       "lesson": 86,
@@ -1004,7 +1009,8 @@
           "I want to have a beard",
           "Ja želim da imam bradu"
         ]
-      ]
+      ],
+      "title_serbian": "Izgled i kosa"
     },
     {
       "lesson": 87,
@@ -1184,7 +1190,8 @@
           "Exciting things are fun",
           "Uzbudlјive stvari su zabavne"
         ]
-      ]
+      ],
+      "title_serbian": "Ličnost i karakter"
     },
     {
       "lesson": 88,
@@ -1276,7 +1283,8 @@
           "I am frightened when I see dangerous things",
           "Ja sam uplašen kada vidim opasne stvari"
         ]
-      ]
+      ],
+      "title_serbian": "Više karakternih osobina"
     },
     {
       "lesson": 89,
@@ -1384,7 +1392,8 @@
           "I go to the bottom",
           "Ja idem na dno"
         ]
-      ]
+      ],
+      "title_serbian": "Oblici i dimenzije"
     },
     {
       "lesson": 90,
@@ -1508,7 +1517,8 @@
           "I like trips",
           "Ja volim putovanja"
         ]
-      ]
+      ],
+      "title_serbian": "Više prevoza"
     }
   ]
 }

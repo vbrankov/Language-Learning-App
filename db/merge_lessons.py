@@ -21,7 +21,7 @@ def merge_lessons():
     
     # Define all lesson files to merge in order
     lesson_files = [
-        ('lessons_1_to_70_bilingual_complete_ENHANCED.json', '1-70'),
+        ('lessons_1_to_70_FIXED.json', '1-70'),
         ('lessons_71_to_80_bilingual.json', '71-80'),
         ('lessons_81_to_90_bilingual.json', '81-90'),
         ('lessons_91_to_100_bilingual.json', '91-100'),

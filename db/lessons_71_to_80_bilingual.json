@@ -232,7 +232,8 @@
           "Table tennis is easy but football is difficult",
           "Stoni tenis je lak ali fudbal je težak"
         ]
-      ]
+      ],
+      "title_serbian": "Više sportova"
     },
     {
       "lesson": 72,
@@ -480,7 +481,8 @@
           "Do you like roller skating",
           "Da li ti se sviđa klizanje na rolerima"
         ]
-      ]
+      ],
+      "title_serbian": "Sportske radnje i oprema"
     },
     {
       "lesson": 73,
@@ -616,7 +618,8 @@
           "I like to ride fast",
           "Ja volim da se vozim brzo"
         ]
-      ]
+      ],
+      "title_serbian": "Više aktivnosti"
     },
     {
       "lesson": 74,
@@ -872,7 +875,8 @@
           "My hobby is fun",
           "Moj hobi je zabavan"
         ]
-      ]
+      ],
+      "title_serbian": "Zabava i slobodno vreme"
     },
     {
       "lesson": 75,
@@ -1128,7 +1132,8 @@
           "The band plays music",
           "Bend svira muziku"
         ]
-      ]
+      ],
+      "title_serbian": "Više aktivnosti u slobodno vreme"
     },
     {
       "lesson": 76,
@@ -1416,7 +1421,8 @@
           "I have soup for dinner",
           "Ja imam supu za večeru"
         ]
-      ]
+      ],
+      "title_serbian": "Više namirnica"
     },
     {
       "lesson": 77,
@@ -1696,7 +1702,8 @@
           "I have strawberries for breakfast",
           "Ja imam jagode za doručak"
         ]
-      ]
+      ],
+      "title_serbian": "Prošireni rečnik hrane"
     },
     {
       "lesson": 78,
@@ -1956,7 +1963,8 @@
           "I have many bottles",
           "Ja imam mnogo flaša"
         ]
-      ]
+      ],
+      "title_serbian": "Priprema hrane i obedovanje"
     },
     {
       "lesson": 79,
@@ -2112,7 +2120,8 @@
           "I eat sandwiches at the picnic",
           "Ja jedem sendviče na pikniku"
         ]
-      ]
+      ],
+      "title_serbian": "Začini i obedovanje"
     },
     {
       "lesson": 80,
@@ -2368,7 +2377,8 @@
           "I give you money",
           "Ja ti dajem novac"
         ]
-      ]
+      ],
+      "title_serbian": "Kupovina i trgovina"
     }
   ]
 }

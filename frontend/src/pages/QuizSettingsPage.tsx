@@ -77,6 +77,9 @@ function QuizSettingsPage() {
             ← Back to Lessons
           </button>
           <h1 className="text-3xl font-bold text-gray-900">{lesson.title}</h1>
+          {lesson.title_serbian && (
+            <div className="text-xl text-gray-700 mt-1">{lesson.title_serbian}</div>
+          )}
           <p className="mt-2 text-sm text-gray-600">
             Lesson {lesson.id} • {lesson.sentences.length} sentences
           </p>
