@@ -152,3 +152,44 @@ export function cyrillicToLatin(text: string): string {
 
   return text.split('').map(char => cyrillicToLatinMap[char] || char).join('');
 }
+
+/**
+ * Convert ijekavian (Croatian) dialect to ekavian (Serbian) dialect
+ * This handles common patterns where Croatian speech recognition returns ijekavian forms
+ */
+export function ijekavianToEkavian(text: string): string {
+  // Common ijekavian → ekavian patterns
+  const conversions: [RegExp, string][] = [
+    // ije → e (in middle of word)
+    [/([^aeiou])ije([^aeiou])/gi, '$1e$2'],
+    // ijel → el
+    [/ijel/gi, 'el'],
+    // jelo → elo (in compounds like "htjelo" → "htelo")
+    [/([^aeiou])jelo/gi, '$1elo'],
+    // mlijeko → mleko
+    [/mlijeko/gi, 'mleko'],
+    // dijete → dete
+    [/dijete/gi, 'dete'],
+    // lijepo → lepo
+    [/lijepo/gi, 'lepo'],
+    // vrijeme → vreme
+    [/vrijeme/gi, 'vreme'],
+    // mjesto → mesto
+    [/mjesto/gi, 'mesto'],
+    // htjela → htela, htjeli → hteli, htjelo → htelo
+    [/htjel([aio])/gi, 'htel$1'],
+    // vjera → vera
+    [/vjera/gi, 'vera'],
+    // cvijet → cvet
+    [/cvije([tt])/gi, 'cve$1'],
+    // Remove Croatian-specific letter đ → đ or dj (keep as-is, it's in both)
+    // But remove other Croatian letters that don't exist in Serbian Latin
+  ];
+  
+  let result = text;
+  for (const [pattern, replacement] of conversions) {
+    result = result.replace(pattern, replacement);
+  }
+  
+  return result;
+}

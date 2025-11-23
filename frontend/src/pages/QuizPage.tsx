@@ -4,7 +4,7 @@ import { QuizSettings, Lesson, Sentence } from '../types';
 import { AlgorithmA, createMultipleChoiceQuestion } from '../utils/QuizAlgorithms';
 import { ProgressManager } from '../utils/ProgressManager';
 import { LessonDatabase } from '../types';
-import { getTitles, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin } from '../utils/ContentFormatter';
+import { getTitles, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin, ijekavianToEkavian } from '../utils/ContentFormatter';
 
 type QuizState = 'question' | 'correct' | 'incorrect';
 
@@ -72,6 +72,7 @@ function QuizPage() {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const isListeningRef = useRef(false);
+  const [usingCroatianFallback, setUsingCroatianFallback] = useState(false);
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
@@ -396,8 +397,17 @@ function QuizPage() {
         const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
         console.log('[Debug] Direction:', settings.direction, 'isEnglish:', isEnglish);
         
-        // Force Serbian for testing
+        // iOS Safari doesn't support Serbian - use Croatian as fallback with ijekavian→ekavian conversion
         let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
+        let useCroatianFallback = false;
+        if (!isEnglish && isIOSSafari) {
+          recognitionLang = 'hr-HR'; // Croatian fallback for iOS
+          useCroatianFallback = true;
+          setUsingCroatianFallback(true);
+          console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
+        } else {
+          setUsingCroatianFallback(false);
+        }
         console.log('[Debug] Setting language to:', recognitionLang);
         
         newRecognition.lang = recognitionLang;
@@ -420,7 +430,14 @@ function QuizPage() {
           let transcript = latestResult[0].transcript;
           
           if (!isEnglish) {
+            // First convert Cyrillic to Latin if needed
             transcript = cyrillicToLatin(transcript);
+            // If using Croatian fallback, convert ijekavian to ekavian
+            if (useCroatianFallback) {
+              console.log('[Debug] Before conversion:', transcript);
+              transcript = ijekavianToEkavian(transcript);
+              console.log('[Debug] After ijekavian→ekavian:', transcript);
+            }
           }
           
           setUserAnswer(transcript);
@@ -431,11 +448,9 @@ function QuizPage() {
           setIsListening(false);
           isListeningRef.current = false;
           
-          // Handle language not supported error
-          if (event.error === 'language-not-supported') {
-            alert('Serbian speech recognition is not supported on iOS Safari.\n\nPlease use:\n• Type mode instead\n• Multiple Choice mode\n• Or test on a desktop browser');
-          } else if (event.error === 'service-not-allowed') {
-            alert('Microphone access denied or speech recognition not available.\n\nPlease check Safari Settings → [This Site] → Microphone');
+          // Handle specific errors
+          if (event.error === 'service-not-allowed') {
+            alert('Microphone access denied.\n\nPlease check Safari Settings → [This Site] → Microphone');
           }
         };
         
