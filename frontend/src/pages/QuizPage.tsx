@@ -86,8 +86,13 @@ function QuizPage() {
       // source-to-dest: answer in Serbian, dest-to-source: answer in English
       // source-to-source: answer in English, dest-to-dest: answer in Serbian
       const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-      recognitionInstance.lang = isEnglish ? 'en-US' : 'sr-RS'; // Use Serbian (Serbia)
-      recognitionInstance.continuous = true; // Keep listening continuously
+      // iOS Safari doesn't support Serbian, use Croatian as fallback
+      let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
+      if (!isEnglish && isIOSSafari) {
+        recognitionLang = 'hr-HR'; // Croatian fallback for iOS
+      }
+      recognitionInstance.lang = recognitionLang;
+      recognitionInstance.continuous = isIOSSafari ? false : true; // iOS needs false
       recognitionInstance.interimResults = true; // Show interim results
       recognitionInstance.maxAlternatives = 1;
       
@@ -369,9 +374,19 @@ function QuizPage() {
     } else {
       // Start listening - create fresh instance for iOS Safari
       console.log('[Debug] User manually starting - creating fresh recognition instance');
+      console.log('[Debug] Is iOS Safari:', isIOSSafari);
+      console.log('[Debug] Location protocol:', window.location.protocol);
+      console.log('[Debug] Location hostname:', window.location.hostname);
       
       if (!('webkitSpeechRecognition' in window)) {
         console.error('[Debug] webkitSpeechRecognition not available');
+        return;
+      }
+      
+      // Check if we're on HTTPS (required for iOS)
+      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+        console.error('[Debug] Speech recognition requires HTTPS on iOS Safari');
+        alert('Speech recognition requires a secure connection (HTTPS). Please access this site via HTTPS.');
         return;
       }
       
@@ -381,9 +396,17 @@ function QuizPage() {
         
         // Set language based on quiz direction
         const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-        newRecognition.lang = isEnglish ? 'en-US' : 'sr-RS';
+        // iOS Safari doesn't support Serbian (sr-RS), use Croatian (hr-HR) as fallback
+        // Croatian and Serbian are mutually intelligible
+        let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
+        if (!isEnglish && isIOSSafari) {
+          recognitionLang = 'hr-HR'; // Croatian fallback for iOS
+          console.log('[Debug] Using Croatian (hr-HR) instead of Serbian for iOS Safari');
+        }
+        newRecognition.lang = recognitionLang;
         // iOS Safari has bugs with continuous mode - use false for iOS
         newRecognition.continuous = isIOSSafari ? false : true;
+        console.log('[Debug] Language:', recognitionLang, 'Continuous:', newRecognition.continuous);
         newRecognition.interimResults = true;
         newRecognition.maxAlternatives = 1;
         
