@@ -8,6 +8,79 @@ function QuizSettingsPage() {
   const navigate = useNavigate();
   const [lessonData, setLessonData] = useState<LessonDatabase | null>(null);
   
+  // Load available voices
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const english = voices.filter(v => v.lang.startsWith('en-'));
+      // Filter for Serbian, Croatian, and Bosnian voices (all mutually intelligible)
+      // Serbian can be: sr-RS, sr-Latn-RS, sr-Cyrl-RS, sr, or rs-RS, rs
+      // Croatian: hr-HR or hr
+      // Bosnian: bs-BA or bs
+      const serbian = voices.filter(v => 
+        v.lang.startsWith('sr-') || v.lang.startsWith('sr') ||
+        v.lang.startsWith('rs-') || v.lang.startsWith('rs') ||
+        v.lang.startsWith('hr-') || v.lang.startsWith('hr') ||
+        v.lang.startsWith('bs-') || v.lang.startsWith('bs')
+      );
+      
+      // Debug: log all voices to console
+      console.log('All available voices:', voices.map(v => `${v.name} (${v.lang})`));
+      console.log('Serbian/Croatian/Bosnian voices found:', serbian.map(v => `${v.name} (${v.lang})`));
+      
+      setEnglishVoices(english);
+      setSerbianVoices(serbian);
+      
+      // Extract unique English locales and sort by country name
+      const uniqueLocales = Array.from(new Set(english.map(v => v.lang)));
+      uniqueLocales.sort((a, b) => getCountryName(a).localeCompare(getCountryName(b)));
+      setEnglishLocales(uniqueLocales);
+      
+      // Extract unique Serbian/Croatian/Bosnian locales and sort by country name
+      const uniqueSerbianLocales = Array.from(new Set(serbian.map(v => v.lang)));
+      uniqueSerbianLocales.sort((a, b) => getCountryName(a).localeCompare(getCountryName(b)));
+      setSerbianLocales(uniqueSerbianLocales);
+      
+      // Set default locale and voices
+      if (uniqueLocales.length > 0 && !englishLocale) {
+        // Prefer en-US, then en-GB, then first available
+        const defaultLocale = uniqueLocales.find(l => l === 'en-US') || 
+                             uniqueLocales.find(l => l === 'en-GB') ||
+                             uniqueLocales[0];
+        setEnglishLocale(defaultLocale);
+        
+        // Filter voices for default locale
+        const voicesForLocale = english.filter(v => v.lang === defaultLocale);
+        setFilteredEnglishVoices(voicesForLocale);
+        
+        if (voicesForLocale.length > 0 && !selectedEnglishVoice) {
+          const defaultVoice = voicesForLocale.find(v => v.name.includes('Natural') || v.name.includes('Premium')) || voicesForLocale[0];
+          setSelectedEnglishVoice(defaultVoice.name);
+        }
+      }
+      
+      if (uniqueSerbianLocales.length > 0 && !serbianLocale) {
+        // Prefer Croatian (hr), then Serbian (sr), then Bosnian (bs)
+        const defaultSerbianLocale = uniqueSerbianLocales.find(l => l.startsWith('hr')) || 
+                                    uniqueSerbianLocales.find(l => l.startsWith('sr')) ||
+                                    uniqueSerbianLocales[0];
+        setSerbianLocale(defaultSerbianLocale);
+        
+        // Filter voices for default locale
+        const voicesForSerbianLocale = serbian.filter(v => v.lang === defaultSerbianLocale);
+        setFilteredSerbianVoices(voicesForSerbianLocale);
+        
+        if (voicesForSerbianLocale.length > 0 && !selectedSerbianVoice) {
+          const defaultVoice = voicesForSerbianLocale.find(v => v.name.includes('Natural') || v.name.includes('Premium')) || voicesForSerbianLocale[0];
+          setSelectedSerbianVoice(defaultVoice.name);
+        }
+      }
+    };
+    
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }, []);
+
   useEffect(() => {
     const loadDatabase = async () => {
       try {
@@ -27,6 +100,44 @@ function QuizSettingsPage() {
   const [direction, setDirection] = useState<QuizDirection>('source-to-dest');
   const [mode, setMode] = useState<QuizMode>('type');
   const [algorithm] = useState<QuizAlgorithm>('A'); // Only A for now
+  const [englishVoices, setEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [serbianVoices, setSerbianVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedEnglishVoice, setSelectedEnglishVoice] = useState<string>('');
+  const [selectedSerbianVoice, setSelectedSerbianVoice] = useState<string>('');
+  const [englishLocale, setEnglishLocale] = useState('');
+  const [englishLocales, setEnglishLocales] = useState<string[]>([]);
+  const [filteredEnglishVoices, setFilteredEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [serbianLocale, setSerbianLocale] = useState('');
+  const [serbianLocales, setSerbianLocales] = useState<string[]>([]);
+  const [filteredSerbianVoices, setFilteredSerbianVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  const getCountryName = (locale: string): string => {
+    const countryNames: Record<string, string> = {
+      'en-GB': 'United Kingdom',
+      'en-US': 'United States',
+      'en-AU': 'Australia',
+      'en-CA': 'Canada',
+      'en-IE': 'Ireland',
+      'en-IN': 'India',
+      'en-NZ': 'New Zealand',
+      'en-ZA': 'South Africa',
+      'en-SG': 'Singapore',
+      'en-PH': 'Philippines',
+      'en-HK': 'Hong Kong',
+      'en-KE': 'Kenya',
+      'en-NG': 'Nigeria',
+      'en-TZ': 'Tanzania',
+      'sr-RS': 'Serbia',
+      'sr': 'Serbia',
+      'rs-RS': 'Serbia',
+      'rs': 'Serbia',
+      'hr-HR': 'Croatia',
+      'hr': 'Croatia',
+      'bs-BA': 'Bosnia and Herzegovina',
+      'bs': 'Bosnia and Herzegovina',
+    };
+    return countryNames[locale] || locale;
+  };
 
   if (!lessonData) {
     return (
@@ -54,12 +165,38 @@ function QuizSettingsPage() {
     );
   }
 
+  const handleLocaleChange = (locale: string) => {
+    setEnglishLocale(locale);
+    const voicesForLocale = englishVoices.filter(v => v.lang === locale);
+    setFilteredEnglishVoices(voicesForLocale);
+    
+    // Auto-select first voice for new locale
+    if (voicesForLocale.length > 0) {
+      const defaultVoice = voicesForLocale.find(v => v.name.includes('Natural') || v.name.includes('Premium')) || voicesForLocale[0];
+      setSelectedEnglishVoice(defaultVoice.name);
+    }
+  };
+
+  const handleSerbianLocaleChange = (locale: string) => {
+    setSerbianLocale(locale);
+    const voicesForLocale = serbianVoices.filter(v => v.lang === locale);
+    setFilteredSerbianVoices(voicesForLocale);
+    
+    // Auto-select first voice for new locale
+    if (voicesForLocale.length > 0) {
+      const defaultVoice = voicesForLocale.find(v => v.name.includes('Natural') || v.name.includes('Premium')) || voicesForLocale[0];
+      setSelectedSerbianVoice(defaultVoice.name);
+    }
+  };
+
   const handleStart = () => {
     const settings: QuizSettings = {
       lessonId: lesson.id,
       direction,
       mode,
-      algorithm
+      algorithm,
+      englishVoice: selectedEnglishVoice,
+      serbianVoice: selectedSerbianVoice,
     };
     
     // Pass settings via state
@@ -205,6 +342,75 @@ function QuizSettingsPage() {
               <div className="text-sm text-gray-600 mt-1">
                 Randomly selects sentences. Correct answers are removed from the pool, 
                 incorrect ones stay in. Pool refills when empty.
+              </div>
+            </div>
+          </div>
+
+          {/* Voice Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Voice Settings
+            </label>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">English Country/Region</label>
+                <select
+                  value={englishLocale}
+                  onChange={(e) => handleLocaleChange(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {englishLocales.map((locale) => (
+                    <option key={locale} value={locale}>
+                      {getCountryName(locale)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">English Voice</label>
+                <select
+                  value={selectedEnglishVoice}
+                  onChange={(e) => setSelectedEnglishVoice(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {filteredEnglishVoices.map((voice) => (
+                    <option key={voice.name} value={voice.name}>
+                      {voice.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Serbian/Croatian/Bosnian Country/Region</label>
+                <select
+                  value={serbianLocale}
+                  onChange={(e) => handleSerbianLocaleChange(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {serbianLocales.map((locale) => (
+                    <option key={locale} value={locale}>
+                      {getCountryName(locale)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Serbian/Croatian/Bosnian Voice</label>
+                <select
+                  value={selectedSerbianVoice}
+                  onChange={(e) => setSelectedSerbianVoice(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {filteredSerbianVoices.length > 0 ? (
+                    filteredSerbianVoices.map((voice) => (
+                      <option key={voice.name} value={voice.name}>
+                        {voice.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">No voices found - check console for available voices</option>
+                  )}
+                </select>
               </div>
             </div>
           </div>

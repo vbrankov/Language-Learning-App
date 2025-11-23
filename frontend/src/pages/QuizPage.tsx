@@ -9,21 +9,36 @@ import { getTitles, getSentenceText, checkAnswerWithAlternatives, cyrillicToLati
 type QuizState = 'question' | 'correct' | 'incorrect';
 
 // Text-to-speech function
-function speak(text: string, lang: 'en' | 'sr') {
+function speak(text: string, lang: 'en' | 'sr', voiceName?: string) {
   if ('speechSynthesis' in window) {
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
     
     const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.85;
     
-    if (lang === 'en') {
-      utterance.lang = 'en-US';
+    const voices = window.speechSynthesis.getVoices();
+    
+    if (voiceName) {
+      // Use the specified voice
+      const selectedVoice = voices.find(v => v.name === voiceName);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else if (lang === 'en') {
+        utterance.lang = 'en-GB';
+      } else {
+        utterance.lang = 'hr-HR';
+      }
     } else {
-      // For Serbian, use Croatian voices (similar language, better support)
-      utterance.lang = 'hr-HR';
+      // Fallback to default behavior
+      if (lang === 'en') {
+        utterance.lang = 'en-GB';
+      } else {
+        utterance.lang = 'hr-HR';
+      }
     }
     
-    utterance.rate = 0.85; // Slightly slower for learning
     window.speechSynthesis.speak(utterance);
   }
 }
@@ -205,7 +220,8 @@ function QuizPage() {
 
     // Auto-speak the question
     setTimeout(() => {
-      speak(questionText, targetLang);
+      const voiceName = targetLang === 'en' ? settings.englishVoice : settings.serbianVoice;
+      speak(questionText, targetLang, voiceName);
     }, 100);
 
     // Setup multiple choice if needed
@@ -278,7 +294,8 @@ function QuizPage() {
           speakLang = settings.direction === 'source-to-source' ? 'en' : 'sr';
         }
         setTimeout(() => {
-          speak(correctAnswer, speakLang);
+          const voiceName = speakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
+          speak(correctAnswer, speakLang, voiceName);
         }, 100);
       }
     }
@@ -445,7 +462,8 @@ function QuizPage() {
                   } else {
                     lang = 'sr';
                   }
-                  speak(questionText, lang);
+                  const voiceName = lang === 'en' ? settings.englishVoice : settings.serbianVoice;
+                  speak(questionText, lang, voiceName);
                 }}
                 className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                 title="Listen to question"
@@ -504,7 +522,8 @@ function QuizPage() {
                         } else {
                           lang = 'en';
                         }
-                        speak(correctAnswer, lang);
+                        const voiceName = lang === 'en' ? settings.englishVoice : settings.serbianVoice;
+                        speak(correctAnswer, lang, voiceName);
                       }}
                       className="p-2 text-red-600 hover:bg-red-200 rounded-full transition-colors flex-shrink-0"
                       title="Listen to correct answer"
@@ -651,7 +670,8 @@ function QuizPage() {
                           } else {
                             lang = 'en';
                           }
-                          speak(correctAnswer, lang);
+                          const voiceName = lang === 'en' ? settings.englishVoice : settings.serbianVoice;
+                          speak(correctAnswer, lang, voiceName);
                         }}
                         className="p-2 text-red-600 hover:bg-red-200 rounded-full transition-colors flex-shrink-0"
                         title="Listen to correct answer"
@@ -727,7 +747,8 @@ function QuizPage() {
                         } else {
                           lang = 'en';
                         }
-                        speak(option, lang);
+                        const voiceName = lang === 'en' ? settings.englishVoice : settings.serbianVoice;
+                        speak(option, lang, voiceName);
                       }}
                       className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-colors flex-shrink-0"
                       title="Listen to this option"

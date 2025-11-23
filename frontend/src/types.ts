@@ -52,6 +52,8 @@ export interface QuizSettings {
   direction: QuizDirection;
   mode: QuizMode;
   algorithm: QuizAlgorithm;
+  englishVoice?: string;
+  serbianVoice?: string;
 }
 
 // Lesson statistics for display
