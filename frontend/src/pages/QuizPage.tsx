@@ -84,7 +84,7 @@ function QuizPage() {
       // source-to-source: answer in English, dest-to-dest: answer in Serbian
       const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
       recognitionInstance.lang = isEnglish ? 'en-US' : 'sr-RS'; // Use Serbian (Serbia)
-      recognitionInstance.continuous = false; // iOS works better with single utterance mode
+      recognitionInstance.continuous = true; // Keep listening continuously
       recognitionInstance.interimResults = true; // Show interim results
       recognitionInstance.maxAlternatives = 1;
       
