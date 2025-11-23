@@ -394,17 +394,18 @@ function QuizPage() {
         
         // Set language based on quiz direction
         const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-        let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
+        console.log('[Debug] Direction:', settings.direction, 'isEnglish:', isEnglish);
         
-        // Test if Serbian is supported by trying it first
-        if (!isEnglish) {
-          console.log('[Debug] Testing Serbian (sr-RS) support...');
-        }
+        // Force Serbian for testing
+        let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
+        console.log('[Debug] Setting language to:', recognitionLang);
         
         newRecognition.lang = recognitionLang;
+        console.log('[Debug] Recognition lang after setting:', newRecognition.lang);
+        
         // iOS Safari has bugs with continuous mode - use false for iOS
         newRecognition.continuous = isIOSSafari ? false : true;
-        console.log('[Debug] Language:', recognitionLang, 'Continuous:', newRecognition.continuous);
+        console.log('[Debug] Continuous:', newRecognition.continuous);
         newRecognition.interimResults = true;
         newRecognition.maxAlternatives = 1;
         
