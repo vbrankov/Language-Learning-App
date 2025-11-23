@@ -72,7 +72,6 @@ function QuizPage() {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const isListeningRef = useRef(false);
-  const [usingCroatianFallback, setUsingCroatianFallback] = useState(false);
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
@@ -402,10 +401,7 @@ function QuizPage() {
         const shouldConvertCroatian = !isEnglish && isIOSSafari;
         if (shouldConvertCroatian) {
           recognitionLang = 'hr-HR'; // Croatian fallback for iOS
-          setUsingCroatianFallback(true);
           console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
-        } else {
-          setUsingCroatianFallback(false);
         }
         console.log('[Debug] Setting language to:', recognitionLang, 'Will convert:', shouldConvertCroatian);
         
