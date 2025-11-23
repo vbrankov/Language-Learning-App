@@ -369,6 +369,12 @@ function QuizPage() {
       setIsListening(true);
       isListeningRef.current = true;
       try {
+        // Reset recognizer state before starting
+        try {
+          recognition.abort();
+        } catch (e) {
+          // Ignore abort errors
+        }
         recognition.start();
         console.log('[Debug] Manual start called successfully');
       } catch (err) {
