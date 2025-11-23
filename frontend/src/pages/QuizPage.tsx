@@ -72,6 +72,7 @@ function QuizPage() {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const isListeningRef = useRef(false);
+  const autoStartRecognitionRef = useRef(false);
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
@@ -109,11 +110,92 @@ function QuizPage() {
     } else if (quizState === 'incorrect' && settings?.mode === 'type') {
       buttonRef.current?.focus();
     }
-    // Note: Auto-start disabled for iOS - user must manually click to start listening
-    // iOS Safari requires speech recognition to be triggered by user gesture
   }, [quizState, settings?.mode]);
 
-  // Removed auto-check - user must manually submit in speak mode
+  // Auto-start speech recognition for speak mode
+  useEffect(() => {
+    if (autoStartRecognitionRef.current && quizState === 'question' && settings?.mode === 'speak') {
+      autoStartRecognitionRef.current = false;
+      
+      // Trigger speech recognition start
+      if (!('webkitSpeechRecognition' in window)) {
+        console.error('[Debug] webkitSpeechRecognition not available');
+        return;
+      }
+      
+      if (window.location.protocol !== 'https:' && isIOSSafari) {
+        console.error('[Debug] Speech recognition requires HTTPS on iOS Safari');
+        return;
+      }
+
+      try {
+        const SpeechRecognition = (window as any).webkitSpeechRecognition;
+        const newRecognition = new SpeechRecognition();
+        const isEnglish = settings.direction === 'source-to-dest' || settings.direction === 'source-to-source';
+        
+        let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
+        const shouldConvertCroatian = !isEnglish && isIOSSafari;
+        if (shouldConvertCroatian) {
+          recognitionLang = 'hr-HR';
+          console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
+        }
+        console.log('[Debug] Auto-starting with language:', recognitionLang);
+        
+        newRecognition.lang = recognitionLang;
+        newRecognition.continuous = isIOSSafari ? false : true;
+        newRecognition.interimResults = false;
+        
+        newRecognition.onstart = () => {
+          console.log('[Debug] Recognition started (auto)');
+        };
+        
+        newRecognition.onresult = (event: any) => {
+          console.log('[Debug] Got result (auto)');
+          const results = event.results;
+          const latestResult = results[results.length - 1];
+          let transcript = latestResult[0].transcript;
+          
+          if (!isEnglish) {
+            transcript = cyrillicToLatin(transcript);
+            if (shouldConvertCroatian) {
+              console.log('[Debug] Before conversion:', transcript);
+              transcript = ijekavianToEkavian(transcript);
+              console.log('[Debug] After ijekavian→ekavian:', transcript);
+            }
+          }
+          
+          setUserAnswer(transcript);
+        };
+        
+        newRecognition.onerror = (event: any) => {
+          console.error('[Debug] Speech recognition error (auto):', event.error);
+        };
+        
+        newRecognition.onend = () => {
+          console.log('[Debug] Recognition ended (auto)');
+          if (isListeningRef.current) {
+            setTimeout(() => {
+              try {
+                newRecognition.start();
+              } catch (err) {
+                console.error('[Debug] Error restarting recognition (auto):', err);
+              }
+            }, 300);
+          }
+        };
+        
+        setRecognition(newRecognition);
+        setIsListening(true);
+        isListeningRef.current = true;
+        
+        newRecognition.start();
+      } catch (err) {
+        console.error('[Debug] Error auto-starting recognition:', err);
+        setIsListening(false);
+        isListeningRef.current = false;
+      }
+    }
+  }, [autoStartRecognitionRef.current, quizState, settings?.mode, settings?.direction, isIOSSafari]);
 
   const loadNextQuestion = (algo: AlgorithmA) => {
     const sentence = algo.getNextSentence();
@@ -161,6 +243,13 @@ function QuizPage() {
       const voiceName = targetLang === 'en' ? settings.englishVoice : settings.serbianVoice;
       speak(questionText, targetLang, voiceName);
     }, 100);
+
+    // Auto-start speech recognition for speak mode (after a slight delay to allow question to finish)
+    if (settings.mode === 'speak') {
+      setTimeout(() => {
+        autoStartRecognitionRef.current = true;
+      }, 1500);
+    }
 
     // Setup multiple choice if needed
     if (settings.mode === 'multiple-choice') {

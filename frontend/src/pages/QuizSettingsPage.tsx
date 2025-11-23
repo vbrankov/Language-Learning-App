@@ -12,45 +12,53 @@ function QuizSettingsPage() {
   useEffect(() => {
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices();
-      const english = voices.filter(v => v.lang.startsWith('en-'));
+      
+      // Filter for English voices (en-US, en-GB, en-AU, etc.)
+      const english = voices.filter(v => {
+        const normalized = normalizeLocale(v.lang);
+        return normalized.startsWith('en-') || normalized === 'en';
+      });
+      
       // Filter for Serbian, Croatian, and Bosnian voices (all mutually intelligible)
       // Serbian can be: sr-RS, sr-Latn-RS, sr-Cyrl-RS, sr, or rs-RS, rs
       // Croatian: hr-HR or hr
       // Bosnian: bs-BA or bs
-      const serbian = voices.filter(v => 
-        v.lang.startsWith('sr-') || v.lang.startsWith('sr') ||
-        v.lang.startsWith('rs-') || v.lang.startsWith('rs') ||
-        v.lang.startsWith('hr-') || v.lang.startsWith('hr') ||
-        v.lang.startsWith('bs-') || v.lang.startsWith('bs')
-      );
+      const serbian = voices.filter(v => {
+        const normalized = normalizeLocale(v.lang);
+        return normalized.startsWith('sr-') || normalized === 'sr' ||
+               normalized.startsWith('rs-') || normalized === 'rs' ||
+               normalized.startsWith('hr-') || normalized === 'hr' ||
+               normalized.startsWith('bs-') || normalized === 'bs';
+      });
       
       // Debug: log all voices to console
       console.log('All available voices:', voices.map(v => `${v.name} (${v.lang})`));
+      console.log('English voices found:', english.map(v => `${v.name} (${v.lang})`));
       console.log('Serbian/Croatian/Bosnian voices found:', serbian.map(v => `${v.name} (${v.lang})`));
       
       setEnglishVoices(english);
       setSerbianVoices(serbian);
       
-      // Extract unique English locales and sort by country name
-      const uniqueLocales = Array.from(new Set(english.map(v => v.lang)));
+      // Extract unique English locales (normalized) and sort by country name
+      const uniqueLocales = Array.from(new Set(english.map(v => normalizeLocale(v.lang))));
       uniqueLocales.sort((a, b) => getCountryName(a).localeCompare(getCountryName(b)));
       setEnglishLocales(uniqueLocales);
       
-      // Extract unique Serbian/Croatian/Bosnian locales and sort by country name
-      const uniqueSerbianLocales = Array.from(new Set(serbian.map(v => v.lang)));
+      // Extract unique Serbian/Croatian/Bosnian locales (normalized) and sort by country name
+      const uniqueSerbianLocales = Array.from(new Set(serbian.map(v => normalizeLocale(v.lang))));
       uniqueSerbianLocales.sort((a, b) => getCountryName(a).localeCompare(getCountryName(b)));
       setSerbianLocales(uniqueSerbianLocales);
       
       // Set default locale and voices
       if (uniqueLocales.length > 0 && !englishLocale) {
         // Prefer en-US, then en-GB, then first available
-        const defaultLocale = uniqueLocales.find(l => l === 'en-US') || 
-                             uniqueLocales.find(l => l === 'en-GB') ||
+        const defaultLocale = uniqueLocales.find(l => l === 'en-us') || 
+                             uniqueLocales.find(l => l === 'en-gb') ||
                              uniqueLocales[0];
         setEnglishLocale(defaultLocale);
         
         // Filter voices for default locale
-        const voicesForLocale = english.filter(v => v.lang === defaultLocale);
+        const voicesForLocale = english.filter(v => normalizeLocale(v.lang) === defaultLocale);
         setFilteredEnglishVoices(voicesForLocale);
         
         if (voicesForLocale.length > 0 && !selectedEnglishVoice) {
@@ -61,13 +69,13 @@ function QuizSettingsPage() {
       
       if (uniqueSerbianLocales.length > 0 && !serbianLocale) {
         // Prefer Croatian (hr), then Serbian (sr), then Bosnian (bs)
-        const defaultSerbianLocale = uniqueSerbianLocales.find(l => l.startsWith('hr')) || 
-                                    uniqueSerbianLocales.find(l => l.startsWith('sr')) ||
+        const defaultSerbianLocale = uniqueSerbianLocales.find(l => l.startsWith('hr-') || l === 'hr') || 
+                                    uniqueSerbianLocales.find(l => l.startsWith('sr-') || l === 'sr') ||
                                     uniqueSerbianLocales[0];
         setSerbianLocale(defaultSerbianLocale);
         
         // Filter voices for default locale
-        const voicesForSerbianLocale = serbian.filter(v => v.lang === defaultSerbianLocale);
+        const voicesForSerbianLocale = serbian.filter(v => normalizeLocale(v.lang) === defaultSerbianLocale);
         setFilteredSerbianVoices(voicesForSerbianLocale);
         
         if (voicesForSerbianLocale.length > 0 && !selectedSerbianVoice) {
@@ -111,32 +119,45 @@ function QuizSettingsPage() {
   const [serbianLocales, setSerbianLocales] = useState<string[]>([]);
   const [filteredSerbianVoices, setFilteredSerbianVoices] = useState<SpeechSynthesisVoice[]>([]);
 
+  const normalizeLocale = (locale: string): string => {
+    // Normalize Android format (e.g., "en_US_#android", "hr_HR") to standard format (e.g., "en-US", "hr-HR")
+    // Also handle mixed formats like "sr_RS_#Latn"
+    return locale
+      .replace(/_/g, '-')  // Replace underscores with hyphens
+      .replace(/#.+$/g, '')  // Remove script markers like #Cyrl, #Latn, #android
+      .split('-')  // Split by hyphen
+      .slice(0, 2)  // Take only language and country code
+      .join('-')  // Join back
+      .toLowerCase();
+  };
+
   const getCountryName = (locale: string): string => {
+    const normalized = normalizeLocale(locale);
     const countryNames: Record<string, string> = {
-      'en-GB': 'United Kingdom',
-      'en-US': 'United States',
-      'en-AU': 'Australia',
-      'en-CA': 'Canada',
-      'en-IE': 'Ireland',
-      'en-IN': 'India',
-      'en-NZ': 'New Zealand',
-      'en-ZA': 'South Africa',
-      'en-SG': 'Singapore',
-      'en-PH': 'Philippines',
-      'en-HK': 'Hong Kong',
-      'en-KE': 'Kenya',
-      'en-NG': 'Nigeria',
-      'en-TZ': 'Tanzania',
-      'sr-RS': 'Serbia',
+      'en-gb': 'United Kingdom',
+      'en-us': 'United States',
+      'en-au': 'Australia',
+      'en-ca': 'Canada',
+      'en-ie': 'Ireland',
+      'en-in': 'India',
+      'en-nz': 'New Zealand',
+      'en-za': 'South Africa',
+      'en-sg': 'Singapore',
+      'en-ph': 'Philippines',
+      'en-hk': 'Hong Kong',
+      'en-ke': 'Kenya',
+      'en-ng': 'Nigeria',
+      'en-tz': 'Tanzania',
+      'sr-rs': 'Serbia',
       'sr': 'Serbia',
-      'rs-RS': 'Serbia',
+      'rs-rs': 'Serbia',
       'rs': 'Serbia',
-      'hr-HR': 'Croatia',
+      'hr-hr': 'Croatia',
       'hr': 'Croatia',
-      'bs-BA': 'Bosnia and Herzegovina',
+      'bs-ba': 'Bosnia and Herzegovina',
       'bs': 'Bosnia and Herzegovina',
     };
-    return countryNames[locale] || locale;
+    return countryNames[normalized] || normalized;
   };
 
   if (!lessonData) {
@@ -167,7 +188,7 @@ function QuizSettingsPage() {
 
   const handleLocaleChange = (locale: string) => {
     setEnglishLocale(locale);
-    const voicesForLocale = englishVoices.filter(v => v.lang === locale);
+    const voicesForLocale = englishVoices.filter(v => normalizeLocale(v.lang) === locale);
     setFilteredEnglishVoices(voicesForLocale);
     
     // Auto-select first voice for new locale
@@ -179,7 +200,7 @@ function QuizSettingsPage() {
 
   const handleSerbianLocaleChange = (locale: string) => {
     setSerbianLocale(locale);
-    const voicesForLocale = serbianVoices.filter(v => v.lang === locale);
+    const voicesForLocale = serbianVoices.filter(v => normalizeLocale(v.lang) === locale);
     setFilteredSerbianVoices(voicesForLocale);
     
     // Auto-select first voice for new locale
