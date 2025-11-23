@@ -72,6 +72,9 @@ function QuizPage() {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
   const isListeningRef = useRef(false);
+  
+  // Detect if running on iOS Safari
+  const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -348,8 +351,8 @@ function QuizPage() {
 
   const toggleListening = () => {
     console.log('[Debug] toggleListening called. recognition:', !!recognition, 'quizState:', quizState, 'isListening:', isListening);
-    if (!recognition || quizState !== 'question') {
-      console.log('[Debug] Early return: recognition exists?', !!recognition, 'quizState is question?', quizState === 'question');
+    if (quizState !== 'question') {
+      console.log('[Debug] Early return: quizState is not question');
       return;
     }
     
@@ -359,26 +362,80 @@ function QuizPage() {
       setIsListening(false);
       isListeningRef.current = false;
       try {
-        recognition.stop();
+        if (recognition) recognition.stop();
       } catch (err) {
         console.error('Error stopping recognition:', err);
       }
     } else {
-      // Start listening
-      console.log('[Debug] User manually starting - about to call recognition.start()');
-      setIsListening(true);
-      isListeningRef.current = true;
+      // Start listening - create fresh instance for iOS Safari
+      console.log('[Debug] User manually starting - creating fresh recognition instance');
+      
+      if (!('webkitSpeechRecognition' in window)) {
+        console.error('[Debug] webkitSpeechRecognition not available');
+        return;
+      }
+      
       try {
-        // Reset recognizer state before starting
-        try {
-          recognition.abort();
-        } catch (e) {
-          // Ignore abort errors
-        }
-        recognition.start();
+        const SpeechRecognition = (window as any).webkitSpeechRecognition;
+        const newRecognition = new SpeechRecognition();
+        
+        // Set language based on quiz direction
+        const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
+        newRecognition.lang = isEnglish ? 'en-US' : 'sr-RS';
+        newRecognition.continuous = true;
+        newRecognition.interimResults = true;
+        newRecognition.maxAlternatives = 1;
+        
+        newRecognition.onstart = () => {
+          console.log('[Debug] Recognition started');
+        };
+        
+        newRecognition.onresult = (event: any) => {
+          console.log('[Debug] Got result');
+          const results = event.results;
+          const latestResult = results[results.length - 1];
+          let transcript = latestResult[0].transcript;
+          
+          if (!isEnglish) {
+            transcript = cyrillicToLatin(transcript);
+          }
+          
+          setUserAnswer(transcript);
+        };
+        
+        newRecognition.onerror = (event: any) => {
+          console.error('[Debug] Speech recognition error:', event.error);
+          setIsListening(false);
+          isListeningRef.current = false;
+        };
+        
+        newRecognition.onend = () => {
+          console.log('[Debug] Recognition ended. isListening:', isListeningRef.current);
+          if (isListeningRef.current) {
+            console.log('[Debug] Attempting to restart...');
+            setTimeout(() => {
+              try {
+                newRecognition.start();
+                console.log('[Debug] Restart successful');
+              } catch (err) {
+                console.error('[Debug] Failed to restart:', err);
+                setIsListening(false);
+                isListeningRef.current = false;
+              }
+            }, 200);
+          } else {
+            setIsListening(false);
+          }
+        };
+        
+        setRecognition(newRecognition);
+        setIsListening(true);
+        isListeningRef.current = true;
+        
+        newRecognition.start();
         console.log('[Debug] Manual start called successfully');
       } catch (err) {
-        console.error('[Debug] Error starting recognition:', err);
+        console.error('[Debug] Error creating/starting recognition:', err);
         setIsListening(false);
         isListeningRef.current = false;
       }
