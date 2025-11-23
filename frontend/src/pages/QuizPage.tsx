@@ -347,7 +347,11 @@ function QuizPage() {
   };
 
   const toggleListening = () => {
-    if (!recognition || quizState !== 'question') return;
+    console.log('[Debug] toggleListening called. recognition:', !!recognition, 'quizState:', quizState, 'isListening:', isListening);
+    if (!recognition || quizState !== 'question') {
+      console.log('[Debug] Early return: recognition exists?', !!recognition, 'quizState is question?', quizState === 'question');
+      return;
+    }
     
     if (isListening) {
       // Stop listening
