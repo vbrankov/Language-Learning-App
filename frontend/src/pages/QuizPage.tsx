@@ -88,7 +88,12 @@ function QuizPage() {
       recognitionInstance.interimResults = true; // Show interim results
       recognitionInstance.maxAlternatives = 1;
       
+      recognitionInstance.onstart = () => {
+        console.log('[Debug] Recognition started');
+      };
+      
       recognitionInstance.onresult = (event: any) => {
+        console.log('[Debug] Got result:', event.results[event.results.length - 1][0].transcript);
         // Get the latest result (interim or final)
         // If there's a pause, it restarts - promotes fluent speaking without breaks
         const results = event.results;
@@ -107,7 +112,7 @@ function QuizPage() {
       };
       
       recognitionInstance.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
+        console.error('[Debug] Speech recognition error:', event.error, 'Type:', event.type);
         setIsListening(false);
         isListeningRef.current = false;
         // Don't auto-restart on iOS - let user manually control it
@@ -115,14 +120,17 @@ function QuizPage() {
       };
       
       recognitionInstance.onend = () => {
+        console.log('[Debug] Recognition ended. isListening:', isListeningRef.current);
         // On iOS with continuous=false, restart automatically after each utterance
         // This gives a brief pause between listening sessions
         if (isListeningRef.current) {
+          console.log('[Debug] Attempting to restart...');
           setTimeout(() => {
             try {
               recognitionInstance.start();
+              console.log('[Debug] Restart successful');
             } catch (err) {
-              console.error('Failed to restart:', err);
+              console.error('[Debug] Failed to restart:', err);
               setIsListening(false);
               isListeningRef.current = false;
             }
@@ -172,11 +180,13 @@ function QuizPage() {
       // Auto-start listening when question appears
       setTimeout(() => {
         try {
+          console.log('[Debug] Auto-starting recognition...');
           recognition.start();
           setIsListening(true);
           isListeningRef.current = true;
+          console.log('[Debug] Auto-start called');
         } catch (err) {
-          console.error('Failed to start recognition:', err);
+          console.error('[Debug] Failed to start recognition:', err);
         }
       }, 300);
     }
@@ -352,6 +362,7 @@ function QuizPage() {
     
     if (isListening) {
       // Stop listening
+      console.log('[Debug] User manually stopping');
       setIsListening(false);
       isListeningRef.current = false;
       try {
@@ -361,10 +372,12 @@ function QuizPage() {
       }
     } else {
       // Start listening
+      console.log('[Debug] User manually starting');
       setIsListening(true);
       isListeningRef.current = true;
       try {
         recognition.start();
+        console.log('[Debug] Manual start called');
       } catch (err) {
         console.error('Error starting recognition:', err);
         setIsListening(false);
