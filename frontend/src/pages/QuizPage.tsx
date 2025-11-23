@@ -170,27 +170,16 @@ function QuizPage() {
     loadNextQuestion(algo);
   }, [lessonData, lesson]);
 
-  // Focus input or button depending on state, and auto-start listening for speak mode
+  // Focus input or button depending on state
   useEffect(() => {
     if (quizState === 'question' && settings?.mode === 'type') {
       inputRef.current?.focus();
     } else if (quizState === 'incorrect' && settings?.mode === 'type') {
       buttonRef.current?.focus();
-    } else if (quizState === 'question' && settings?.mode === 'speak' && recognition) {
-      // Auto-start listening when question appears
-      setTimeout(() => {
-        try {
-          console.log('[Debug] Auto-starting recognition...');
-          recognition.start();
-          setIsListening(true);
-          isListeningRef.current = true;
-          console.log('[Debug] Auto-start called');
-        } catch (err) {
-          console.error('[Debug] Failed to start recognition:', err);
-        }
-      }, 300);
     }
-  }, [quizState, settings?.mode, recognition]);
+    // Note: Auto-start disabled for iOS - user must manually click to start listening
+    // iOS Safari requires speech recognition to be triggered by user gesture
+  }, [quizState, settings?.mode]);
 
   // Removed auto-check - user must manually submit in speak mode
 
