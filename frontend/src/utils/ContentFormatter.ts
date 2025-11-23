@@ -156,40 +156,47 @@ export function cyrillicToLatin(text: string): string {
 /**
  * Convert ijekavian (Croatian) dialect to ekavian (Serbian) dialect
  * This handles common patterns where Croatian speech recognition returns ijekavian forms
+ * 
+ * Main rules:
+ * - ije → e (vrijeme → vreme, dijete → dete)
+ * - je → e when it comes from old Slavic ě (jelo → elo, but NOT in words like "jesti")
+ * - ije → e at word boundaries
  */
 export function ijekavianToEkavian(text: string): string {
-  // Common ijekavian → ekavian patterns
-  const conversions: [RegExp, string][] = [
-    // ije → e (in middle of word)
-    [/([^aeiou])ije([^aeiou])/gi, '$1e$2'],
-    // ijel → el
-    [/ijel/gi, 'el'],
-    // jelo → elo (in compounds like "htjelo" → "htelo")
-    [/([^aeiou])jelo/gi, '$1elo'],
-    // mlijeko → mleko
-    [/mlijeko/gi, 'mleko'],
-    // dijete → dete
-    [/dijete/gi, 'dete'],
-    // lijepo → lepo
-    [/lijepo/gi, 'lepo'],
-    // vrijeme → vreme
-    [/vrijeme/gi, 'vreme'],
-    // mjesto → mesto
-    [/mjesto/gi, 'mesto'],
-    // htjela → htela, htjeli → hteli, htjelo → htelo
-    [/htjel([aio])/gi, 'htel$1'],
-    // vjera → vera
-    [/vjera/gi, 'vera'],
-    // cvijet → cvet
-    [/cvije([tt])/gi, 'cve$1'],
-    // Remove Croatian-specific letter đ → đ or dj (keep as-is, it's in both)
-    // But remove other Croatian letters that don't exist in Serbian Latin
-  ];
+  // Split into words to process each separately
+  const words = text.split(/(\s+)/); // Keep whitespace
   
-  let result = text;
-  for (const [pattern, replacement] of conversions) {
-    result = result.replace(pattern, replacement);
-  }
+  const convertedWords = words.map(word => {
+    let result = word;
+    
+    // Skip if it's just whitespace
+    if (/^\s+$/.test(word)) {
+      return word;
+    }
+    
+    // Pattern 1: ije → e (most common)
+    // Examples: vrijeme → vreme, dijete → dete, lijepo → lepo, bijel → bel
+    result = result.replace(/ije/gi, 'e');
+    
+    // Pattern 2: je → e after consonants that indicate old ě
+    // Examples: čovjek → čovek, mjesto → mesto, mlijeko → mleko
+    // Common consonants before this: v, m, c, n, t, b, p, s, z
+    result = result.replace(/([vmcntbpszčšćžđl])je([kntcgb])/gi, '$1e$2');
+    
+    // Pattern 3: vjera → vera, cvijet → cvet
+    result = result.replace(/vje/gi, 've');
+    
+    // Pattern 4: Initial ije- → e-
+    result = result.replace(/^ije/gi, 'e');
+    
+    // Pattern 5: htjela → htela, htjeo → hteo (want/wanted)
+    result = result.replace(/htje/gi, 'hte');
+    
+    // Pattern 6: sjeo → seo, sjela → sela (sat down)
+    result = result.replace(/sje([ol])/gi, 'se$1');
+    
+    return result;
+  });
   
-  return result;
+  return convertedWords.join('');
 }
