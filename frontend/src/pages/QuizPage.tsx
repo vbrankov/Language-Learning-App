@@ -86,12 +86,7 @@ function QuizPage() {
       // source-to-dest: answer in Serbian, dest-to-source: answer in English
       // source-to-source: answer in English, dest-to-dest: answer in Serbian
       const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-      // iOS Safari doesn't support Serbian, use Croatian as fallback
-      let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
-      if (!isEnglish && isIOSSafari) {
-        recognitionLang = 'hr-HR'; // Croatian fallback for iOS
-      }
-      recognitionInstance.lang = recognitionLang;
+      recognitionInstance.lang = isEnglish ? 'en-US' : 'sr-RS';
       recognitionInstance.continuous = isIOSSafari ? false : true; // iOS needs false
       recognitionInstance.interimResults = true; // Show interim results
       recognitionInstance.maxAlternatives = 1;
@@ -123,8 +118,11 @@ function QuizPage() {
         console.error('[Debug] Speech recognition error:', event.error, 'Type:', event.type);
         setIsListening(false);
         isListeningRef.current = false;
-        // Don't auto-restart on iOS - let user manually control it
-        // iOS has stricter permissions for continuous listening
+        
+        // Handle language not supported error
+        if (event.error === 'language-not-supported') {
+          alert('Serbian speech recognition is not supported on iOS Safari.\n\nPlease use:\n• Type mode instead\n• Multiple Choice mode\n• Or test on a desktop browser');
+        }
       };
       
       recognitionInstance.onend = () => {
@@ -396,13 +394,13 @@ function QuizPage() {
         
         // Set language based on quiz direction
         const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-        // iOS Safari doesn't support Serbian (sr-RS), use Croatian (hr-HR) as fallback
-        // Croatian and Serbian are mutually intelligible
         let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
-        if (!isEnglish && isIOSSafari) {
-          recognitionLang = 'hr-HR'; // Croatian fallback for iOS
-          console.log('[Debug] Using Croatian (hr-HR) instead of Serbian for iOS Safari');
+        
+        // Test if Serbian is supported by trying it first
+        if (!isEnglish) {
+          console.log('[Debug] Testing Serbian (sr-RS) support...');
         }
+        
         newRecognition.lang = recognitionLang;
         // iOS Safari has bugs with continuous mode - use false for iOS
         newRecognition.continuous = isIOSSafari ? false : true;
@@ -431,6 +429,13 @@ function QuizPage() {
           console.error('[Debug] Speech recognition error:', event.error);
           setIsListening(false);
           isListeningRef.current = false;
+          
+          // Handle language not supported error
+          if (event.error === 'language-not-supported') {
+            alert('Serbian speech recognition is not supported on iOS Safari.\n\nPlease use:\n• Type mode instead\n• Multiple Choice mode\n• Or test on a desktop browser');
+          } else if (event.error === 'service-not-allowed') {
+            alert('Microphone access denied or speech recognition not available.\n\nPlease check Safari Settings → [This Site] → Microphone');
+          }
         };
         
         newRecognition.onend = () => {
