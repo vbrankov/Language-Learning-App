@@ -362,15 +362,40 @@ function QuizPage() {
     } else {
       // Start listening
       console.log('[Debug] User manually starting');
-      setIsListening(true);
-      isListeningRef.current = true;
-      try {
-        recognition.start();
-        console.log('[Debug] Manual start called');
-      } catch (err) {
-        console.error('Error starting recognition:', err);
-        setIsListening(false);
-        isListeningRef.current = false;
+      
+      // For iOS Safari, request microphone permission first
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        console.log('[Debug] Requesting microphone permission...');
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(() => {
+            console.log('[Debug] Microphone permission granted');
+            setIsListening(true);
+            isListeningRef.current = true;
+            try {
+              recognition.start();
+              console.log('[Debug] Manual start called');
+            } catch (err) {
+              console.error('[Debug] Error starting recognition:', err);
+              setIsListening(false);
+              isListeningRef.current = false;
+            }
+          })
+          .catch((err) => {
+            console.error('[Debug] Microphone permission denied:', err);
+            alert('Microphone access is required for speech recognition. Please allow microphone access in Safari settings.');
+          });
+      } else {
+        // Fallback for browsers without getUserMedia
+        setIsListening(true);
+        isListeningRef.current = true;
+        try {
+          recognition.start();
+          console.log('[Debug] Manual start called');
+        } catch (err) {
+          console.error('[Debug] Error starting recognition:', err);
+          setIsListening(false);
+          isListeningRef.current = false;
+        }
       }
     }
   };
