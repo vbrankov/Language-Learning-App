@@ -41,7 +41,26 @@ function speak(text: string, lang: 'en' | 'sr', voiceName?: string, onEnd?: () =
     
     // Trigger callback when speech ends
     if (onEnd) {
-      utterance.onend = onEnd;
+      let callbackTriggered = false;
+      
+      utterance.onend = () => {
+        console.log('[Debug] Speech onend event fired');
+        if (!callbackTriggered) {
+          callbackTriggered = true;
+          onEnd();
+        }
+      };
+      
+      // Fallback timeout for Android where onend might not fire reliably
+      // Estimate duration: ~100ms per character at rate 0.85
+      const estimatedDuration = Math.max(text.length * 100, 2000);
+      setTimeout(() => {
+        console.log('[Debug] Speech timeout fallback fired');
+        if (!callbackTriggered) {
+          callbackTriggered = true;
+          onEnd();
+        }
+      }, estimatedDuration);
     }
     
     window.speechSynthesis.speak(utterance);
@@ -76,8 +95,10 @@ function QuizPage() {
   // Speech recognition state
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
+  const recognitionRef = useRef<any>(null);
   const isListeningRef = useRef(false);
   const autoStartRecognitionRef = useRef(false);
+  const sessionIdRef = useRef(0); // Increment to invalidate old callbacks
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
@@ -99,14 +120,62 @@ function QuizPage() {
 
   // Initialize algorithm and first question
   useEffect(() => {
+    console.log('[Debug] Initialize effect running - lessonData:', !!lessonData, 'lesson:', lesson?.id);
     if (!lessonData || !lesson) {
       return;
     }
+
+    // Clean up any existing recognition when starting a new lesson
+    if (recognitionRef.current) {
+      console.log('[Debug] New lesson starting - cleaning up old recognition');
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {
+        console.error('[Debug] Error stopping old recognition:', err);
+      }
+      recognitionRef.current = null;
+      setRecognition(null);
+    }
+    
+    // Reset listening state and invalidate old callbacks
+    console.log('[Debug] Resetting state for new lesson');
+    sessionIdRef.current += 1; // Invalidate any pending speech callbacks
+    setIsListening(false);
+    isListeningRef.current = false;
 
     const algo = new AlgorithmA(lesson.sentences);
     setAlgorithm(algo);
     loadNextQuestion(algo);
   }, [lessonData, lesson]);
+
+  // Debug: Log isListening state changes
+  useEffect(() => {
+    console.log('[Debug] isListening state changed to:', isListening);
+  }, [isListening]);
+
+
+
+  // Cleanup on unmount: stop recognition and cancel speech synthesis
+  useEffect(() => {
+    return () => {
+      console.log('[Debug] QuizPage unmounting - cleaning up');
+      
+      // Stop speech recognition
+      if (recognitionRef.current) {
+        isListeningRef.current = false;
+        try {
+          recognitionRef.current.stop();
+        } catch (err) {
+          console.error('[Debug] Error stopping recognition on unmount:', err);
+        }
+      }
+      
+      // Cancel speech synthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []); // Empty deps - only run on actual unmount
 
   // Shared function to start speech recognition
   const startSpeechRecognition = useCallback(() => {
@@ -127,10 +196,15 @@ function QuizPage() {
       return;
     }
     
+    // Increment session ID to invalidate old callbacks
+    sessionIdRef.current++;
+    const currentSessionId = sessionIdRef.current;
+    console.log('[Debug] New session ID:', currentSessionId);
+    
     // Stop any existing recognition first
-    if (recognition) {
+    if (recognitionRef.current) {
       try {
-        recognition.stop();
+        recognitionRef.current.stop();
       } catch (err) {
         console.error('[Debug] Error stopping existing recognition:', err);
       }
@@ -197,10 +271,20 @@ function QuizPage() {
       };
       
       newRecognition.onend = () => {
-        console.log('[Debug] Recognition ended. isListening:', isListeningRef.current);
+        console.log('[Debug] Recognition ended. Session:', currentSessionId, 'Current:', sessionIdRef.current, 'isListening:', isListeningRef.current);
+        // Only restart if this is still the current session
+        if (currentSessionId !== sessionIdRef.current) {
+          console.log('[Debug] Stale session - not restarting');
+          return;
+        }
         if (isListeningRef.current) {
           console.log('[Debug] Attempting to restart...');
           setTimeout(() => {
+            // Double-check session is still current
+            if (currentSessionId !== sessionIdRef.current) {
+              console.log('[Debug] Session changed during timeout - not restarting');
+              return;
+            }
             try {
               newRecognition.start();
               console.log('[Debug] Restart successful');
@@ -216,8 +300,10 @@ function QuizPage() {
       };
       
       setRecognition(newRecognition);
+      recognitionRef.current = newRecognition;
       setIsListening(true);
       isListeningRef.current = true;
+      console.log('[Debug] State updated: isListening=true, isListeningRef=true');
       
       newRecognition.start();
       console.log('[Debug] Start called successfully');
@@ -226,7 +312,7 @@ function QuizPage() {
       setIsListening(false);
       isListeningRef.current = false;
     }
-  }, [recognition, settings?.direction, isIOSSafari]);
+  }, [settings?.direction, isIOSSafari]);
 
   // Focus input or button depending on state
   useEffect(() => {
@@ -285,7 +371,13 @@ function QuizPage() {
       const voiceName = targetLang === 'en' ? settings.englishVoice : settings.serbianVoice;
       
       // For speak mode, start recognition after speech synthesis completes
+      const currentSessionId = sessionIdRef.current;
       const onSpeechEnd = settings.mode === 'speak' ? () => {
+        // Check if this callback is still valid (lesson hasn't changed)
+        if (currentSessionId !== sessionIdRef.current) {
+          console.log('[Debug] Speech callback stale, ignoring');
+          return;
+        }
         console.log('[Debug] Speech synthesis ended, starting recognition');
         startSpeechRecognition();
       } : undefined;
@@ -309,10 +401,12 @@ function QuizPage() {
     if (!algorithm || !currentSentence) return;
 
     // Stop speech recognition if it's running (for speak mode)
-    if (recognition && settings.mode === 'speak') {
+    if (recognitionRef.current && settings.mode === 'speak') {
+      console.log('[Debug] Stopping recognition in checkAnswer');
+      setIsListening(false);
       isListeningRef.current = false;
       try {
-        recognition.stop();
+        recognitionRef.current.stop();
       } catch (err) {
         console.error('[Debug] Error stopping recognition:', err);
       }
@@ -394,7 +488,7 @@ function QuizPage() {
   };
 
   const restartListening = () => {
-    if (recognition && quizState === 'question') {
+    if (recognitionRef.current && quizState === 'question') {
       setUserAnswer('');
       setIsListening(false);
       isListeningRef.current = false;
@@ -432,7 +526,7 @@ function QuizPage() {
       setIsListening(false);
       isListeningRef.current = false;
       try {
-        if (recognition) recognition.stop();
+        if (recognitionRef.current) recognitionRef.current.stop();
       } catch (err) {
         console.error('Error stopping recognition:', err);
       }
@@ -666,6 +760,29 @@ function QuizPage() {
                 {/* Control Buttons */}
                 {quizState === 'question' && (
                   <div className="mt-6 space-y-3">
+                    {/* Microphone status indicator */}
+                    <div className={`p-3 rounded-lg flex items-center gap-3 ${
+                      isListening 
+                        ? 'bg-green-100 border-2 border-green-500' 
+                        : 'bg-gray-100 border-2 border-gray-300'
+                    }`}>
+                      <svg 
+                        className={`w-6 h-6 ${isListening ? 'text-green-600 animate-pulse' : 'text-gray-400'}`}
+                        fill="currentColor" 
+                        viewBox="0 0 20 20"
+                      >
+                        <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+                      </svg>
+                      <div className="flex-1">
+                        <div className={`font-semibold ${isListening ? 'text-green-900' : 'text-gray-700'}`}>
+                          {isListening ? 'Microphone Active - Listening...' : `Microphone Off (${isListening} / ${isListeningRef.current})`}
+                        </div>
+                        {isListening && (
+                          <div className="text-sm text-green-700">Speak your answer now</div>
+                        )}
+                      </div>
+                    </div>
+
                     {/* Recognized text display */}
                     {userAnswer && (
                       <div className="p-4 bg-gray-100 border border-gray-300 rounded-lg">
