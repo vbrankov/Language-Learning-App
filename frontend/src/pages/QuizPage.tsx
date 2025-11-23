@@ -71,6 +71,7 @@ function QuizPage() {
   // Speech recognition state
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
+  const isListeningRef = useRef(false);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -83,12 +84,13 @@ function QuizPage() {
       // source-to-source: answer in English, dest-to-dest: answer in Serbian
       const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
       recognitionInstance.lang = isEnglish ? 'en-US' : 'sr-RS'; // Use Serbian (Serbia)
-      recognitionInstance.continuous = true; // Keep listening for longer
+      recognitionInstance.continuous = false; // iOS works better with single utterance mode
       recognitionInstance.interimResults = true; // Show interim results
       recognitionInstance.maxAlternatives = 1;
       
       recognitionInstance.onresult = (event: any) => {
         // Get the latest result (interim or final)
+        // If there's a pause, it restarts - promotes fluent speaking without breaks
         const results = event.results;
         const latestResult = results[results.length - 1];
         let transcript = latestResult[0].transcript;
@@ -107,23 +109,27 @@ function QuizPage() {
       recognitionInstance.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
-        // Restart listening after error (unless it's a critical error)
-        if (event.error !== 'aborted' && event.error !== 'no-speech') {
-          setTimeout(() => {
-            if (recognitionInstance) {
-              try {
-                recognitionInstance.start();
-                setIsListening(true);
-              } catch (err) {
-                console.error('Failed to restart recognition:', err);
-              }
-            }
-          }, 500);
-        }
+        isListeningRef.current = false;
+        // Don't auto-restart on iOS - let user manually control it
+        // iOS has stricter permissions for continuous listening
       };
       
       recognitionInstance.onend = () => {
-        setIsListening(false);
+        // On iOS with continuous=false, restart automatically after each utterance
+        // This gives a brief pause between listening sessions
+        if (isListeningRef.current) {
+          setTimeout(() => {
+            try {
+              recognitionInstance.start();
+            } catch (err) {
+              console.error('Failed to restart:', err);
+              setIsListening(false);
+              isListeningRef.current = false;
+            }
+          }, 200);
+        } else {
+          setIsListening(false);
+        }
       };
       
       setRecognition(recognitionInstance);
@@ -168,6 +174,7 @@ function QuizPage() {
         try {
           recognition.start();
           setIsListening(true);
+          isListeningRef.current = true;
         } catch (err) {
           console.error('Failed to start recognition:', err);
         }
@@ -229,7 +236,7 @@ function QuizPage() {
       const { options, correctIndex } = createMultipleChoiceQuestion(
         sentence,
         lesson!.sentences,
-        settings.direction === 'source-to-dest' || settings.direction === 'source-to-source'
+        settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest'
       );
       setMultipleChoiceOptions(options);
       setCorrectOptionIndex(correctIndex);
@@ -318,6 +325,7 @@ function QuizPage() {
     if (recognition && quizState === 'question') {
       setUserAnswer('');
       setIsListening(false);
+      isListeningRef.current = false;
       
       // Stop current recognition
       try {
@@ -331,6 +339,7 @@ function QuizPage() {
         try {
           recognition.start();
           setIsListening(true);
+          isListeningRef.current = true;
         } catch (err) {
           console.error('Error restarting recognition:', err);
         }
@@ -342,20 +351,24 @@ function QuizPage() {
     if (!recognition || quizState !== 'question') return;
     
     if (isListening) {
-      // Pause listening
+      // Stop listening
+      setIsListening(false);
+      isListeningRef.current = false;
       try {
         recognition.stop();
-        setIsListening(false);
       } catch (err) {
         console.error('Error stopping recognition:', err);
       }
     } else {
-      // Resume listening
+      // Start listening
+      setIsListening(true);
+      isListeningRef.current = true;
       try {
         recognition.start();
-        setIsListening(true);
       } catch (err) {
         console.error('Error starting recognition:', err);
+        setIsListening(false);
+        isListeningRef.current = false;
       }
     }
   };
