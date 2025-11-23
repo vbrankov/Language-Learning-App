@@ -76,80 +76,6 @@ function QuizPage() {
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
 
-  // Initialize speech recognition
-  useEffect(() => {
-    if (settings?.mode === 'speak' && 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition;
-      const recognitionInstance = new SpeechRecognition();
-      
-      // Set language based on quiz direction
-      // source-to-dest: answer in Serbian, dest-to-source: answer in English
-      // source-to-source: answer in English, dest-to-dest: answer in Serbian
-      const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-      recognitionInstance.lang = isEnglish ? 'en-US' : 'sr-RS';
-      recognitionInstance.continuous = isIOSSafari ? false : true; // iOS needs false
-      recognitionInstance.interimResults = true; // Show interim results
-      recognitionInstance.maxAlternatives = 1;
-      
-      recognitionInstance.onstart = () => {
-        console.log('[Debug] Recognition started');
-      };
-      
-      recognitionInstance.onresult = (event: any) => {
-        console.log('[Debug] Got result:', event.results[event.results.length - 1][0].transcript);
-        // Get the latest result (interim or final)
-        // If there's a pause, it restarts - promotes fluent speaking without breaks
-        const results = event.results;
-        const latestResult = results[results.length - 1];
-        let transcript = latestResult[0].transcript;
-        
-        // Convert Cyrillic to Latin for Serbian
-        if (!isEnglish) {
-          transcript = cyrillicToLatin(transcript);
-        }
-        
-        setUserAnswer(transcript);
-        
-        // Don't auto-stop - let user pause and continue
-        // They can manually stop or submit when ready
-      };
-      
-      recognitionInstance.onerror = (event: any) => {
-        console.error('[Debug] Speech recognition error:', event.error, 'Type:', event.type);
-        setIsListening(false);
-        isListeningRef.current = false;
-        
-        // Handle language not supported error
-        if (event.error === 'language-not-supported') {
-          alert('Serbian speech recognition is not supported on iOS Safari.\n\nPlease use:\n• Type mode instead\n• Multiple Choice mode\n• Or test on a desktop browser');
-        }
-      };
-      
-      recognitionInstance.onend = () => {
-        console.log('[Debug] Recognition ended. isListening:', isListeningRef.current);
-        // On iOS with continuous=false, restart automatically after each utterance
-        // This gives a brief pause between listening sessions
-        if (isListeningRef.current) {
-          console.log('[Debug] Attempting to restart...');
-          setTimeout(() => {
-            try {
-              recognitionInstance.start();
-              console.log('[Debug] Restart successful');
-            } catch (err) {
-              console.error('[Debug] Failed to restart:', err);
-              setIsListening(false);
-              isListeningRef.current = false;
-            }
-          }, 200);
-        } else {
-          setIsListening(false);
-        }
-      };
-      
-      setRecognition(recognitionInstance);
-    }
-  }, [settings]);
-
   // Load database
   useEffect(() => {
     const loadDatabase = async () => {
@@ -250,6 +176,16 @@ function QuizPage() {
 
   const checkAnswer = (selectedIndex?: number) => {
     if (!algorithm || !currentSentence) return;
+
+    // Stop speech recognition if it's running (for speak mode)
+    if (recognition && settings.mode === 'speak') {
+      isListeningRef.current = false;
+      try {
+        recognition.stop();
+      } catch (err) {
+        console.error('[Debug] Error stopping recognition:', err);
+      }
+    }
 
     let isCorrect = false;
     let answerToCheck;
