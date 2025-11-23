@@ -163,6 +163,14 @@ export function cyrillicToLatin(text: string): string {
  * - dje → de (djevojka → devojka, djeca → deca)
  */
 export function ijekavianToEkavian(text: string): string {
+  // Helper function to preserve case in replacements
+  const preserveCase = (match: string, replacement: string): string => {
+    if (match[0] === match[0].toUpperCase()) {
+      return replacement[0].toUpperCase() + replacement.slice(1);
+    }
+    return replacement;
+  };
+  
   // Split into words to process each separately
   const words = text.split(/(\s+)/); // Keep whitespace
   
@@ -175,33 +183,36 @@ export function ijekavianToEkavian(text: string): string {
     }
     
     // Pattern 0: dje → de (Croatian adds j before e after d)
-    // Examples: djevojka → devojka, djeca → deca, dječak → dečak
-    result = result.replace(/dje/gi, 'de');
+    // Examples: djevojka → devojka, djeca → deca, dječak → dečak, Djevojčica → Devojčica
+    result = result.replace(/dje/gi, match => preserveCase(match, 'de'));
     
     // Pattern 1: ije → e (most common)
     // Examples: vrijeme → vreme, dijete → dete, lijepo → lepo, bijel → bel
-    result = result.replace(/ije/gi, 'e');
+    result = result.replace(/ije/gi, match => preserveCase(match, 'e'));
     
     // Pattern 2: je → e after consonants that indicate old ě
     // Examples: čovjek → čovek, mjesto → mesto, mlijeko → mleko
     // Common consonants before this: v, m, c, n, t, b, p, s, z
-    result = result.replace(/([vmcntbpszčšćžđl])je([kntcgb])/gi, '$1e$2');
+    result = result.replace(/([vmcntbpszčšćžđl])je([kntcgb])/gi, (_match, p1, p2) => {
+      const isUpperCase = p1 === p1.toUpperCase();
+      return p1 + (isUpperCase ? 'E' : 'e') + p2;
+    });
     
     // Pattern 3: vjera → vera, cvijet → cvet
-    result = result.replace(/vje/gi, 've');
+    result = result.replace(/vje/gi, match => preserveCase(match, 've'));
     
     // Pattern 4: tje → te, nje → ne in certain contexts
-    result = result.replace(/tje/gi, 'te');
-    result = result.replace(/nje/gi, 'ne');
+    result = result.replace(/tje/gi, match => preserveCase(match, 'te'));
+    result = result.replace(/nje/gi, match => preserveCase(match, 'ne'));
     
     // Pattern 5: Initial ije- → e-
-    result = result.replace(/^ije/gi, 'e');
+    result = result.replace(/^ije/gi, match => preserveCase(match, 'e'));
     
     // Pattern 6: htjela → htela, htjeo → hteo (want/wanted)
-    result = result.replace(/htje/gi, 'hte');
+    result = result.replace(/htje/gi, match => preserveCase(match, 'hte'));
     
     // Pattern 7: sjeo → seo, sjela → sela (sat down)
-    result = result.replace(/sje([ol])/gi, 'se$1');
+    result = result.replace(/sje([ol])/gi, (match, p1) => preserveCase(match, 'se') + p1);
     
     return result;
   });
