@@ -163,6 +163,8 @@ export function cyrillicToLatin(text: string): string {
  * - dje → de (djevojka → devojka, djeca → deca)
  */
 export function ijekavianToEkavian(text: string): string {
+  console.log('[ijekavianToEkavian] Input:', text);
+  
   // Helper function to preserve case in replacements
   const preserveCase = (match: string, replacement: string): string => {
     if (match[0] === match[0].toUpperCase()) {
@@ -182,14 +184,19 @@ export function ijekavianToEkavian(text: string): string {
       return word;
     }
     
+    console.log('[Pattern 0 input]:', result);
     // Pattern 0: dje → de (Croatian adds j before e after d)
     // Examples: djevojka → devojka, djeca → deca, dječak → dečak, Djevojčica → Devojčica
     result = result.replace(/dje/gi, match => preserveCase(match, 'de'));
+    console.log('[Pattern 0 output]:', result);
     
+    console.log('[Pattern 1 input]:', result);
     // Pattern 1: ije → e (most common)
     // Examples: vrijeme → vreme, dijete → dete, lijepo → lepo, bijel → bel
     result = result.replace(/ije/gi, match => preserveCase(match, 'e'));
+    console.log('[Pattern 1 output]:', result);
     
+    console.log('[Pattern 2 input]:', result);
     // Pattern 2: je → e after consonants that indicate old ě
     // Examples: čovjek → čovek, mjesto → mesto, mlijeko → mleko
     // Common consonants before this: v, m, c, n, t, b, p, s, z
@@ -197,9 +204,12 @@ export function ijekavianToEkavian(text: string): string {
       const isUpperCase = p1 === p1.toUpperCase();
       return p1 + (isUpperCase ? 'E' : 'e') + p2;
     });
+    console.log('[Pattern 2 output]:', result);
     
+    console.log('[Pattern 3 input]:', result);
     // Pattern 3: vjera → vera, cvijet → cvet
     result = result.replace(/vje/gi, match => preserveCase(match, 've'));
+    console.log('[Pattern 3 output]:', result);
     
     // Pattern 4: tje → te, nje → ne in certain contexts
     result = result.replace(/tje/gi, match => preserveCase(match, 'te'));
@@ -214,8 +224,11 @@ export function ijekavianToEkavian(text: string): string {
     // Pattern 7: sjeo → seo, sjela → sela (sat down)
     result = result.replace(/sje([ol])/gi, (match, p1) => preserveCase(match, 'se') + p1);
     
+    console.log('[Final word]:', result);
     return result;
   });
   
-  return convertedWords.join('');
+  const finalResult = convertedWords.join('');
+  console.log('[ijekavianToEkavian] Output:', finalResult);
+  return finalResult;
 }
