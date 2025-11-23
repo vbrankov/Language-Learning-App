@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { QuizSettings, Lesson, Sentence } from '../types';
 import { AlgorithmA, createMultipleChoiceQuestion } from '../utils/QuizAlgorithms';
@@ -103,6 +103,126 @@ function QuizPage() {
     loadNextQuestion(algo);
   }, [lessonData, lesson]);
 
+  // Shared function to start speech recognition
+  const startSpeechRecognition = useCallback(() => {
+    console.log('[Debug] startSpeechRecognition called');
+    
+    if (!('webkitSpeechRecognition' in window)) {
+      console.error('[Debug] webkitSpeechRecognition not available');
+      return;
+    }
+    
+    // Check if we're on HTTPS (required for iOS)
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      console.error('[Debug] Speech recognition requires HTTPS on iOS Safari');
+      if (!autoStartRecognitionRef.current) {
+        // Only show alert for manual starts, not auto-starts
+        alert('Speech recognition requires a secure connection (HTTPS). Please access this site via HTTPS.');
+      }
+      return;
+    }
+    
+    // Stop any existing recognition first
+    if (recognition) {
+      try {
+        recognition.stop();
+      } catch (err) {
+        console.error('[Debug] Error stopping existing recognition:', err);
+      }
+    }
+    
+    try {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition;
+      const newRecognition = new SpeechRecognition();
+      
+      // Set language based on quiz direction
+      const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
+      console.log('[Debug] Direction:', settings.direction, 'isEnglish:', isEnglish);
+      
+      // iOS Safari doesn't support Serbian - use Croatian as fallback with ijekavian→ekavian conversion
+      let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
+      const shouldConvertCroatian = !isEnglish && isIOSSafari;
+      if (shouldConvertCroatian) {
+        recognitionLang = 'hr-HR'; // Croatian fallback for iOS
+        console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
+      }
+      console.log('[Debug] Setting language to:', recognitionLang);
+      
+      newRecognition.lang = recognitionLang;
+      
+      // iOS Safari has bugs with continuous mode - use false for iOS
+      newRecognition.continuous = isIOSSafari ? false : true;
+      console.log('[Debug] Continuous:', newRecognition.continuous);
+      newRecognition.interimResults = true;
+      newRecognition.maxAlternatives = 1;
+      
+      newRecognition.onstart = () => {
+        console.log('[Debug] Recognition started');
+      };
+      
+      newRecognition.onresult = (event: any) => {
+        console.log('[Debug] Got result');
+        const results = event.results;
+        const latestResult = results[results.length - 1];
+        let transcript = latestResult[0].transcript;
+        
+        if (!isEnglish) {
+          // First convert Cyrillic to Latin if needed
+          transcript = cyrillicToLatin(transcript);
+          // If using Croatian fallback, convert ijekavian to ekavian
+          if (shouldConvertCroatian) {
+            console.log('[Debug] Before conversion:', transcript);
+            transcript = ijekavianToEkavian(transcript);
+            console.log('[Debug] After ijekavian→ekavian:', transcript);
+          }
+        }
+        
+        setUserAnswer(transcript);
+      };
+      
+      newRecognition.onerror = (event: any) => {
+        console.error('[Debug] Speech recognition error:', event.error);
+        setIsListening(false);
+        isListeningRef.current = false;
+        
+        // Handle specific errors
+        if (event.error === 'service-not-allowed') {
+          alert('Microphone access denied.\n\nPlease check Safari Settings → [This Site] → Microphone');
+        }
+      };
+      
+      newRecognition.onend = () => {
+        console.log('[Debug] Recognition ended. isListening:', isListeningRef.current);
+        if (isListeningRef.current) {
+          console.log('[Debug] Attempting to restart...');
+          setTimeout(() => {
+            try {
+              newRecognition.start();
+              console.log('[Debug] Restart successful');
+            } catch (err) {
+              console.error('[Debug] Failed to restart:', err);
+              setIsListening(false);
+              isListeningRef.current = false;
+            }
+          }, 200);
+        } else {
+          setIsListening(false);
+        }
+      };
+      
+      setRecognition(newRecognition);
+      setIsListening(true);
+      isListeningRef.current = true;
+      
+      newRecognition.start();
+      console.log('[Debug] Start called successfully');
+    } catch (err) {
+      console.error('[Debug] Error creating/starting recognition:', err);
+      setIsListening(false);
+      isListeningRef.current = false;
+    }
+  }, [recognition, settings?.direction, isIOSSafari]);
+
   // Focus input or button depending on state
   useEffect(() => {
     if (quizState === 'question' && settings?.mode === 'type') {
@@ -115,87 +235,11 @@ function QuizPage() {
   // Auto-start speech recognition for speak mode
   useEffect(() => {
     if (autoStartRecognitionRef.current && quizState === 'question' && settings?.mode === 'speak') {
+      console.log('[Debug] Auto-starting speech recognition');
       autoStartRecognitionRef.current = false;
-      
-      // Trigger speech recognition start
-      if (!('webkitSpeechRecognition' in window)) {
-        console.error('[Debug] webkitSpeechRecognition not available');
-        return;
-      }
-      
-      if (window.location.protocol !== 'https:' && isIOSSafari) {
-        console.error('[Debug] Speech recognition requires HTTPS on iOS Safari');
-        return;
-      }
-
-      try {
-        const SpeechRecognition = (window as any).webkitSpeechRecognition;
-        const newRecognition = new SpeechRecognition();
-        const isEnglish = settings.direction === 'source-to-dest' || settings.direction === 'source-to-source';
-        
-        let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
-        const shouldConvertCroatian = !isEnglish && isIOSSafari;
-        if (shouldConvertCroatian) {
-          recognitionLang = 'hr-HR';
-          console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
-        }
-        console.log('[Debug] Auto-starting with language:', recognitionLang);
-        
-        newRecognition.lang = recognitionLang;
-        newRecognition.continuous = isIOSSafari ? false : true;
-        newRecognition.interimResults = false;
-        
-        newRecognition.onstart = () => {
-          console.log('[Debug] Recognition started (auto)');
-        };
-        
-        newRecognition.onresult = (event: any) => {
-          console.log('[Debug] Got result (auto)');
-          const results = event.results;
-          const latestResult = results[results.length - 1];
-          let transcript = latestResult[0].transcript;
-          
-          if (!isEnglish) {
-            transcript = cyrillicToLatin(transcript);
-            if (shouldConvertCroatian) {
-              console.log('[Debug] Before conversion:', transcript);
-              transcript = ijekavianToEkavian(transcript);
-              console.log('[Debug] After ijekavian→ekavian:', transcript);
-            }
-          }
-          
-          setUserAnswer(transcript);
-        };
-        
-        newRecognition.onerror = (event: any) => {
-          console.error('[Debug] Speech recognition error (auto):', event.error);
-        };
-        
-        newRecognition.onend = () => {
-          console.log('[Debug] Recognition ended (auto)');
-          if (isListeningRef.current) {
-            setTimeout(() => {
-              try {
-                newRecognition.start();
-              } catch (err) {
-                console.error('[Debug] Error restarting recognition (auto):', err);
-              }
-            }, 300);
-          }
-        };
-        
-        setRecognition(newRecognition);
-        setIsListening(true);
-        isListeningRef.current = true;
-        
-        newRecognition.start();
-      } catch (err) {
-        console.error('[Debug] Error auto-starting recognition:', err);
-        setIsListening(false);
-        isListeningRef.current = false;
-      }
+      startSpeechRecognition();
     }
-  }, [autoStartRecognitionRef.current, quizState, settings?.mode, settings?.direction, isIOSSafari]);
+  }, [autoStartRecognitionRef.current, quizState, settings?.mode, startSpeechRecognition]);
 
   const loadNextQuestion = (algo: AlgorithmA) => {
     const sentence = algo.getNextSentence();
@@ -395,115 +439,9 @@ function QuizPage() {
         console.error('Error stopping recognition:', err);
       }
     } else {
-      // Start listening - create fresh instance for iOS Safari
-      console.log('[Debug] User manually starting - creating fresh recognition instance');
-      console.log('[Debug] Is iOS Safari:', isIOSSafari);
-      console.log('[Debug] Location protocol:', window.location.protocol);
-      console.log('[Debug] Location hostname:', window.location.hostname);
-      
-      if (!('webkitSpeechRecognition' in window)) {
-        console.error('[Debug] webkitSpeechRecognition not available');
-        return;
-      }
-      
-      // Check if we're on HTTPS (required for iOS)
-      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-        console.error('[Debug] Speech recognition requires HTTPS on iOS Safari');
-        alert('Speech recognition requires a secure connection (HTTPS). Please access this site via HTTPS.');
-        return;
-      }
-      
-      try {
-        const SpeechRecognition = (window as any).webkitSpeechRecognition;
-        const newRecognition = new SpeechRecognition();
-        
-        // Set language based on quiz direction
-        const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-        console.log('[Debug] Direction:', settings.direction, 'isEnglish:', isEnglish);
-        
-        // iOS Safari doesn't support Serbian - use Croatian as fallback with ijekavian→ekavian conversion
-        let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
-        const shouldConvertCroatian = !isEnglish && isIOSSafari;
-        if (shouldConvertCroatian) {
-          recognitionLang = 'hr-HR'; // Croatian fallback for iOS
-          console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
-        }
-        console.log('[Debug] Setting language to:', recognitionLang, 'Will convert:', shouldConvertCroatian);
-        
-        newRecognition.lang = recognitionLang;
-        console.log('[Debug] Recognition lang after setting:', newRecognition.lang);
-        
-        // iOS Safari has bugs with continuous mode - use false for iOS
-        newRecognition.continuous = isIOSSafari ? false : true;
-        console.log('[Debug] Continuous:', newRecognition.continuous);
-        newRecognition.interimResults = true;
-        newRecognition.maxAlternatives = 1;
-        
-        newRecognition.onstart = () => {
-          console.log('[Debug] Recognition started');
-        };
-        
-        newRecognition.onresult = (event: any) => {
-          console.log('[Debug] Got result');
-          const results = event.results;
-          const latestResult = results[results.length - 1];
-          let transcript = latestResult[0].transcript;
-          
-          if (!isEnglish) {
-            // First convert Cyrillic to Latin if needed
-            transcript = cyrillicToLatin(transcript);
-            // If using Croatian fallback, convert ijekavian to ekavian
-            if (shouldConvertCroatian) {
-              console.log('[Debug] Before conversion:', transcript);
-              transcript = ijekavianToEkavian(transcript);
-              console.log('[Debug] After ijekavian→ekavian:', transcript);
-            }
-          }
-          
-          setUserAnswer(transcript);
-        };
-        
-        newRecognition.onerror = (event: any) => {
-          console.error('[Debug] Speech recognition error:', event.error);
-          setIsListening(false);
-          isListeningRef.current = false;
-          
-          // Handle specific errors
-          if (event.error === 'service-not-allowed') {
-            alert('Microphone access denied.\n\nPlease check Safari Settings → [This Site] → Microphone');
-          }
-        };
-        
-        newRecognition.onend = () => {
-          console.log('[Debug] Recognition ended. isListening:', isListeningRef.current);
-          if (isListeningRef.current) {
-            console.log('[Debug] Attempting to restart...');
-            setTimeout(() => {
-              try {
-                newRecognition.start();
-                console.log('[Debug] Restart successful');
-              } catch (err) {
-                console.error('[Debug] Failed to restart:', err);
-                setIsListening(false);
-                isListeningRef.current = false;
-              }
-            }, 200);
-          } else {
-            setIsListening(false);
-          }
-        };
-        
-        setRecognition(newRecognition);
-        setIsListening(true);
-        isListeningRef.current = true;
-        
-        newRecognition.start();
-        console.log('[Debug] Manual start called successfully');
-      } catch (err) {
-        console.error('[Debug] Error creating/starting recognition:', err);
-        setIsListening(false);
-        isListeningRef.current = false;
-      }
+      // Start listening using shared function
+      console.log('[Debug] User manually starting');
+      startSpeechRecognition();
     }
   };
 
