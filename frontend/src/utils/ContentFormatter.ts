@@ -159,8 +159,8 @@ export function cyrillicToLatin(text: string): string {
  * 
  * Main rules:
  * - ije → e (vrijeme → vreme, dijete → dete)
- * - je → e when it comes from old Slavic ě (jelo → elo, but NOT in words like "jesti")
- * - ije → e at word boundaries
+ * - je → e when it comes from old Slavic ě
+ * - dje → de (djevojka → devojka, djeca → deca)
  */
 export function ijekavianToEkavian(text: string): string {
   // Split into words to process each separately
@@ -174,6 +174,10 @@ export function ijekavianToEkavian(text: string): string {
       return word;
     }
     
+    // Pattern 0: dje → de (Croatian adds j before e after d)
+    // Examples: djevojka → devojka, djeca → deca, dječak → dečak
+    result = result.replace(/dje/gi, 'de');
+    
     // Pattern 1: ije → e (most common)
     // Examples: vrijeme → vreme, dijete → dete, lijepo → lepo, bijel → bel
     result = result.replace(/ije/gi, 'e');
@@ -186,13 +190,17 @@ export function ijekavianToEkavian(text: string): string {
     // Pattern 3: vjera → vera, cvijet → cvet
     result = result.replace(/vje/gi, 've');
     
-    // Pattern 4: Initial ije- → e-
+    // Pattern 4: tje → te, nje → ne in certain contexts
+    result = result.replace(/tje/gi, 'te');
+    result = result.replace(/nje/gi, 'ne');
+    
+    // Pattern 5: Initial ije- → e-
     result = result.replace(/^ije/gi, 'e');
     
-    // Pattern 5: htjela → htela, htjeo → hteo (want/wanted)
+    // Pattern 6: htjela → htela, htjeo → hteo (want/wanted)
     result = result.replace(/htje/gi, 'hte');
     
-    // Pattern 6: sjeo → seo, sjela → sela (sat down)
+    // Pattern 7: sjeo → seo, sjela → sela (sat down)
     result = result.replace(/sje([ol])/gi, 'se$1');
     
     return result;

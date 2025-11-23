@@ -399,14 +399,15 @@ function QuizPage() {
         
         // iOS Safari doesn't support Serbian - use Croatian as fallback with ijekavian→ekavian conversion
         let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
-        if (!isEnglish && isIOSSafari) {
+        const shouldConvertCroatian = !isEnglish && isIOSSafari;
+        if (shouldConvertCroatian) {
           recognitionLang = 'hr-HR'; // Croatian fallback for iOS
           setUsingCroatianFallback(true);
           console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
         } else {
           setUsingCroatianFallback(false);
         }
-        console.log('[Debug] Setting language to:', recognitionLang);
+        console.log('[Debug] Setting language to:', recognitionLang, 'Will convert:', shouldConvertCroatian);
         
         newRecognition.lang = recognitionLang;
         console.log('[Debug] Recognition lang after setting:', newRecognition.lang);
@@ -431,7 +432,7 @@ function QuizPage() {
             // First convert Cyrillic to Latin if needed
             transcript = cyrillicToLatin(transcript);
             // If using Croatian fallback, convert ijekavian to ekavian
-            if (usingCroatianFallback) {
+            if (shouldConvertCroatian) {
               console.log('[Debug] Before conversion:', transcript);
               transcript = ijekavianToEkavian(transcript);
               console.log('[Debug] After ijekavian→ekavian:', transcript);
