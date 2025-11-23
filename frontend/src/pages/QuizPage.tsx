@@ -382,7 +382,8 @@ function QuizPage() {
         // Set language based on quiz direction
         const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
         newRecognition.lang = isEnglish ? 'en-US' : 'sr-RS';
-        newRecognition.continuous = true;
+        // iOS Safari has bugs with continuous mode - use false for iOS
+        newRecognition.continuous = isIOSSafari ? false : true;
         newRecognition.interimResults = true;
         newRecognition.maxAlternatives = 1;
         
