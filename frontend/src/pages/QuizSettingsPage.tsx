@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { QuizSettings, QuizDirection, QuizMode, QuizAlgorithm, LessonDatabase } from '../types';
+import { getTitles } from '../utils/ContentFormatter';
 
 function QuizSettingsPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -76,10 +77,8 @@ function QuizSettingsPage() {
           >
             ← Back to Lessons
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">{lesson.title}</h1>
-          {lesson.title_serbian && (
-            <div className="text-xl text-gray-700 mt-1">{lesson.title_serbian}</div>
-          )}
+          <h1 className="text-3xl font-bold text-gray-900">{getTitles(lesson.title).en}</h1>
+          <div className="text-xl text-gray-700 mt-1">{getTitles(lesson.title).sr}</div>
           <p className="mt-2 text-sm text-gray-600">
             Lesson {lesson.id} • {lesson.sentences.length} sentences
           </p>
@@ -121,6 +120,30 @@ function QuizSettingsPage() {
                   {lessonData.destinationLanguage} → {lessonData.sourceLanguage}
                 </span>
               </label>
+              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                <input
+                  type="radio"
+                  name="direction"
+                  checked={direction === 'source-to-source'}
+                  onChange={() => setDirection('source-to-source')}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="ml-3 text-gray-900">
+                  {lessonData.sourceLanguage} → {lessonData.sourceLanguage}
+                </span>
+              </label>
+              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                <input
+                  type="radio"
+                  name="direction"
+                  checked={direction === 'dest-to-dest'}
+                  onChange={() => setDirection('dest-to-dest')}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="ml-3 text-gray-900">
+                  {lessonData.destinationLanguage} → {lessonData.destinationLanguage}
+                </span>
+              </label>
             </div>
           </div>
 
@@ -154,6 +177,19 @@ function QuizSettingsPage() {
                 <span className="ml-3">
                   <div className="text-gray-900 font-medium">Multiple Choice</div>
                   <div className="text-sm text-gray-500">Choose from 5 options</div>
+                </span>
+              </label>
+              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                <input
+                  type="radio"
+                  name="mode"
+                  checked={mode === 'speak'}
+                  onChange={() => setMode('speak')}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="ml-3">
+                  <div className="text-gray-900 font-medium">🎤 Speak Answer</div>
+                  <div className="text-sm text-gray-500">Say the translation out loud</div>
                 </span>
               </label>
             </div>

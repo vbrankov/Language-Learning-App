@@ -3,12 +3,12 @@
 export interface Sentence {
   id: number;
   source: string;
-  destination: string;
+  destination: string | string[]; // Can be single string or array of alternatives
 }
 
 export interface Lesson {
   id: number;
-  title: string;
+  title: string | [string, string]; // Can be single string or [English, Serbian]
   title_serbian?: string;
   words: string[] | Array<{ english: string; serbian: string }>;
   sentences: Sentence[];
@@ -43,8 +43,8 @@ export interface UserProgress {
 
 // Quiz configuration
 
-export type QuizDirection = 'source-to-dest' | 'dest-to-source';
-export type QuizMode = 'type' | 'multiple-choice';
+export type QuizDirection = 'source-to-dest' | 'dest-to-source' | 'source-to-source' | 'dest-to-dest';
+export type QuizMode = 'type' | 'multiple-choice' | 'speak';
 export type QuizAlgorithm = 'A' | 'B';
 
 export interface QuizSettings {

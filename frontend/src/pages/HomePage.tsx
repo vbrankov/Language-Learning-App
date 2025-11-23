@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LessonDatabase, LessonStats } from '../types';
 import { ProgressManager } from '../utils/ProgressManager';
 import { timeAgo } from '../utils/timeAgo';
+import { getTitles } from '../utils/ContentFormatter';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -113,13 +114,11 @@ function HomePage() {
                   <div className="flex-1">
                     <div className="text-sm font-medium text-gray-500">Lesson {lesson.id}</div>
                     <h3 className="text-lg font-semibold text-gray-900 mt-1">
-                      {lesson.title}
+                      {getTitles(lesson.title).en}
                     </h3>
-                    {lesson.title_serbian && (
-                      <div className="text-sm text-gray-600 mt-0.5">
-                        {lesson.title_serbian}
-                      </div>
-                    )}
+                    <div className="text-sm text-gray-600 mt-0.5">
+                      {getTitles(lesson.title).sr}
+                    </div>
                   </div>
                 </div>
 

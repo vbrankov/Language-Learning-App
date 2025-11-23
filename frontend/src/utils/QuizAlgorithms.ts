@@ -1,4 +1,5 @@
 import { Sentence } from '../types';
+import { getSentenceText } from './ContentFormatter';
 
 /**
  * Algorithm A: Random selection with removal
@@ -113,7 +114,11 @@ export function generateWrongAnswers(
       const text = isSourceToDestination ? s.destination : s.source;
       return text !== correctText && s.id !== correctSentence.id;
     })
-    .map(s => isSourceToDestination ? s.destination : s.source);
+    .map(s => {
+      const text = isSourceToDestination ? s.destination : s.source;
+      // Extract first alternative if it's an array
+      return getSentenceText(text);
+    });
 
   // Shuffle and take 4
   const shuffled = [...possibleWrong].sort(() => Math.random() - 0.5);
@@ -134,10 +139,13 @@ export function createMultipleChoiceQuestion(
     ? correctSentence.destination 
     : correctSentence.source;
 
+  // Extract text from correct answer (handle alternatives)
+  const correctAnswerText = getSentenceText(correctAnswer);
+
   const wrongAnswers = generateWrongAnswers(correctSentence, lessonSentences, isSourceToDestination);
   
   // Combine and shuffle
-  const allOptions = [correctAnswer, ...wrongAnswers];
+  const allOptions = [correctAnswerText, ...wrongAnswers];
   const shuffledOptions: string[] = [];
   let correctIndex = -1;
 
