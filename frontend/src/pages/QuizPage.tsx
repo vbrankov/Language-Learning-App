@@ -9,7 +9,7 @@ import { getTitles, getSentenceText, checkAnswerWithAlternatives, cyrillicToLati
 type QuizState = 'question' | 'correct' | 'incorrect';
 
 // Text-to-speech function
-function speak(text: string, lang: 'en' | 'sr', voiceName?: string) {
+function speak(text: string, lang: 'en' | 'sr', voiceName?: string, onEnd?: () => void) {
   if ('speechSynthesis' in window) {
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
@@ -37,6 +37,11 @@ function speak(text: string, lang: 'en' | 'sr', voiceName?: string) {
       } else {
         utterance.lang = 'hr-HR';
       }
+    }
+    
+    // Trigger callback when speech ends
+    if (onEnd) {
+      utterance.onend = onEnd;
     }
     
     window.speechSynthesis.speak(utterance);
@@ -232,14 +237,7 @@ function QuizPage() {
     }
   }, [quizState, settings?.mode]);
 
-  // Auto-start speech recognition for speak mode
-  useEffect(() => {
-    if (autoStartRecognitionRef.current && quizState === 'question' && settings?.mode === 'speak') {
-      console.log('[Debug] Auto-starting speech recognition');
-      autoStartRecognitionRef.current = false;
-      startSpeechRecognition();
-    }
-  }, [autoStartRecognitionRef.current, quizState, settings?.mode, startSpeechRecognition]);
+
 
   const loadNextQuestion = (algo: AlgorithmA) => {
     const sentence = algo.getNextSentence();
@@ -285,15 +283,15 @@ function QuizPage() {
     // Auto-speak the question
     setTimeout(() => {
       const voiceName = targetLang === 'en' ? settings.englishVoice : settings.serbianVoice;
-      speak(questionText, targetLang, voiceName);
+      
+      // For speak mode, start recognition after speech synthesis completes
+      const onSpeechEnd = settings.mode === 'speak' ? () => {
+        console.log('[Debug] Speech synthesis ended, starting recognition');
+        startSpeechRecognition();
+      } : undefined;
+      
+      speak(questionText, targetLang, voiceName, onSpeechEnd);
     }, 100);
-
-    // Auto-start speech recognition for speak mode (after a slight delay to allow question to finish)
-    if (settings.mode === 'speak') {
-      setTimeout(() => {
-        autoStartRecognitionRef.current = true;
-      }, 1500);
-    }
 
     // Setup multiple choice if needed
     if (settings.mode === 'multiple-choice') {
