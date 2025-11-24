@@ -127,7 +127,7 @@ function QuizSettingsPage() {
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
   
-  // Check if speak mode should be disabled
+  // Check if speak mode should be disabled (iOS doesn't support Serbian/Croatian speech recognition)
   const isSerbianAnswer = direction === 'source-to-dest' || direction === 'dest-to-dest';
   const isSpeakModeDisabled = isIOSSafari && isSerbianAnswer;
 
@@ -356,7 +356,7 @@ function QuizSettingsPage() {
                   checked={mode === 'speak'}
                   onChange={() => {
                     if (isSpeakModeDisabled) {
-                      alert('Serbian speech recognition is not available on iOS Safari.\n\nTo use speech recognition:\n• Switch to English mode, or\n• Install Croatian keyboard in iOS Settings, or\n• Use this feature on Windows or Android');
+                      alert('Serbian/Croatian speech recognition is not supported on iOS Safari.\n\niOS does not support Serbian or Croatian speech recognition at the system level.\n\nTo use speech recognition:\n• Switch to English mode, or\n• Use this feature on Windows or Android (both support Serbian)');
                     } else {
                       setMode('speak');
                     }
@@ -369,7 +369,7 @@ function QuizSettingsPage() {
                   <div className="text-sm text-gray-500">
                     Say the translation out loud
                     {isSpeakModeDisabled && (
-                      <span className="block mt-1 text-red-600">⚠️ Not available on iOS for Serbian (works on Windows/Android)</span>
+                      <span className="block mt-1 text-red-600">⚠️ Not supported on iOS (use Windows/Android)</span>
                     )}
                   </div>
                 </span>

@@ -4,7 +4,7 @@ import { QuizSettings, Lesson, Sentence } from '../types';
 import { AlgorithmA, createMultipleChoiceQuestion } from '../utils/QuizAlgorithms';
 import { ProgressManager } from '../utils/ProgressManager';
 import { LessonDatabase } from '../types';
-import { getTitles, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin, ijekavianToEkavian } from '../utils/ContentFormatter';
+import { getTitles, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin } from '../utils/ContentFormatter';
 
 type QuizState = 'question' | 'correct' | 'incorrect';
 
@@ -97,7 +97,6 @@ function QuizPage() {
   const isListeningRef = useRef(false);
   const autoStartRecognitionRef = useRef(false);
   const sessionIdRef = useRef(0); // Increment to invalidate old callbacks
-  const hasShownIOSWarningRef = useRef(false); // Track if we've shown the iOS Croatian warning
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
@@ -205,19 +204,8 @@ function QuizPage() {
       // Set language based on quiz direction
       const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
       
-      // iOS Safari only supports languages installed on the device
-      // Users need to install Croatian/Serbian keyboard on their iPhone for it to work
+      // Set language based on quiz direction
       let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
-      const shouldConvertCroatian = !isEnglish && isIOSSafari;
-      if (shouldConvertCroatian) {
-        recognitionLang = 'hr-HR'; // Croatian fallback for iOS
-        
-        // Show warning to iOS users about Croatian/Serbian (only once)
-        if (!hasShownIOSWarningRef.current) {
-          hasShownIOSWarningRef.current = true;
-          alert('ℹ️ Croatian Speech Recognition on iOS\n\nFor Croatian/Serbian to work on iPhone, you need:\n\n1. Go to Settings → General → Keyboard → Keyboards\n2. Add "Croatian" keyboard\n3. Return to this app\n\nIf the Croatian keyboard is not installed, recognition may not work or may default to English.\n\nAlternatively, switch to English mode.');
-        }
-      }
       
       newRecognition.lang = recognitionLang;
       
@@ -236,12 +224,8 @@ function QuizPage() {
         let transcript = latestResult[0].transcript;
         
         if (!isEnglish) {
-          // First convert Cyrillic to Latin if needed
+          // Convert Cyrillic to Latin if needed
           transcript = cyrillicToLatin(transcript);
-          // If using Croatian fallback on iOS, convert ijekavian to ekavian
-          if (shouldConvertCroatian) {
-            transcript = ijekavianToEkavian(transcript);
-          }
         }
         
         setUserAnswer(transcript);
@@ -253,11 +237,7 @@ function QuizPage() {
         
         // Handle specific errors
         if (event.error === 'not-allowed') {
-          if (isIOSSafari && !isEnglish) {
-            alert('⚠️ Serbian/Croatian Not Available on iOS\n\nSpeech recognition for Serbian/Croatian requires the language to be installed on your iPhone.\n\nTo enable:\n1. Go to iPhone Settings → General → Keyboard → Keyboards\n2. Add Croatian keyboard\n3. Return to this app and try again\n\nAlternatively, use English mode or test on Windows/Android.');
-          } else {
-            alert('Microphone access denied.\n\nPlease go to Settings → Safari → This Website → Microphone → Allow');
-          }
+          alert('Microphone access denied.\n\nPlease go to Settings → Safari → This Website → Microphone → Allow');
         } else if (event.error === 'network') {
           alert('Network error. Speech recognition requires an internet connection.');
         }
