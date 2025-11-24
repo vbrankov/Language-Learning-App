@@ -124,12 +124,8 @@ function QuizSettingsPage() {
   const [serbianLocales, setSerbianLocales] = useState<string[]>([]);
   const [filteredSerbianVoices, setFilteredSerbianVoices] = useState<SpeechSynthesisVoice[]>([]);
 
-  // Detect if running on iOS Safari
-  const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
-  
-  // Check if speak mode should be disabled (currently allowing on all platforms)
-  const isSerbianAnswer = direction === 'source-to-dest' || direction === 'dest-to-dest';
-  const isSpeakModeDisabled = false; // Allow Serbian on iOS - may work in future
+  // Speak mode is enabled on all platforms
+  const isSpeakModeDisabled = false;
 
   const normalizeLocale = (locale: string): string => {
     // Normalize Android format (e.g., "en_US_#android", "hr_HR") to standard format (e.g., "en-US", "hr-HR")
