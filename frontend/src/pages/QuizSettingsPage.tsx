@@ -127,9 +127,9 @@ function QuizSettingsPage() {
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
   
-  // Check if speak mode should be disabled (iOS doesn't support Serbian/Croatian speech recognition)
+  // Check if speak mode should be disabled (currently allowing on all platforms)
   const isSerbianAnswer = direction === 'source-to-dest' || direction === 'dest-to-dest';
-  const isSpeakModeDisabled = isIOSSafari && isSerbianAnswer;
+  const isSpeakModeDisabled = false; // Allow Serbian on iOS - may work in future
 
   const normalizeLocale = (locale: string): string => {
     // Normalize Android format (e.g., "en_US_#android", "hr_HR") to standard format (e.g., "en-US", "hr-HR")
