@@ -305,6 +305,11 @@ function QuizPage() {
     }
   }, [settings?.direction, isIOSSafari]);
 
+  // Scroll to top when quiz starts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Focus input or button depending on state
   useEffect(() => {
     if (quizState === 'question' && settings?.mode === 'type') {
