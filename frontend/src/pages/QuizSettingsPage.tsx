@@ -68,10 +68,15 @@ function QuizSettingsPage() {
       }
       
       if (uniqueSerbianLocales.length > 0 && !serbianLocale) {
-        // Prefer Croatian (hr), then Serbian (sr), then Bosnian (bs)
-        const defaultSerbianLocale = uniqueSerbianLocales.find(l => l.startsWith('hr-') || l === 'hr') || 
-                                    uniqueSerbianLocales.find(l => l.startsWith('sr-') || l === 'sr') ||
-                                    uniqueSerbianLocales[0];
+        // On Android prefer Serbian (sr), on other platforms prefer Croatian (hr)
+        const isAndroid = /android/i.test(navigator.userAgent);
+        const defaultSerbianLocale = isAndroid
+          ? (uniqueSerbianLocales.find(l => l.startsWith('sr-') || l === 'sr') || 
+             uniqueSerbianLocales.find(l => l.startsWith('hr-') || l === 'hr') ||
+             uniqueSerbianLocales[0])
+          : (uniqueSerbianLocales.find(l => l.startsWith('hr-') || l === 'hr') || 
+             uniqueSerbianLocales.find(l => l.startsWith('sr-') || l === 'sr') ||
+             uniqueSerbianLocales[0]);
         setSerbianLocale(defaultSerbianLocale);
         
         // Filter voices for default locale

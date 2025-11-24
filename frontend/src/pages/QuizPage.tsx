@@ -127,18 +127,16 @@ function QuizPage() {
 
     // Clean up any existing recognition when starting a new lesson
     if (recognitionRef.current) {
-      console.log('[Debug] New lesson starting - cleaning up old recognition');
       try {
         recognitionRef.current.stop();
       } catch (err) {
-        console.error('[Debug] Error stopping old recognition:', err);
+        // Ignore errors
       }
       recognitionRef.current = null;
       setRecognition(null);
     }
     
     // Reset listening state and invalidate old callbacks
-    console.log('[Debug] Resetting state for new lesson');
     sessionIdRef.current += 1; // Invalidate any pending speech callbacks
     setIsListening(false);
     isListeningRef.current = false;
@@ -146,27 +144,22 @@ function QuizPage() {
     const algo = new AlgorithmA(lesson.sentences);
     setAlgorithm(algo);
     loadNextQuestion(algo);
-  }, [lessonData, lesson]);
+  }, [lessonData, lesson, isIOSSafari, settings?.mode]);
 
-  // Debug: Log isListening state changes
-  useEffect(() => {
-    console.log('[Debug] isListening state changed to:', isListening);
-  }, [isListening]);
+
 
 
 
   // Cleanup on unmount: stop recognition and cancel speech synthesis
   useEffect(() => {
     return () => {
-      console.log('[Debug] QuizPage unmounting - cleaning up');
-      
       // Stop speech recognition
       if (recognitionRef.current) {
         isListeningRef.current = false;
         try {
           recognitionRef.current.stop();
         } catch (err) {
-          console.error('[Debug] Error stopping recognition on unmount:', err);
+          // Ignore errors on cleanup
         }
       }
       
@@ -175,23 +168,19 @@ function QuizPage() {
         window.speechSynthesis.cancel();
       }
     };
-  }, []); // Empty deps - only run on actual unmount
+  }, []);
 
   // Shared function to start speech recognition
-  const startSpeechRecognition = useCallback(() => {
-    console.log('[Debug] startSpeechRecognition called');
-    
+  const startSpeechRecognition = useCallback(async () => {
     if (!('webkitSpeechRecognition' in window)) {
-      console.error('[Debug] webkitSpeechRecognition not available');
+      alert('Speech recognition is not supported on this browser.');
       return;
     }
     
-    // Check if we're on HTTPS (required for iOS)
+    // Check if we're on HTTPS (required for production)
     if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-      console.error('[Debug] Speech recognition requires HTTPS on iOS Safari');
       if (!autoStartRecognitionRef.current) {
-        // Only show alert for manual starts, not auto-starts
-        alert('Speech recognition requires a secure connection (HTTPS). Please access this site via HTTPS.');
+        alert('Speech recognition requires a secure connection (HTTPS).');
       }
       return;
     }
@@ -199,15 +188,16 @@ function QuizPage() {
     // Increment session ID to invalidate old callbacks
     sessionIdRef.current++;
     const currentSessionId = sessionIdRef.current;
-    console.log('[Debug] New session ID:', currentSessionId);
     
     // Stop any existing recognition first
     if (recognitionRef.current) {
       try {
+        isListeningRef.current = false;
         recognitionRef.current.stop();
       } catch (err) {
-        console.error('[Debug] Error stopping existing recognition:', err);
+        // Ignore errors
       }
+      recognitionRef.current = null;
     }
     
     try {
@@ -216,31 +206,27 @@ function QuizPage() {
       
       // Set language based on quiz direction
       const isEnglish = settings.direction === 'dest-to-source' || settings.direction === 'source-to-source';
-      console.log('[Debug] Direction:', settings.direction, 'isEnglish:', isEnglish);
       
-      // iOS Safari doesn't support Serbian - use Croatian as fallback with ijekavian→ekavian conversion
+      // iOS Safari only supports languages installed on the device
+      // Users need to install Croatian/Serbian keyboard on their iPhone for it to work
       let recognitionLang = isEnglish ? 'en-US' : 'sr-RS';
       const shouldConvertCroatian = !isEnglish && isIOSSafari;
       if (shouldConvertCroatian) {
         recognitionLang = 'hr-HR'; // Croatian fallback for iOS
-        console.log('[Debug] Using Croatian (hr-HR) with ijekavian→ekavian conversion');
       }
-      console.log('[Debug] Setting language to:', recognitionLang);
       
       newRecognition.lang = recognitionLang;
       
       // iOS Safari has bugs with continuous mode - use false for iOS
       newRecognition.continuous = isIOSSafari ? false : true;
-      console.log('[Debug] Continuous:', newRecognition.continuous);
       newRecognition.interimResults = true;
       newRecognition.maxAlternatives = 1;
       
       newRecognition.onstart = () => {
-        console.log('[Debug] Recognition started');
+        // Recognition started successfully
       };
       
       newRecognition.onresult = (event: any) => {
-        console.log('[Debug] Got result');
         const results = event.results;
         const latestResult = results[results.length - 1];
         let transcript = latestResult[0].transcript;
@@ -248,11 +234,9 @@ function QuizPage() {
         if (!isEnglish) {
           // First convert Cyrillic to Latin if needed
           transcript = cyrillicToLatin(transcript);
-          // If using Croatian fallback, convert ijekavian to ekavian
+          // If using Croatian fallback on iOS, convert ijekavian to ekavian
           if (shouldConvertCroatian) {
-            console.log('[Debug] Before conversion:', transcript);
             transcript = ijekavianToEkavian(transcript);
-            console.log('[Debug] After ijekavian→ekavian:', transcript);
           }
         }
         
@@ -260,36 +244,33 @@ function QuizPage() {
       };
       
       newRecognition.onerror = (event: any) => {
-        console.error('[Debug] Speech recognition error:', event.error);
         setIsListening(false);
         isListeningRef.current = false;
         
         // Handle specific errors
-        if (event.error === 'service-not-allowed') {
-          alert('Microphone access denied.\n\nPlease check Safari Settings → [This Site] → Microphone');
+        if (event.error === 'not-allowed') {
+          alert('Microphone access denied.\n\nPlease go to Settings → Safari → This Website → Microphone → Allow');
+        } else if (event.error === 'network') {
+          alert('Network error. Speech recognition requires an internet connection.');
         }
+        // Ignore 'aborted' errors (expected when stopping/restarting)
       };
       
       newRecognition.onend = () => {
-        console.log('[Debug] Recognition ended. Session:', currentSessionId, 'Current:', sessionIdRef.current, 'isListening:', isListeningRef.current);
         // Only restart if this is still the current session
         if (currentSessionId !== sessionIdRef.current) {
-          console.log('[Debug] Stale session - not restarting');
           return;
         }
+        
         if (isListeningRef.current) {
-          console.log('[Debug] Attempting to restart...');
+          // Restart after brief delay (required for iOS with continuous:false)
           setTimeout(() => {
-            // Double-check session is still current
             if (currentSessionId !== sessionIdRef.current) {
-              console.log('[Debug] Session changed during timeout - not restarting');
               return;
             }
             try {
               newRecognition.start();
-              console.log('[Debug] Restart successful');
             } catch (err) {
-              console.error('[Debug] Failed to restart:', err);
               setIsListening(false);
               isListeningRef.current = false;
             }
@@ -303,12 +284,14 @@ function QuizPage() {
       recognitionRef.current = newRecognition;
       setIsListening(true);
       isListeningRef.current = true;
-      console.log('[Debug] State updated: isListening=true, isListeningRef=true');
       
-      newRecognition.start();
-      console.log('[Debug] Start called successfully');
+      try {
+        newRecognition.start();
+      } catch (startErr) {
+        setIsListening(false);
+        isListeningRef.current = false;
+      }
     } catch (err) {
-      console.error('[Debug] Error creating/starting recognition:', err);
       setIsListening(false);
       isListeningRef.current = false;
     }
@@ -375,10 +358,8 @@ function QuizPage() {
       const onSpeechEnd = settings.mode === 'speak' ? () => {
         // Check if this callback is still valid (lesson hasn't changed)
         if (currentSessionId !== sessionIdRef.current) {
-          console.log('[Debug] Speech callback stale, ignoring');
           return;
         }
-        console.log('[Debug] Speech synthesis ended, starting recognition');
         startSpeechRecognition();
       } : undefined;
       
@@ -402,13 +383,12 @@ function QuizPage() {
 
     // Stop speech recognition if it's running (for speak mode)
     if (recognitionRef.current && settings.mode === 'speak') {
-      console.log('[Debug] Stopping recognition in checkAnswer');
       setIsListening(false);
       isListeningRef.current = false;
       try {
         recognitionRef.current.stop();
       } catch (err) {
-        console.error('[Debug] Error stopping recognition:', err);
+        // Ignore errors
       }
     }
 
@@ -514,25 +494,23 @@ function QuizPage() {
   };
 
   const toggleListening = () => {
-    console.log('[Debug] toggleListening called. recognition:', !!recognition, 'quizState:', quizState, 'isListening:', isListening);
     if (quizState !== 'question') {
-      console.log('[Debug] Early return: quizState is not question');
       return;
     }
     
-    if (isListening) {
+    if (isListeningRef.current) {
       // Stop listening
-      console.log('[Debug] User manually stopping');
       setIsListening(false);
       isListeningRef.current = false;
       try {
-        if (recognitionRef.current) recognitionRef.current.stop();
+        if (recognitionRef.current) {
+          recognitionRef.current.stop();
+        }
       } catch (err) {
-        console.error('Error stopping recognition:', err);
+        // Ignore errors when stopping
       }
     } else {
-      // Start listening using shared function
-      console.log('[Debug] User manually starting');
+      // Start listening
       startSpeechRecognition();
     }
   };
@@ -775,7 +753,7 @@ function QuizPage() {
                       </svg>
                       <div className="flex-1">
                         <div className={`font-semibold ${isListening ? 'text-green-900' : 'text-gray-700'}`}>
-                          {isListening ? 'Microphone Active - Listening...' : `Microphone Off (${isListening} / ${isListeningRef.current})`}
+                          {isListening ? 'Microphone Active - Listening...' : 'Microphone Off'}
                         </div>
                         {isListening && (
                           <div className="text-sm text-green-700">Speak your answer now</div>
@@ -897,7 +875,7 @@ function QuizPage() {
 
           {/* Multiple Choice Mode */}
           {settings.mode === 'multiple-choice' && (
-            <div className="space-y-3">
+            <div className="space-y-3" key={currentSentence?.id}>
               {multipleChoiceOptions.map((option, index) => {
                 const isSelected = selectedOptionIndex === index;
                 const isCorrect = index === correctOptionIndex;
