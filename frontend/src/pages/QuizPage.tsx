@@ -44,7 +44,6 @@ function speak(text: string, lang: 'en' | 'sr', voiceName?: string, onEnd?: () =
       let callbackTriggered = false;
       
       utterance.onend = () => {
-        console.log('[Debug] Speech onend event fired');
         if (!callbackTriggered) {
           callbackTriggered = true;
           onEnd();
@@ -55,7 +54,6 @@ function speak(text: string, lang: 'en' | 'sr', voiceName?: string, onEnd?: () =
       // Estimate duration: ~100ms per character at rate 0.85
       const estimatedDuration = Math.max(text.length * 100, 2000);
       setTimeout(() => {
-        console.log('[Debug] Speech timeout fallback fired');
         if (!callbackTriggered) {
           callbackTriggered = true;
           onEnd();
@@ -99,6 +97,7 @@ function QuizPage() {
   const isListeningRef = useRef(false);
   const autoStartRecognitionRef = useRef(false);
   const sessionIdRef = useRef(0); // Increment to invalidate old callbacks
+  const hasShownIOSWarningRef = useRef(false); // Track if we've shown the iOS Croatian warning
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
@@ -111,7 +110,7 @@ function QuizPage() {
         const data = await response.json();
         setLessonData(data);
       } catch (err) {
-        console.error('Error loading database:', err);
+        // Database loading error
       }
     };
     
@@ -120,7 +119,6 @@ function QuizPage() {
 
   // Initialize algorithm and first question
   useEffect(() => {
-    console.log('[Debug] Initialize effect running - lessonData:', !!lessonData, 'lesson:', lesson?.id);
     if (!lessonData || !lesson) {
       return;
     }
@@ -213,6 +211,12 @@ function QuizPage() {
       const shouldConvertCroatian = !isEnglish && isIOSSafari;
       if (shouldConvertCroatian) {
         recognitionLang = 'hr-HR'; // Croatian fallback for iOS
+        
+        // Show warning to iOS users about Croatian/Serbian (only once)
+        if (!hasShownIOSWarningRef.current) {
+          hasShownIOSWarningRef.current = true;
+          alert('ℹ️ Croatian Speech Recognition on iOS\n\nFor Croatian/Serbian to work on iPhone, you need:\n\n1. Go to Settings → General → Keyboard → Keyboards\n2. Add "Croatian" keyboard\n3. Return to this app\n\nIf the Croatian keyboard is not installed, recognition may not work or may default to English.\n\nAlternatively, switch to English mode.');
+        }
       }
       
       newRecognition.lang = recognitionLang;
@@ -249,7 +253,11 @@ function QuizPage() {
         
         // Handle specific errors
         if (event.error === 'not-allowed') {
-          alert('Microphone access denied.\n\nPlease go to Settings → Safari → This Website → Microphone → Allow');
+          if (isIOSSafari && !isEnglish) {
+            alert('⚠️ Serbian/Croatian Not Available on iOS\n\nSpeech recognition for Serbian/Croatian requires the language to be installed on your iPhone.\n\nTo enable:\n1. Go to iPhone Settings → General → Keyboard → Keyboards\n2. Add Croatian keyboard\n3. Return to this app and try again\n\nAlternatively, use English mode or test on Windows/Android.');
+          } else {
+            alert('Microphone access denied.\n\nPlease go to Settings → Safari → This Website → Microphone → Allow');
+          }
         } else if (event.error === 'network') {
           alert('Network error. Speech recognition requires an internet connection.');
         }
@@ -306,7 +314,48 @@ function QuizPage() {
     }
   }, [quizState, settings?.mode]);
 
+  // Auto-submit when correct answer is typed or spoken
+  useEffect(() => {
+    if (quizState !== 'question' || (settings?.mode !== 'type' && settings?.mode !== 'speak') || !userAnswer.trim() || !currentSentence || !algorithm) {
+      return;
+    }
 
+    // Determine which field to check answer against
+    let answerToCheck;
+    if (settings.direction === 'source-to-dest') {
+      answerToCheck = currentSentence.destination;
+    } else if (settings.direction === 'dest-to-source') {
+      answerToCheck = currentSentence.source;
+    } else if (settings.direction === 'source-to-source') {
+      answerToCheck = currentSentence.source;
+    } else {
+      answerToCheck = currentSentence.destination;
+    }
+
+    const isSerbianAnswer = settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest';
+    const isCorrect = checkAnswerWithAlternatives(userAnswer, answerToCheck, isSerbianAnswer);
+
+    if (isCorrect) {
+      // Stop listening
+      if (settings.mode === 'speak' && recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (err) {
+          // Ignore errors
+        }
+        setIsListening(false);
+        isListeningRef.current = false;
+      }
+      
+      // Record answer and advance
+      ProgressManager.recordAnswer(currentSentence.id, true);
+      algorithm.recordAnswer(true);
+      setQuizState('correct');
+      setTimeout(() => {
+        loadNextQuestion(algorithm);
+      }, settings.mode === 'type' ? 1000 : 500);
+    }
+  }, [userAnswer, quizState, settings?.mode, settings?.direction, currentSentence, algorithm]);
 
   const loadNextQuestion = (algo: AlgorithmA) => {
     const sentence = algo.getNextSentence();
@@ -477,7 +526,7 @@ function QuizPage() {
       try {
         recognition.stop();
       } catch (err) {
-        console.error('Error stopping recognition:', err);
+        // Ignore errors
       }
       
       // Restart after a brief delay
@@ -487,7 +536,7 @@ function QuizPage() {
           setIsListening(true);
           isListeningRef.current = true;
         } catch (err) {
-          console.error('Error restarting recognition:', err);
+          // Ignore errors
         }
       }, 300);
     }
@@ -738,29 +787,6 @@ function QuizPage() {
                 {/* Control Buttons */}
                 {quizState === 'question' && (
                   <div className="mt-6 space-y-3">
-                    {/* Microphone status indicator */}
-                    <div className={`p-3 rounded-lg flex items-center gap-3 ${
-                      isListening 
-                        ? 'bg-green-100 border-2 border-green-500' 
-                        : 'bg-gray-100 border-2 border-gray-300'
-                    }`}>
-                      <svg 
-                        className={`w-6 h-6 ${isListening ? 'text-green-600 animate-pulse' : 'text-gray-400'}`}
-                        fill="currentColor" 
-                        viewBox="0 0 20 20"
-                      >
-                        <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
-                      </svg>
-                      <div className="flex-1">
-                        <div className={`font-semibold ${isListening ? 'text-green-900' : 'text-gray-700'}`}>
-                          {isListening ? 'Microphone Active - Listening...' : 'Microphone Off'}
-                        </div>
-                        {isListening && (
-                          <div className="text-sm text-green-700">Speak your answer now</div>
-                        )}
-                      </div>
-                    </div>
-
                     {/* Recognized text display */}
                     {userAnswer && (
                       <div className="p-4 bg-gray-100 border border-gray-300 rounded-lg">

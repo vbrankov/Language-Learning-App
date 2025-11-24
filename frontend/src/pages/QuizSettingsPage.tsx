@@ -124,6 +124,13 @@ function QuizSettingsPage() {
   const [serbianLocales, setSerbianLocales] = useState<string[]>([]);
   const [filteredSerbianVoices, setFilteredSerbianVoices] = useState<SpeechSynthesisVoice[]>([]);
 
+  // Detect if running on iOS Safari
+  const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
+  
+  // Check if speak mode should be disabled
+  const isSerbianAnswer = direction === 'source-to-dest' || direction === 'dest-to-dest';
+  const isSpeakModeDisabled = isIOSSafari && isSerbianAnswer;
+
   const normalizeLocale = (locale: string): string => {
     // Normalize Android format (e.g., "en_US_#android", "hr_HR") to standard format (e.g., "en-US", "hr-HR")
     // Also handle mixed formats like "sr_RS_#Latn"
@@ -342,17 +349,29 @@ function QuizSettingsPage() {
                   <div className="text-sm text-gray-500">Choose from 5 options</div>
                 </span>
               </label>
-              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+              <label className={`flex items-center p-3 border border-gray-300 rounded-lg ${isSpeakModeDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}>
                 <input
                   type="radio"
                   name="mode"
                   checked={mode === 'speak'}
-                  onChange={() => setMode('speak')}
+                  onChange={() => {
+                    if (isSpeakModeDisabled) {
+                      alert('Serbian speech recognition is not available on iOS Safari.\n\nTo use speech recognition:\n• Switch to English mode, or\n• Install Croatian keyboard in iOS Settings, or\n• Use this feature on Windows or Android');
+                    } else {
+                      setMode('speak');
+                    }
+                  }}
+                  disabled={isSpeakModeDisabled}
                   className="w-4 h-4 text-blue-600"
                 />
                 <span className="ml-3">
                   <div className="text-gray-900 font-medium">🎤 Speak Answer</div>
-                  <div className="text-sm text-gray-500">Say the translation out loud</div>
+                  <div className="text-sm text-gray-500">
+                    Say the translation out loud
+                    {isSpeakModeDisabled && (
+                      <span className="block mt-1 text-red-600">⚠️ Not available on iOS for Serbian (works on Windows/Android)</span>
+                    )}
+                  </div>
                 </span>
               </label>
             </div>
