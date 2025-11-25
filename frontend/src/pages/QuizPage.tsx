@@ -97,6 +97,7 @@ function QuizPage() {
   const isListeningRef = useRef(false);
   const autoStartRecognitionRef = useRef(false);
   const sessionIdRef = useRef(0); // Increment to invalidate old callbacks
+  const isAdvancingRef = useRef(false); // Prevent duplicate auto-submit triggers
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
@@ -301,7 +302,7 @@ function QuizPage() {
 
   // Auto-submit when correct answer is typed or spoken
   useEffect(() => {
-    if (quizState !== 'question' || (settings?.mode !== 'type' && settings?.mode !== 'speak') || !userAnswer.trim() || !currentSentence || !algorithm) {
+    if (quizState !== 'question' || (settings?.mode !== 'type' && settings?.mode !== 'speak') || !userAnswer.trim() || !currentSentence || !algorithm || isAdvancingRef.current) {
       return;
     }
 
@@ -321,6 +322,9 @@ function QuizPage() {
     const isCorrect = checkAnswerWithAlternatives(userAnswer, answerToCheck, isSerbianAnswer);
 
     if (isCorrect) {
+      // Mark that we're advancing to prevent duplicate triggers
+      isAdvancingRef.current = true;
+      
       // Stop listening
       if (settings.mode === 'speak' && recognitionRef.current) {
         try {
@@ -332,13 +336,33 @@ function QuizPage() {
         isListeningRef.current = false;
       }
       
-      // Record answer and advance
+      // Record answer
       ProgressManager.recordAnswer(currentSentence.id, true);
       algorithm.recordAnswer(true);
       setQuizState('correct');
-      setTimeout(() => {
-        loadNextQuestion(algorithm);
-      }, settings.mode === 'type' ? 1000 : 500);
+      
+      // Speak the correct answer before advancing
+      let speakLang: 'en' | 'sr';
+      if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
+        speakLang = 'sr';
+      } else {
+        speakLang = 'en';
+      }
+      const voiceName = speakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
+      
+      if (settings.mode === 'type') {
+        // For type mode, speak then advance
+        speak(getSentenceText(answerToCheck), speakLang, voiceName, () => {
+          loadNextQuestion(algorithm);
+          isAdvancingRef.current = false;
+        });
+      } else {
+        // For speak mode, just advance with delay
+        setTimeout(() => {
+          loadNextQuestion(algorithm);
+          isAdvancingRef.current = false;
+        }, 500);
+      }
     }
   }, [userAnswer, quizState, settings?.mode, settings?.direction, currentSentence, algorithm]);
 
@@ -460,15 +484,40 @@ function QuizPage() {
 
     if (isCorrect) {
       setQuizState('correct');
-      // Auto-advance after a short delay
-      setTimeout(() => {
-        loadNextQuestion(algorithm);
-      }, settings.mode === 'type' ? 1000 : 500);
+      
+      // For type mode, speak the correct answer before auto-advancing
+      if (settings.mode === 'type') {
+        let speakLang: 'en' | 'sr';
+        if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
+          speakLang = 'sr';
+        } else {
+          speakLang = 'en';
+        }
+        const voiceName = speakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
+        speak(correctAnswer, speakLang, voiceName, () => {
+          // Auto-advance after speech finishes
+          loadNextQuestion(algorithm);
+        });
+      } else {
+        // For other modes, auto-advance after a short delay
+        setTimeout(() => {
+          loadNextQuestion(algorithm);
+        }, 500);
+      }
     } else {
       setQuizState('incorrect');
-      // For type mode, show the correct answer in the input box
+      // For type mode, speak the correct answer aloud
       if (settings.mode === 'type') {
-        setUserAnswer(correctAnswer);
+        let speakLang: 'en' | 'sr';
+        if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
+          speakLang = 'sr';
+        } else {
+          speakLang = 'en';
+        }
+        setTimeout(() => {
+          const voiceName = speakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
+          speak(correctAnswer, speakLang, voiceName);
+        }, 100);
       }
       // For speak mode, speak the correct answer aloud
       if (settings.mode === 'speak') {
@@ -685,6 +734,11 @@ function QuizPage() {
                   placeholder="Type your answer..."
                   autoComplete="off"
                 />
+                {quizState === 'incorrect' && (
+                  <div className="mt-3 text-2xl text-green-700 font-semibold">
+                    ✓ {correctAnswer}
+                  </div>
+                )}
               </div>
 
               {/* Feedback */}
@@ -696,32 +750,9 @@ function QuizPage() {
 
               {quizState === 'incorrect' && (
                 <div className="mb-6 p-4 bg-red-100 border border-red-400 rounded-lg">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="text-red-800 font-semibold text-lg">✗ Incorrect</div>
-                      <div className="text-red-600 text-sm mt-2">
-                        The correct answer is shown above. Press Enter to continue.
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        let lang: 'en' | 'sr';
-                        if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
-                          lang = 'sr';
-                        } else {
-                          lang = 'en';
-                        }
-                        const voiceName = lang === 'en' ? settings.englishVoice : settings.serbianVoice;
-                        speak(correctAnswer, lang, voiceName);
-                      }}
-                      className="p-2 text-red-600 hover:bg-red-200 rounded-full transition-colors flex-shrink-0"
-                      title="Listen to correct answer"
-                      type="button"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
-                      </svg>
-                    </button>
+                  <div className="text-red-800 font-semibold text-lg">✗ Incorrect</div>
+                  <div className="text-red-600 text-sm mt-2">
+                    Press Enter to continue.
                   </div>
                 </div>
               )}
@@ -907,47 +938,50 @@ function QuizPage() {
                 }
 
                 return (
-                  <div key={index} className="flex items-center gap-2">
-                    <button
-                      onClick={() => {
-                        if (quizState !== 'question') return;
-                        setSelectedOptionIndex(index);
-                        // Check answer immediately with the selected index
+                  <button
+                    key={index}
+                    onClick={() => {
+                      if (quizState !== 'question') return;
+                      
+                      setSelectedOptionIndex(index);
+                      
+                      // Speak the option when clicked
+                      let lang: 'en' | 'sr';
+                      if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
+                        lang = 'sr';
+                      } else {
+                        lang = 'en';
+                      }
+                      const voiceName = lang === 'en' ? settings.englishVoice : settings.serbianVoice;
+                      
+                      // Check if this is the correct answer
+                      const isCorrectAnswer = index === correctOptionIndex;
+                      
+                      if (isCorrectAnswer) {
+                        // For correct answer, wait for speech to finish before checking
+                        speak(option, lang, voiceName, () => {
+                          checkAnswer(index);
+                        });
+                      } else {
+                        // For incorrect answer, speak the correct answer and check immediately
+                        const correctOption = multipleChoiceOptions[correctOptionIndex];
+                        speak(correctOption, lang, voiceName);
                         checkAnswer(index);
-                      }}
-                      disabled={quizState !== 'question'}
-                      className={buttonClass + ' flex-1'}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{option}</span>
-                        {showFeedback && isCorrect && (
-                          <span className="text-green-600 font-bold">✓</span>
-                        )}
-                        {showFeedback && isSelected && !isCorrect && (
-                          <span className="text-red-600 font-bold">✗</span>
-                        )}
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => {
-                        let lang: 'en' | 'sr';
-                        if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
-                          lang = 'sr';
-                        } else {
-                          lang = 'en';
-                        }
-                        const voiceName = lang === 'en' ? settings.englishVoice : settings.serbianVoice;
-                        speak(option, lang, voiceName);
-                      }}
-                      className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-colors flex-shrink-0"
-                      title="Listen to this option"
-                      type="button"
-                    >
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                  </div>
+                      }
+                    }}
+                    disabled={quizState !== 'question'}
+                    className={buttonClass}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>{option}</span>
+                      {showFeedback && isCorrect && (
+                        <span className="text-green-600 font-bold">✓</span>
+                      )}
+                      {showFeedback && isSelected && !isCorrect && (
+                        <span className="text-red-600 font-bold">✗</span>
+                      )}
+                    </div>
+                  </button>
                 );
               })}
 
