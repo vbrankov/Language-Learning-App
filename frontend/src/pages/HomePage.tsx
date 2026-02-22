@@ -1,55 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LessonDatabase, LessonStats } from '../types';
+import { LessonStats } from '../types';
+import { useDatabase } from '../DatabaseContext';
 import { ProgressManager } from '../utils/ProgressManager';
 import { timeAgo } from '../utils/timeAgo';
-import { getTitles } from '../utils/ContentFormatter';
+import { getLangText } from '../utils/ContentFormatter';
 
 function HomePage() {
   const navigate = useNavigate();
-  const [database, setDatabase] = useState<LessonDatabase | null>(null);
+  const { database, loading, error, sourceIndex, destIndex } = useDatabase();
   const [lessonStats, setLessonStats] = useState<Record<number, LessonStats>>({});
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadDatabase = async () => {
-      try {
-        const response = await fetch('/Language-Learning-App/data/lessons_1_to_106_enhanced.json');
-        if (!response.ok) {
-          throw new Error(`Failed to load database: ${response.status}`);
-        }
-        const data = await response.json();
-        setDatabase(data);
-      } catch (err) {
-        console.error('Error loading database:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadDatabase();
-  }, []);
+    if (!database?.lessons) return;
 
-  useEffect(() => {
-    if (!database || !database.lessons) {
-      return;
+    const stats: Record<number, LessonStats> = {};
+    for (const lesson of database.lessons) {
+      stats[lesson.id] = ProgressManager.getLessonStats(lesson.id, lesson.sentences);
     }
-    
-    try {
-      // Calculate stats for all lessons
-      const stats: Record<number, LessonStats> = {};
-      
-      for (const lesson of database.lessons) {
-        stats[lesson.id] = ProgressManager.getLessonStats(lesson.id, lesson.sentences);
-      }
-      
-      setLessonStats(stats);
-    } catch (err) {
-      console.error('Error calculating stats:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    }
+    setLessonStats(stats);
   }, [database]);
 
   const handleLessonClick = (lessonId: number) => {
@@ -84,7 +53,7 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <h1 className="text-3xl font-bold text-gray-900">Language Learning</h1>
           <p className="mt-2 text-sm text-gray-600">
-            {database.sourceLanguage} → {database.destinationLanguage}
+            {database.languages[sourceIndex]} → {database.languages[destIndex]}
           </p>
         </div>
       </header>
@@ -102,7 +71,7 @@ function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {database.lessons.map((lesson) => {
             const stats = lessonStats[lesson.id];
-            
+
             return (
               <button
                 key={lesson.id}
@@ -114,10 +83,10 @@ function HomePage() {
                   <div className="flex-1">
                     <div className="text-sm font-medium text-gray-500">Lesson {lesson.id}</div>
                     <h3 className="text-lg font-semibold text-gray-900 mt-1">
-                      {getTitles(lesson.title).en}
+                      {getLangText(lesson.title, sourceIndex)}
                     </h3>
                     <div className="text-sm text-gray-600 mt-0.5">
-                      {getTitles(lesson.title).sr}
+                      {getLangText(lesson.title, destIndex)}
                     </div>
                   </div>
                 </div>

@@ -1,23 +1,20 @@
-// Core data types matching the enhanced database structure
+// Core data types for the language learning database
 
 export interface Sentence {
   id: number;
-  source: string;
-  destination: string | string[]; // Can be single string or array of alternatives
+  sentences: Array<string | string[]>; // one entry per language; each can be an array of alternatives
 }
 
 export interface Lesson {
   id: number;
-  title: string | [string, string]; // Can be single string or [English, Serbian]
-  title_serbian?: string;
-  words: string[] | Array<{ english: string; serbian: string }>;
+  title: string | string[]; // indexed by language, e.g. ["English title", "Serbian title"]
+  words: string[];
   sentences: Sentence[];
 }
 
 export interface LessonDatabase {
   version: string;
-  sourceLanguage: string;
-  destinationLanguage: string;
+  languages: string[]; // e.g. ["English", "Serbian"]
   lastUpdated: string;
   nextLessonId: number;
   nextSentenceId: number;

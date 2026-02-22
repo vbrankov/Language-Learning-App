@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { QuizSettings, Lesson, Sentence } from '../types';
 import { AlgorithmA, createMultipleChoiceQuestion } from '../utils/QuizAlgorithms';
 import { ProgressManager } from '../utils/ProgressManager';
-import { LessonDatabase } from '../types';
-import { getTitles, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin } from '../utils/ContentFormatter';
+import { useDatabase } from '../DatabaseContext';
+import { getLangText, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin } from '../utils/ContentFormatter';
 
 type QuizState = 'question' | 'correct' | 'incorrect';
 
@@ -72,8 +72,8 @@ function QuizPage() {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const settings = location.state as QuizSettings;
-  const [lessonData, setLessonData] = useState<LessonDatabase | null>(null);
-  
+  const { database: lessonData, loading: dbLoading, sourceIndex, destIndex } = useDatabase();
+
   // Get the lesson
   const lesson: Lesson | undefined = lessonData?.lessons.find(l => l.id === settings?.lessonId);
   
@@ -101,21 +101,6 @@ function QuizPage() {
   
   // Detect if running on iOS Safari
   const isIOSSafari = /iPhone|iPad/.test(navigator.userAgent) && /Version\//.test(navigator.userAgent) && !/CriOS|FxiOS/.test(navigator.userAgent);
-
-  // Load database
-  useEffect(() => {
-    const loadDatabase = async () => {
-      try {
-        const response = await fetch('/Language-Learning-App/data/lessons_1_to_106_enhanced.json');
-        const data = await response.json();
-        setLessonData(data);
-      } catch (err) {
-        // Database loading error
-      }
-    };
-    
-    loadDatabase();
-  }, []);
 
   // Initialize algorithm and first question
   useEffect(() => {
@@ -306,17 +291,10 @@ function QuizPage() {
       return;
     }
 
-    // Determine which field to check answer against
-    let answerToCheck;
-    if (settings.direction === 'source-to-dest') {
-      answerToCheck = currentSentence.destination;
-    } else if (settings.direction === 'dest-to-source') {
-      answerToCheck = currentSentence.source;
-    } else if (settings.direction === 'source-to-source') {
-      answerToCheck = currentSentence.source;
-    } else {
-      answerToCheck = currentSentence.destination;
-    }
+    // Determine which language slot to check answer against
+    const answerLangIdx = (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest')
+      ? destIndex : sourceIndex;
+    const answerToCheck = currentSentence.sentences[answerLangIdx];
 
     const isSerbianAnswer = settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest';
     const isCorrect = checkAnswerWithAlternatives(userAnswer, answerToCheck, isSerbianAnswer);
@@ -375,32 +353,31 @@ function QuizPage() {
 
     // Determine question and answer based on direction
     let question, answer, targetLang;
-    
+
     if (settings.direction === 'source-to-dest') {
-      question = sentence.source;
-      answer = sentence.destination;
+      question = sentence.sentences[sourceIndex];
+      answer = sentence.sentences[destIndex];
       targetLang = 'en' as const;
     } else if (settings.direction === 'dest-to-source') {
-      question = sentence.destination;
-      answer = sentence.source;
+      question = sentence.sentences[destIndex];
+      answer = sentence.sentences[sourceIndex];
       targetLang = 'sr' as const;
     } else if (settings.direction === 'source-to-source') {
-      // Pronunciation mode: both question and answer are source language
-      question = sentence.source;
-      answer = sentence.source;
+      question = sentence.sentences[sourceIndex];
+      answer = sentence.sentences[sourceIndex];
       targetLang = 'en' as const;
     } else {
-      // dest-to-dest: both question and answer are destination language
-      question = sentence.destination;
-      answer = sentence.destination;
+      // dest-to-dest
+      question = sentence.sentences[destIndex];
+      answer = sentence.sentences[destIndex];
       targetLang = 'sr' as const;
     }
 
     // Extract text from question/answer (handle alternatives)
     const questionText = getSentenceText(question);
     const answerText = getSentenceText(answer);
-    const englishSentenceText = getSentenceText(sentence.source);
-    const serbianSentenceText = getSentenceText(sentence.destination);
+    const englishSentenceText = getSentenceText(sentence.sentences[sourceIndex]);
+    const serbianSentenceText = getSentenceText(sentence.sentences[destIndex]);
     
     setQuestionText(questionText);
     setCorrectAnswer(answerText);
@@ -426,10 +403,12 @@ function QuizPage() {
 
     // Setup multiple choice if needed
     if (settings.mode === 'multiple-choice') {
+      const answerLangIdx = (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest')
+        ? destIndex : sourceIndex;
       const { options, correctIndex } = createMultipleChoiceQuestion(
         sentence,
         lesson!.sentences,
-        settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest'
+        answerLangIdx
       );
       setMultipleChoiceOptions(options);
       setCorrectOptionIndex(correctIndex);
@@ -451,20 +430,11 @@ function QuizPage() {
     }
 
     let isCorrect = false;
-    let answerToCheck;
 
-    // Determine which field to check answer against
-    if (settings.direction === 'source-to-dest') {
-      answerToCheck = currentSentence.destination;
-    } else if (settings.direction === 'dest-to-source') {
-      answerToCheck = currentSentence.source;
-    } else if (settings.direction === 'source-to-source') {
-      // For pronunciation: check against source
-      answerToCheck = currentSentence.source;
-    } else {
-      // dest-to-dest: check against destination
-      answerToCheck = currentSentence.destination;
-    }
+    // Determine which language slot to check answer against
+    const answerLangIdx = (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest')
+      ? destIndex : sourceIndex;
+    const answerToCheck = currentSentence.sentences[answerLangIdx];
 
     if (settings.mode === 'type' || settings.mode === 'speak') {
       // Check against all alternatives
@@ -604,7 +574,7 @@ function QuizPage() {
     }
   };
 
-  if (!lessonData) {
+  if (dbLoading || !lessonData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -645,8 +615,8 @@ function QuizPage() {
               >
                 ← Finish Session
               </button>
-              <h1 className="text-xl font-semibold text-gray-900 mt-1">{getTitles(lesson.title).en}</h1>
-              <div className="text-sm text-gray-600">{getTitles(lesson.title).sr}</div>
+              <h1 className="text-xl font-semibold text-gray-900 mt-1">{getLangText(lesson.title, sourceIndex)}</h1>
+              <div className="text-sm text-gray-600">{getLangText(lesson.title, destIndex)}</div>
             </div>
             {progress && (
               <div className="text-right">

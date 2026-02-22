@@ -101,21 +101,19 @@ export class AlgorithmA {
 export function generateWrongAnswers(
   correctSentence: Sentence,
   lessonSentences: Sentence[],
-  isSourceToDestination: boolean
+  answerLangIndex: number
 ): string[] {
   // Get the text we want to avoid (the correct answer)
-  const correctText = isSourceToDestination 
-    ? correctSentence.destination 
-    : correctSentence.source;
+  const correctText = correctSentence.sentences[answerLangIndex];
 
   // Get all possible wrong answers from the same lesson only
   const possibleWrong = lessonSentences
     .filter(s => {
-      const text = isSourceToDestination ? s.destination : s.source;
+      const text = s.sentences[answerLangIndex];
       return text !== correctText && s.id !== correctSentence.id;
     })
     .map(s => {
-      const text = isSourceToDestination ? s.destination : s.source;
+      const text = s.sentences[answerLangIndex];
       // Extract first alternative if it's an array
       return getSentenceText(text);
     });
@@ -133,16 +131,14 @@ export function generateWrongAnswers(
 export function createMultipleChoiceQuestion(
   correctSentence: Sentence,
   lessonSentences: Sentence[],
-  isSourceToDestination: boolean
+  answerLangIndex: number
 ): { options: string[]; correctIndex: number } {
-  const correctAnswer = isSourceToDestination 
-    ? correctSentence.destination 
-    : correctSentence.source;
+  const correctAnswer = correctSentence.sentences[answerLangIndex];
 
   // Extract text from correct answer (handle alternatives)
   const correctAnswerText = getSentenceText(correctAnswer);
 
-  const wrongAnswers = generateWrongAnswers(correctSentence, lessonSentences, isSourceToDestination);
+  const wrongAnswers = generateWrongAnswers(correctSentence, lessonSentences, answerLangIndex);
   
   // Combine and shuffle
   const allOptions = [correctAnswerText, ...wrongAnswers];

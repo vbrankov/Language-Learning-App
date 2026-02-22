@@ -1,28 +1,18 @@
 /**
- * Utility functions to handle new database format with:
- * - Bilingual titles: [English, Serbian] or string
+ * Utility functions to handle the database format:
+ * - Multilingual titles: string[] indexed by language, or plain string
  * - Sentence alternatives: string or [alternative1, alternative2, ...]
  */
 
 /**
- * Get the title in the requested language
+ * Get the text for a given language index from a title or sentence slot.
+ * Falls back to the first entry if the index is out of range.
  */
-export function getTitle(title: string | [string, string], lang: 'en' | 'sr'): string {
-  if (typeof title === 'string') {
-    return title;
+export function getLangText(value: string | string[], langIndex: number): string {
+  if (typeof value === 'string') {
+    return value;
   }
-  // title is [english, serbian]
-  return lang === 'en' ? title[0] : title[1];
-}
-
-/**
- * Get both language titles
- */
-export function getTitles(title: string | [string, string]): { en: string; sr: string } {
-  if (typeof title === 'string') {
-    return { en: title, sr: title };
-  }
-  return { en: title[0], sr: title[1] };
+  return value[langIndex] ?? value[0] ?? '';
 }
 
 /**

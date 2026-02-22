@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { QuizSettings, QuizDirection, QuizMode, QuizAlgorithm, LessonDatabase } from '../types';
-import { getTitles } from '../utils/ContentFormatter';
+import { QuizSettings, QuizDirection, QuizMode, QuizAlgorithm } from '../types';
+import { useDatabase } from '../DatabaseContext';
+import { getLangText } from '../utils/ContentFormatter';
 
 function QuizSettingsPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
-  const [lessonData, setLessonData] = useState<LessonDatabase | null>(null);
+  const { database: lessonData, sourceIndex, destIndex } = useDatabase();
   
   // Load available voices
   useEffect(() => {
@@ -94,20 +95,6 @@ function QuizSettingsPage() {
     window.speechSynthesis.onvoiceschanged = loadVoices;
   }, []);
 
-  useEffect(() => {
-    const loadDatabase = async () => {
-      try {
-        const response = await fetch('/Language-Learning-App/data/lessons_1_to_106_enhanced.json');
-        const data = await response.json();
-        setLessonData(data);
-      } catch (err) {
-        console.error('Error loading database:', err);
-      }
-    };
-    
-    loadDatabase();
-  }, []);
-  
   const lesson = lessonData?.lessons.find(l => l.id === parseInt(lessonId || '0'));
   
   const [direction, setDirection] = useState<QuizDirection>('source-to-dest');
@@ -243,8 +230,8 @@ function QuizSettingsPage() {
           >
             ← Back to Lessons
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">{getTitles(lesson.title).en}</h1>
-          <div className="text-xl text-gray-700 mt-1">{getTitles(lesson.title).sr}</div>
+          <h1 className="text-3xl font-bold text-gray-900">{getLangText(lesson.title, sourceIndex)}</h1>
+          <div className="text-xl text-gray-700 mt-1">{getLangText(lesson.title, destIndex)}</div>
           <p className="mt-2 text-sm text-gray-600">
             Lesson {lesson.id} • {lesson.sentences.length} sentences
           </p>
@@ -271,7 +258,7 @@ function QuizSettingsPage() {
                   className="w-4 h-4 text-blue-600"
                 />
                 <span className="ml-3 text-gray-900">
-                  {lessonData.sourceLanguage} → {lessonData.destinationLanguage}
+                  {lessonData.languages[sourceIndex]} → {lessonData.languages[destIndex]}
                 </span>
               </label>
               <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -283,7 +270,7 @@ function QuizSettingsPage() {
                   className="w-4 h-4 text-blue-600"
                 />
                 <span className="ml-3 text-gray-900">
-                  {lessonData.destinationLanguage} → {lessonData.sourceLanguage}
+                  {lessonData.languages[destIndex]} → {lessonData.languages[sourceIndex]}
                 </span>
               </label>
               <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -295,7 +282,7 @@ function QuizSettingsPage() {
                   className="w-4 h-4 text-blue-600"
                 />
                 <span className="ml-3 text-gray-900">
-                  {lessonData.sourceLanguage} → {lessonData.sourceLanguage}
+                  {lessonData.languages[sourceIndex]} → {lessonData.languages[sourceIndex]}
                 </span>
               </label>
               <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
@@ -307,7 +294,7 @@ function QuizSettingsPage() {
                   className="w-4 h-4 text-blue-600"
                 />
                 <span className="ml-3 text-gray-900">
-                  {lessonData.destinationLanguage} → {lessonData.destinationLanguage}
+                  {lessonData.languages[destIndex]} → {lessonData.languages[destIndex]}
                 </span>
               </label>
             </div>
