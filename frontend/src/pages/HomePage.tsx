@@ -8,7 +8,7 @@ import { getLangText } from '../utils/ContentFormatter';
 
 function HomePage() {
   const navigate = useNavigate();
-  const { database, loading, error, sourceIndex, destIndex } = useDatabase();
+  const { database, loading, error, noDatabase, sourceIndex, destIndex } = useDatabase();
   const [lessonStats, setLessonStats] = useState<Record<number, LessonStats>>({});
 
   useEffect(() => {
@@ -35,11 +35,32 @@ function HomePage() {
     );
   }
 
+  if (noDatabase) {
+    const exampleUrl = `${window.location.origin}${window.location.pathname}?db=https://example.github.io/my-db/lessons.json`;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-2xl mx-auto px-6 py-12">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Language Learning App</h1>
+          <p className="text-gray-500 mb-8">No database loaded. To get started, provide a database URL via the <code className="bg-gray-100 px-1 rounded">?db=</code> query parameter.</p>
+
+          <div className="bg-white rounded-lg shadow p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-gray-800">How to use</h2>
+            <p className="text-gray-600">Append <code className="bg-gray-100 px-1 rounded">?db=&lt;url&gt;</code> to this page's URL, where <code className="bg-gray-100 px-1 rounded">&lt;url&gt;</code> points to a JSON database file:</p>
+            <div className="bg-gray-50 border border-gray-200 rounded p-3 text-sm font-mono break-all text-gray-700">
+              {exampleUrl}
+            </div>
+            <p className="text-gray-600 text-sm">The database must be a publicly accessible JSON file following the Language Learning App schema (v2.0).</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error || !database) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600">Error Loading App</h1>
+          <h1 className="text-2xl font-bold text-red-600">Error Loading Database</h1>
           <p className="text-gray-600 mt-2">{error || 'Database not loaded'}</p>
         </div>
       </div>

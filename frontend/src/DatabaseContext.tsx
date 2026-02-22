@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LessonDatabase } from './types';
 
-const DEFAULT_DB_URL = '/Language-Learning-App/data/a1_english_serbian.json';
-
 interface DatabaseContextValue {
   database: LessonDatabase | null;
   loading: boolean;
   error: string | null;
+  noDatabase: boolean;
+  dbUrl: string | null;
   sourceIndex: number;
   destIndex: number;
 }
@@ -17,14 +17,24 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   const [database, setDatabase] = useState<LessonDatabase | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [noDatabase, setNoDatabase] = useState(false);
+  const [dbUrl, setDbUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const dbUrl = params.get('db') || DEFAULT_DB_URL;
+    const url = params.get('db');
+
+    if (!url) {
+      setNoDatabase(true);
+      setLoading(false);
+      return;
+    }
+
+    setDbUrl(url);
 
     const load = async () => {
       try {
-        const response = await fetch(dbUrl);
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to load database: ${response.status}`);
         const data = await response.json();
         setDatabase(data);
@@ -39,7 +49,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <DatabaseContext.Provider value={{ database, loading, error, sourceIndex: 0, destIndex: 1 }}>
+    <DatabaseContext.Provider value={{ database, loading, error, noDatabase, dbUrl, sourceIndex: 0, destIndex: 1 }}>
       {children}
     </DatabaseContext.Provider>
   );
