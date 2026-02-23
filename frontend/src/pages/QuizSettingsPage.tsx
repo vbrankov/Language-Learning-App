@@ -95,7 +95,8 @@ function QuizSettingsPage() {
     window.speechSynthesis.onvoiceschanged = loadVoices;
   }, []);
 
-  const lesson = lessonData?.lessons.find(l => l.id === parseInt(lessonId || '0'));
+  const lessonIndex = parseInt(lessonId || '0');
+  const lesson = lessonData?.lessons[lessonIndex];
   
   const [direction, setDirection] = useState<QuizDirection>('source-to-dest');
   const [mode, setMode] = useState<QuizMode>('type');
@@ -207,7 +208,7 @@ function QuizSettingsPage() {
 
   const handleStart = () => {
     const settings: QuizSettings = {
-      lessonId: lesson.id,
+      lessonIndex,
       direction,
       mode,
       algorithm,
@@ -233,7 +234,7 @@ function QuizSettingsPage() {
           <h1 className="text-3xl font-bold text-gray-900">{getLangText(lesson.title, sourceIndex)}</h1>
           <div className="text-xl text-gray-700 mt-1">{getLangText(lesson.title, destIndex)}</div>
           <p className="mt-2 text-sm text-gray-600">
-            Lesson {lesson.id} • {lesson.sentences.length} sentences
+            Lesson {lessonIndex + 1} • {lesson.sentences.length} sentences
           </p>
         </div>
       </header>

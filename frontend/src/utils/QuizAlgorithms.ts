@@ -3,10 +3,10 @@ import { getSentenceText } from './ContentFormatter';
 
 /**
  * Algorithm A: Random selection with removal
- * 
+ *
  * - Randomly picks from remaining sentences in the lesson
  * - Correct answer → remove from set
- * - Wrong answer → keep in set
+ * - Wrong answer → keep in set, reinsert at random position
  * - When set is empty → refill with all sentences and continue
  */
 export class AlgorithmA {
@@ -20,72 +20,44 @@ export class AlgorithmA {
     this.shuffle();
   }
 
-  /**
-   * Shuffle the remaining sentences array
-   */
   private shuffle(): void {
     for (let i = this.remainingSentences.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [this.remainingSentences[i], this.remainingSentences[j]] = 
+      [this.remainingSentences[i], this.remainingSentences[j]] =
         [this.remainingSentences[j], this.remainingSentences[i]];
     }
   }
 
-  /**
-   * Get the next sentence to practice
-   */
   getNextSentence(): Sentence {
-    // If no sentences remain, refill and shuffle
     if (this.remainingSentences.length === 0) {
       this.remainingSentences = [...this.allSentences];
       this.shuffle();
     }
-
-    // Pick the first sentence (already shuffled)
     this.currentSentence = this.remainingSentences[0];
     return this.currentSentence;
   }
 
-  /**
-   * Record the answer and update the sentence pool
-   */
   recordAnswer(isCorrect: boolean): void {
-    if (!this.currentSentence) {
-      return;
-    }
+    if (!this.currentSentence) return;
 
     if (isCorrect) {
-      // Remove the sentence from the remaining pool
-      this.remainingSentences = this.remainingSentences.filter(
-        s => s.id !== this.currentSentence!.id
-      );
+      this.remainingSentences = this.remainingSentences.filter(s => s !== this.currentSentence);
     } else {
-      // Keep in pool but move to a random position (not just the front)
-      const currentId = this.currentSentence.id;
-      this.remainingSentences = this.remainingSentences.filter(s => s.id !== currentId);
-      
-      // Insert at random position
+      const current = this.currentSentence;
+      this.remainingSentences = this.remainingSentences.filter(s => s !== current);
       const randomIndex = Math.floor(Math.random() * (this.remainingSentences.length + 1));
-      this.remainingSentences.splice(randomIndex, 0, this.currentSentence);
+      this.remainingSentences.splice(randomIndex, 0, current);
     }
 
     this.currentSentence = null;
   }
 
-  /**
-   * Get the current progress (for display purposes)
-   */
   getProgress(): { remaining: number; total: number; completed: number } {
     const remaining = this.remainingSentences.length;
     const total = this.allSentences.length;
-    const completed = total - remaining;
-    
-    return { remaining, total, completed };
+    return { remaining, total, completed: total - remaining };
   }
 
-  /**
-   * Reset the algorithm to start fresh
-   */
   reset(): void {
     this.remainingSentences = [...this.allSentences];
     this.shuffle();
@@ -94,58 +66,37 @@ export class AlgorithmA {
 }
 
 /**
- * Generate random wrong answers for multiple choice
- * Returns 4 sentences that are different from the correct answer
- * All wrong answers come from the same lesson (lessonSentences)
+ * Generate 4 wrong answers for multiple choice from the same lesson.
  */
 export function generateWrongAnswers(
   correctSentence: Sentence,
   lessonSentences: Sentence[],
   answerLangIndex: number
 ): string[] {
-  // Get the text we want to avoid (the correct answer)
-  const correctText = correctSentence.sentences[answerLangIndex];
+  const correctText = correctSentence[answerLangIndex];
 
-  // Get all possible wrong answers from the same lesson only
   const possibleWrong = lessonSentences
-    .filter(s => {
-      const text = s.sentences[answerLangIndex];
-      return text !== correctText && s.id !== correctSentence.id;
-    })
-    .map(s => {
-      const text = s.sentences[answerLangIndex];
-      // Extract first alternative if it's an array
-      return getSentenceText(text);
-    });
+    .filter(s => s !== correctSentence && s[answerLangIndex] !== correctText)
+    .map(s => getSentenceText(s[answerLangIndex]));
 
-  // Shuffle and take 4
-  const shuffled = [...possibleWrong].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 4);
+  return [...possibleWrong].sort(() => Math.random() - 0.5).slice(0, 4);
 }
 
 /**
- * Create a multiple choice question with 5 options (1 correct, 4 wrong)
- * Returns array of 5 options in random order, and the index of the correct answer
- * All wrong answers come from the same lesson
+ * Create a multiple choice question: 1 correct + 4 wrong options, shuffled.
  */
 export function createMultipleChoiceQuestion(
   correctSentence: Sentence,
   lessonSentences: Sentence[],
   answerLangIndex: number
 ): { options: string[]; correctIndex: number } {
-  const correctAnswer = correctSentence.sentences[answerLangIndex];
-
-  // Extract text from correct answer (handle alternatives)
-  const correctAnswerText = getSentenceText(correctAnswer);
-
+  const correctAnswerText = getSentenceText(correctSentence[answerLangIndex]);
   const wrongAnswers = generateWrongAnswers(correctSentence, lessonSentences, answerLangIndex);
-  
-  // Combine and shuffle
+
   const allOptions = [correctAnswerText, ...wrongAnswers];
   const shuffledOptions: string[] = [];
   let correctIndex = -1;
 
-  // Shuffle while tracking where the correct answer ends up
   const indices = [0, 1, 2, 3, 4];
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -154,9 +105,7 @@ export function createMultipleChoiceQuestion(
 
   indices.forEach((originalIndex, newIndex) => {
     shuffledOptions.push(allOptions[originalIndex]);
-    if (originalIndex === 0) {
-      correctIndex = newIndex;
-    }
+    if (originalIndex === 0) correctIndex = newIndex;
   });
 
   return { options: shuffledOptions, correctIndex };

@@ -75,7 +75,7 @@ function QuizPage() {
   const { database: lessonData, loading: dbLoading, sourceIndex, destIndex } = useDatabase();
 
   // Get the lesson
-  const lesson: Lesson | undefined = lessonData?.lessons.find(l => l.id === settings?.lessonId);
+  const lesson: Lesson | undefined = lessonData?.lessons[settings?.lessonIndex ?? -1];
   
   // Quiz state
   const [algorithm, setAlgorithm] = useState<AlgorithmA | null>(null);
@@ -294,13 +294,12 @@ function QuizPage() {
     // Determine which language slot to check answer against
     const answerLangIdx = (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest')
       ? destIndex : sourceIndex;
-    const answerToCheck = currentSentence.sentences[answerLangIdx];
+    const answerToCheck = currentSentence[answerLangIdx];
 
     const isSerbianAnswer = settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest';
     const isCorrect = checkAnswerWithAlternatives(userAnswer, answerToCheck, isSerbianAnswer);
 
     if (isCorrect) {
-      // Mark that we're advancing to prevent duplicate triggers
       isAdvancingRef.current = true;
       
       // Stop listening
@@ -315,7 +314,7 @@ function QuizPage() {
       }
       
       // Record answer
-      ProgressManager.recordAnswer(currentSentence.id, true);
+      ProgressManager.recordAnswer(getLangText(lesson!.title, sourceIndex), true);
       algorithm.recordAnswer(true);
       setQuizState('correct');
       
@@ -355,29 +354,28 @@ function QuizPage() {
     let question, answer, targetLang;
 
     if (settings.direction === 'source-to-dest') {
-      question = sentence.sentences[sourceIndex];
-      answer = sentence.sentences[destIndex];
+      question = sentence[sourceIndex];
+      answer = sentence[destIndex];
       targetLang = 'en' as const;
     } else if (settings.direction === 'dest-to-source') {
-      question = sentence.sentences[destIndex];
-      answer = sentence.sentences[sourceIndex];
+      question = sentence[destIndex];
+      answer = sentence[sourceIndex];
       targetLang = 'sr' as const;
     } else if (settings.direction === 'source-to-source') {
-      question = sentence.sentences[sourceIndex];
-      answer = sentence.sentences[sourceIndex];
+      question = sentence[sourceIndex];
+      answer = sentence[sourceIndex];
       targetLang = 'en' as const;
     } else {
       // dest-to-dest
-      question = sentence.sentences[destIndex];
-      answer = sentence.sentences[destIndex];
+      question = sentence[destIndex];
+      answer = sentence[destIndex];
       targetLang = 'sr' as const;
     }
 
-    // Extract text from question/answer (handle alternatives)
     const questionText = getSentenceText(question);
     const answerText = getSentenceText(answer);
-    const englishSentenceText = getSentenceText(sentence.sentences[sourceIndex]);
-    const serbianSentenceText = getSentenceText(sentence.sentences[destIndex]);
+    const englishSentenceText = getSentenceText(sentence[sourceIndex]);
+    const serbianSentenceText = getSentenceText(sentence[destIndex]);
     
     setQuestionText(questionText);
     setCorrectAnswer(answerText);
@@ -434,7 +432,7 @@ function QuizPage() {
     // Determine which language slot to check answer against
     const answerLangIdx = (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest')
       ? destIndex : sourceIndex;
-    const answerToCheck = currentSentence.sentences[answerLangIdx];
+    const answerToCheck = currentSentence[answerLangIdx];
 
     if (settings.mode === 'type' || settings.mode === 'speak') {
       // Check against all alternatives
@@ -449,7 +447,7 @@ function QuizPage() {
     }
 
     // Record answer
-    ProgressManager.recordAnswer(currentSentence.id, isCorrect);
+    ProgressManager.recordAnswer(getLangText(lesson!.title, sourceIndex), isCorrect);
     algorithm.recordAnswer(isCorrect);
 
     if (isCorrect) {
@@ -887,7 +885,7 @@ function QuizPage() {
 
           {/* Multiple Choice Mode */}
           {settings.mode === 'multiple-choice' && (
-            <div className="space-y-3" key={currentSentence?.id}>
+            <div className="space-y-3" key={JSON.stringify(currentSentence)}>
               {multipleChoiceOptions.map((option, index) => {
                 const isSelected = selectedOptionIndex === index;
                 const isCorrect = index === correctOptionIndex;

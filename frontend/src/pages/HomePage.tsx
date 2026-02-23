@@ -9,20 +9,21 @@ import { getLangText } from '../utils/ContentFormatter';
 function HomePage() {
   const navigate = useNavigate();
   const { database, loading, error, noDatabase, sourceIndex, destIndex } = useDatabase();
-  const [lessonStats, setLessonStats] = useState<Record<number, LessonStats>>({});
+  const [lessonStats, setLessonStats] = useState<Record<string, LessonStats>>({});
 
   useEffect(() => {
     if (!database?.lessons) return;
 
-    const stats: Record<number, LessonStats> = {};
+    const stats: Record<string, LessonStats> = {};
     for (const lesson of database.lessons) {
-      stats[lesson.id] = ProgressManager.getLessonStats(lesson.id, lesson.sentences);
+      const title = getLangText(lesson.title, sourceIndex);
+      stats[title] = ProgressManager.getLessonStats(title, lesson.sentences.length);
     }
     setLessonStats(stats);
   }, [database]);
 
-  const handleLessonClick = (lessonId: number) => {
-    navigate(`/lesson/${lessonId}/settings`);
+  const handleLessonClick = (lessonIndex: number) => {
+    navigate(`/lesson/${lessonIndex}/settings`);
   };
 
   if (loading) {
@@ -49,7 +50,7 @@ function HomePage() {
             <div className="bg-gray-50 border border-gray-200 rounded p-3 text-sm font-mono break-all text-gray-700">
               {exampleUrl}
             </div>
-            <p className="text-gray-600 text-sm">The database must be a publicly accessible JSON file following the Language Learning App schema (v2.0).</p>
+            <p className="text-gray-600 text-sm">The database must be a publicly accessible JSON file following the Language Learning App schema (v3.0).</p>
           </div>
         </div>
       </div>
@@ -90,22 +91,21 @@ function HomePage() {
 
         {/* Lesson Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {database.lessons.map((lesson) => {
-            const stats = lessonStats[lesson.id];
+          {database.lessons.map((lesson, index) => {
+            const title = getLangText(lesson.title, sourceIndex);
+            const stats = lessonStats[title];
 
             return (
               <button
-                key={lesson.id}
-                onClick={() => handleLessonClick(lesson.id)}
+                key={index}
+                onClick={() => handleLessonClick(index)}
                 className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6 text-left border border-gray-200 hover:border-blue-500"
               >
                 {/* Lesson Number & Title */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-500">Lesson {lesson.id}</div>
-                    <h3 className="text-lg font-semibold text-gray-900 mt-1">
-                      {getLangText(lesson.title, sourceIndex)}
-                    </h3>
+                    <div className="text-sm font-medium text-gray-500">Lesson {index + 1}</div>
+                    <h3 className="text-lg font-semibold text-gray-900 mt-1">{title}</h3>
                     <div className="text-sm text-gray-600 mt-0.5">
                       {getLangText(lesson.title, destIndex)}
                     </div>
@@ -115,32 +115,13 @@ function HomePage() {
                 {/* Stats */}
                 {stats && (
                   <div className="space-y-2">
-                    {/* Progress Bar */}
-                    {stats.attemptedSentences > 0 && (
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full transition-all"
-                          style={{
-                            width: `${(stats.attemptedSentences / stats.totalSentences) * 100}%`
-                          }}
-                        />
-                      </div>
-                    )}
-
                     {/* Sentence Count */}
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">
-                        {stats.totalSentences} sentence{stats.totalSentences !== 1 ? 's' : ''}
-                      </span>
-                      {stats.attemptedSentences > 0 && (
-                        <span className="text-gray-500">
-                          {stats.attemptedSentences} attempted
-                        </span>
-                      )}
+                    <div className="text-sm text-gray-600">
+                      {stats.totalSentences} sentence{stats.totalSentences !== 1 ? 's' : ''}
                     </div>
 
                     {/* Correct/Incorrect Counts */}
-                    {stats.attemptedSentences > 0 && (
+                    {(stats.correctCount > 0 || stats.incorrectCount > 0) && (
                       <div className="flex items-center gap-4 text-sm">
                         <span className="text-green-600 font-medium">
                           ✓ {stats.correctCount} correct
@@ -152,7 +133,7 @@ function HomePage() {
                     )}
 
                     {/* Accuracy */}
-                    {stats.attemptedSentences > 0 && (
+                    {(stats.correctCount > 0 || stats.incorrectCount > 0) && (
                       <div className="text-sm">
                         <span className="text-gray-600">Accuracy: </span>
                         <span className={`font-semibold ${

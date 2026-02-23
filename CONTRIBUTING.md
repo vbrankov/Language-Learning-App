@@ -86,46 +86,30 @@ GitHub has a full editor built in. No installation needed.
 
 #### Database format
 
-The database is a JSON file with this structure at the top level:
+The database is a JSON file. Here is a complete minimal example:
 
 ```json
 {
-  "version": "2.0",
+  "version": "3.0",
   "languages": ["English", "Serbian"],
-  "lastUpdated": "2025-01-01",
-  "nextLessonId": 107,
-  "nextSentenceId": 5900,
-  "metadata": {},
-  "lessons": [ ... ]
-}
-```
-
-Here is an example of one lesson with two sentences:
-
-```json
-{
-  "id": 12,
-  "title": ["At the Market", "Na pijaci"],
-  "words": ["apple", "bread", "cheap", "expensive"],
-  "sentences": [
+  "lessons": [
     {
-      "id": 201,
-      "sentences": ["An apple a day.", "Jedna jabuka dnevno."]
-    },
-    {
-      "id": 202,
-      "sentences": ["The bread is cheap.", ["Hleb je jeftin.", "Kruh je jeftin."]]
+      "title": ["At the Market", "Na pijaci"],
+      "words": ["apple", "bread", "cheap", "expensive"],
+      "sentences": [
+        ["An apple a day.", "Jedna jabuka dnevno."],
+        ["The bread is cheap.", ["Hleb je jeftin.", "Kruh je jeftin."]]
+      ]
     }
   ]
 }
 ```
 
 Key rules:
-- Each lesson and each sentence must have a **unique `id` number**.
-- `languages` lists the languages in order — `sentences[0]` is always the first language, `sentences[1]` the second.
+- `languages` lists the languages in order. Each sentence is an array with one entry per language — `sentence[0]` is always the first language, `sentence[1]` the second.
 - `title` follows the same order as `languages`.
-- If a translation has multiple valid alternatives, use an array: `["option 1", "option 2"]`.
-- `nextLessonId` and `nextSentenceId` at the top of the file must always be higher than any id in the file.
+- If a translation has multiple valid alternatives, use an array for that slot: `["option 1", "option 2"]`.
+- Lessons and sentences have no IDs — their position in the array is their identity. **Do not reorder existing lessons or sentences** unless you intend to create a new version of the database.
 
 ---
 
@@ -146,21 +130,20 @@ Paste this into the chat, filling in the parts in `[brackets]`:
 > The format for one lesson is:
 > ```json
 > {
->   "id": 12,
 >   "title": ["Source language title", "Target language title"],
 >   "words": ["word1", "word2"],
 >   "sentences": [
->     { "id": 201, "sentences": ["Source language sentence.", "Target language sentence."] },
->     { "id": 202, "sentences": ["Another sentence.", ["Alternative 1.", "Alternative 2."]] }
+>     ["Source language sentence.", "Target language sentence."],
+>     ["Another sentence.", ["Alternative 1.", "Alternative 2."]]
 >   ]
 > }
 > ```
 >
 > Rules:
-> - IDs must be unique integers. Start lesson IDs at [e.g. 107] and sentence IDs at [e.g. 5900].
+> - No IDs — lessons and sentences are identified by their position in the array.
 > - Each lesson should have 10–20 sentences.
 > - Sentences should only use vocabulary introduced in that lesson or earlier lessons.
-> - If a translation has common alternatives, list them as an array.
+> - If a translation has common alternatives, list them as an array for that language slot.
 >
 > Please generate [number] lessons about [topic, e.g. "food and shopping"] for [language pair, e.g. "English to French"] at [level, e.g. A1] level.
 
