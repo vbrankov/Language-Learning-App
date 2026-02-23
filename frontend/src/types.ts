@@ -6,7 +6,7 @@ export type Sentence = Array<string | string[]>;
 
 export interface Lesson {
   title: string | string[]; // indexed by language, e.g. ["English title", "Serbian title"]
-  words?: string[];
+  words?: Array<string | string[]>; // each entry is a word/phrase, string or language-indexed array
   sentences: Sentence[];
 }
 

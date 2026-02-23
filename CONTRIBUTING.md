@@ -95,7 +95,7 @@ The database is a JSON file. Here is a complete minimal example:
   "lessons": [
     {
       "title": ["At the Market", "Na pijaci"],
-      "words": ["apple", "bread", "cheap", "expensive"],
+      "words": [["apple", "jabuka"], ["bread", "hleb"], "cheap", "expensive"],
       "sentences": [
         ["An apple a day.", "Jedna jabuka dnevno."],
         ["The bread is cheap.", ["Hleb je jeftin.", "Kruh je jeftin."]]
@@ -108,6 +108,7 @@ The database is a JSON file. Here is a complete minimal example:
 Key rules:
 - `languages` lists the languages in order. Each sentence is an array with one entry per language — `sentence[0]` is always the first language, `sentence[1]` the second.
 - `title` follows the same order as `languages`.
+- `words` lists vocabulary introduced in the lesson. Each entry can be a plain string (source language only) or a language-indexed array like `["apple", "jabuka"]`.
 - If a translation has multiple valid alternatives, use an array for that slot: `["option 1", "option 2"]`.
 - Lessons and sentences have no IDs — their position in the array is their identity. **Do not reorder existing lessons or sentences** unless you intend to create a new version of the database.
 
@@ -131,7 +132,7 @@ Paste this into the chat, filling in the parts in `[brackets]`:
 > ```json
 > {
 >   "title": ["Source language title", "Target language title"],
->   "words": ["word1", "word2"],
+>   "words": [["word1", "translation1"], ["word2", "translation2"]],
 >   "sentences": [
 >     ["Source language sentence.", "Target language sentence."],
 >     ["Another sentence.", ["Alternative 1.", "Alternative 2."]]
