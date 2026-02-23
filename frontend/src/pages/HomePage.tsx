@@ -73,10 +73,9 @@ function HomePage() {
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Language Learning</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900">
             {database.languages[sourceIndex]} → {database.languages[destIndex]}
-          </p>
+          </h1>
         </div>
       </header>
 
@@ -102,13 +101,10 @@ function HomePage() {
                 className="bg-white rounded-lg shadow hover:shadow-md transition-shadow p-6 text-left border border-gray-200 hover:border-blue-500"
               >
                 {/* Lesson Number & Title */}
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-500">Lesson {index + 1}</div>
-                    <h3 className="text-lg font-semibold text-gray-900 mt-1">{title}</h3>
-                    <div className="text-sm text-gray-600 mt-0.5">
-                      {getLangText(lesson.title, destIndex)}
-                    </div>
+                <div className="mb-3">
+                  <h3 className="text-base font-semibold text-gray-900">{index + 1}. {title}</h3>
+                  <div className="text-sm text-gray-500 mt-0.5">
+                    {getLangText(lesson.title, destIndex)}
                   </div>
                 </div>
 
