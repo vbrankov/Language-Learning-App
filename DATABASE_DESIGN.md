@@ -318,12 +318,69 @@ For each sentence, ask: *Is there more than one natural and correct way to trans
 
 ---
 
+### Pass 6 — Inaccurate lesson titles
+
+**The problem:** The lesson title doesn't reflect the words actually introduced in the lesson.
+
+This happens when lessons are reorganised, merged, or generated in bulk by an AI that titles them based on a brief description rather than the actual content. A lesson titled "Time Words" might end up containing mostly spatial vocabulary. A lesson titled "Family" might contain mostly food and drink. Misleading titles make it harder for learners to navigate and harder for contributors to maintain the database.
+
+**How to review:**
+Read the word list and sentences of each lesson, then check whether the title accurately describes what is being taught. A good title answers the question: *what would a learner expect to find here?*
+
+Watch for:
+- Titles that describe only a minority of the lesson's content
+- Two lessons with very similar titles that cover different things
+- Generic titles ("Basic Words", "More Verbs") that could apply to any lesson
+- Titles in the wrong language or inconsistent formatting
+
+**AI prompt for this pass:**
+> For each lesson below, you are given the title and the list of words it introduces. Decide whether the title accurately reflects the content.
+>
+> If the title is misleading or too vague, suggest a better one. If the title is accurate, say so.
+>
+> [list of lessons with titles and word lists]
+
+---
+
+### Pass 7 — Lesson ordering
+
+**The problem:** Lessons are not ordered by communicative importance — less essential vocabulary appears before more essential vocabulary.
+
+This often happens when lessons are added incrementally without revisiting the overall structure. A lesson on greetings might end up at position 15 even though it should be lesson 1. Pronouns might appear after food vocabulary even though they are needed in almost every sentence. When the ordering is wrong, early lessons are harder to learn because the most useful building blocks haven't been introduced yet.
+
+**How to review:**
+Read through the lesson list as a whole and ask: *if a learner stopped after lesson N, would they have the most useful N lessons worth of vocabulary?* The earlier lessons should be the ones with the highest communicative payoff.
+
+General priority order:
+1. **Greetings and social essentials** — hello, goodbye, please, thank you, sorry
+2. **Core function words** — pronouns (I, you, he, she…), yes, no, and, but, because
+3. **The verb "to be" and "to have"** — used in almost every sentence
+4. **Common question words** — who, what, where, when, why, how
+5. **High-frequency verbs** — go, come, want, need, know, see, give, take
+6. **Basic descriptors** — numbers, colours, size, common adjectives
+7. **Thematic vocabulary** — food, transport, health, work, etc.
+
+Note that reordering lessons has consequences: if you move a lesson earlier, the sentences of all lessons that came before it may now use words that haven't been introduced yet, triggering a new round of Pass 1.
+
+**AI prompt for this pass:**
+> Below is a list of lessons in a language learning database, with the words each lesson introduces. Evaluate the ordering: are the most communicatively important lessons near the beginning?
+>
+> Identify any lessons that seem significantly out of place — either too early (introducing niche vocabulary before essentials) or too late (holding back words that are needed to write natural sentences in earlier lessons).
+>
+> Suggest a revised order with a brief justification for any changes.
+>
+> [list of lessons with titles and word lists]
+
+---
+
 ### Suggested review order
 
 These passes are best run in this order, because earlier passes reduce noise for later ones:
 
-1. **Vocabulary constraint** first — fixing unknown words may change sentences significantly, making later passes cleaner.
-2. **Grammar** second — no point polishing an ungrammatical sentence.
-3. **Naturalness** third — once the sentence is grammatically sound, refine the phrasing.
-4. **Plausibility** fourth — once the phrasing is natural, check that the content makes sense.
-5. **Alternatives** last — only add alternatives once the primary translation is correct and natural.
+1. **Lesson ordering** first — if lessons are reorganised, everything else may shift.
+2. **Lesson titles** second — once the order is settled, titles can be checked against final content.
+3. **Vocabulary constraint** third — fixing unknown words may change sentences significantly, making later passes cleaner.
+4. **Grammar** fourth — no point polishing an ungrammatical sentence.
+5. **Naturalness** fifth — once the sentence is grammatically sound, refine the phrasing.
+6. **Plausibility** sixth — once the phrasing is natural, check that the content makes sense.
+7. **Alternatives** last — only add alternatives once the primary translation is correct and natural.
