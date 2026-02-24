@@ -1,5 +1,7 @@
 # Language Learning App
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A web app for learning languages through translation exercises. It works with any language pair and any database — you bring the content, the app handles the learning.
 
 **[Try it with the A1 English–Serbian database →](https://vbrankov.github.io/Language-Learning-App/?db=https://vbrankov.github.io/Language-Learning-DB/a1_english_serbian.json)**

@@ -180,9 +180,20 @@ The original author will review your changes and can accept, discuss, or suggest
 
 ---
 
+## Your database, your rules
+
+If you create your own database (by forking this one or starting from scratch), you own it. You are free to:
+
+- Host it anywhere — GitHub Pages, your own server, wherever you like.
+- License it however you choose.
+- Accept donations or otherwise monetize it as you see fit — for example, by adding a link to [Buy Me a Coffee](https://buymeacoffee.com) or a similar platform on your database's page.
+
+The app loads any database by URL, so what you do with yours is entirely up to you.
+
+---
+
 ## Tips
 
 - **Start small.** Try adding or correcting a single sentence before doing a whole lesson.
-- **Check IDs.** The most common mistake is duplicate IDs. Make sure every lesson and sentence has a unique number, and update `nextLessonId` / `nextSentenceId` at the top of the file.
 - **Test your changes.** After committing, wait a minute for GitHub Pages to rebuild, then open your live database URL in the app to verify everything works.
 - **Ask questions.** Open an [Issue](../../issues) on this repository if you need help.
