@@ -2,6 +2,8 @@
 
 This guide is for language learning experts who want to create or improve a database for this app — no programming experience required.
 
+If you are starting a database from scratch and want guidance on how to choose words, design lessons, and write sentences, read the **[Database Design Guide](DATABASE_DESIGN.md)** first.
+
 ---
 
 ## What you'll need

@@ -40,13 +40,9 @@ Anyone can create a database and share a link — no server required. Databases 
 
 ## Creating your own database
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for a step-by-step guide aimed at language experts with no programming experience. It covers:
+See [DATABASE_DESIGN.md](DATABASE_DESIGN.md) for the methodology — how to choose words, design lessons, and write sentences that build on each other.
 
-- Forking an existing database as a starting point
-- Editing in the browser (no installation needed)
-- Using AI (Claude, ChatGPT, GitHub Copilot) to generate content
-- Publishing your database on GitHub Pages
-- Submitting improvements back via pull request
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the technical step-by-step — forking, editing in the browser, using AI to generate content, publishing on GitHub Pages, and submitting improvements via pull request.
 
 ---
 
