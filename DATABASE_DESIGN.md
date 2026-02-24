@@ -186,3 +186,144 @@ Notice that "and" and "but" are held back until lesson 4 or later — as soon as
 - [ ] Translations are grammatically correct, including gender agreement and case.
 - [ ] Common alternatives are listed (formal/informal, regional variants).
 - [ ] The database has been tested in the app and all sentences display correctly.
+
+---
+
+## Iterative improvement
+
+A database is never finished in one pass. AI-generated content in particular tends to have recurring, predictable problems. The most effective approach is to run a series of focused review passes — each looking for one type of issue. This is easier and more thorough than trying to catch everything at once.
+
+---
+
+### Pass 1 — Vocabulary constraint violations
+
+**The problem:** A sentence uses a word that hasn't been introduced yet in this or any previous lesson.
+
+This is the most structural error and the easiest to catch systematically. A sentence in lesson 8 might use the word "because" — but if "because" isn't introduced until lesson 14, the learner has no basis for understanding it.
+
+**How to review:**
+Build a cumulative word list — all words introduced up to and including the current lesson. Then read each sentence and check that every word it uses is on that list. Flag any sentence that contains an unknown word.
+
+**What to do:**
+- Remove the sentence, or
+- Rephrase it to use only known words, or
+- Move it to a later lesson where all its words are available, or
+- Move the missing word to an earlier lesson if it's important enough.
+
+**AI prompt for this pass:**
+> Here is the full list of words available up to lesson [N]:
+> [word list]
+>
+> Here are the sentences from lesson [N]:
+> [sentences]
+>
+> Identify any sentence that uses a word not on the available word list. For each violation, state which word is the problem and suggest a corrected version of the sentence that uses only available words.
+
+---
+
+### Pass 2 — Grammatical errors
+
+**The problem:** A sentence is grammatically wrong — wrong verb form, wrong case, wrong gender agreement, missing agreement between subject and predicate, etc.
+
+AI models make grammar mistakes, especially in morphologically complex languages (those with cases, genders, verb conjugations). They tend to be more reliable for the source language (usually English) and less reliable for the target language.
+
+**How to review:**
+This pass requires a native speaker or a linguist familiar with the target language. Read only the target-language side of each sentence and flag anything that sounds grammatically off.
+
+Common error patterns to watch for:
+- Adjective not agreeing with noun in gender or case
+- Wrong pronoun case (e.g., nominative where genitive is required)
+- Wrong verb conjugation for the subject
+- Prepositions used with the wrong case
+- Clitic pronouns placed in the wrong position in the sentence
+
+**AI prompt for this pass:**
+> You are a native speaker of [language] reviewing a language learning database for grammatical errors.
+>
+> For each sentence below, check only the [language] translation. Identify any grammatical error — wrong case, wrong gender agreement, wrong verb form, wrong word order, etc. For each error, explain what is wrong and provide the corrected version.
+>
+> [list of sentences]
+
+---
+
+### Pass 3 — Unnatural phrasing
+
+**The problem:** The sentence is grammatically correct but no native speaker would say it that way. It sounds like a literal translation rather than natural speech.
+
+This is subtler than a grammar error and harder to catch automatically. The sentence passes a grammar check but fails a "would anyone actually say this?" test. Examples: overly formal phrasing in a casual context, word order that is technically allowed but unusual, expressions that calque directly from the source language instead of using the natural target-language idiom.
+
+**How to review:**
+This pass also requires a native speaker. The key question for each sentence is not "is this correct?" but "would I say this?" or "would I hear this in everyday conversation?"
+
+Watch for:
+- Sentences that feel translated rather than original
+- Expressions that exist in English but have a completely different idiomatic equivalent in the target language
+- Register mismatches (very formal grammar in a casual sentence, or vice versa)
+- Overly long or convoluted phrasing where a shorter, simpler expression exists
+
+**AI prompt for this pass:**
+> You are a native speaker of [language]. For each sentence below, ignore whether it is grammatically correct and focus only on whether it sounds natural — whether a real person would say it in everyday speech.
+>
+> Flag any sentence that sounds unnatural, stilted, or translated. For each flagged sentence, explain why it sounds odd and suggest a more natural alternative.
+>
+> [list of sentences]
+
+---
+
+### Pass 4 — Nonsensical or implausible sentences
+
+**The problem:** The sentence makes no logical sense, or it describes a situation that would never occur in real life.
+
+AI models sometimes produce sentences that are grammatically correct and use only known words, but say something absurd ("The bread is my friend"), arbitrary ("She gives the window to the dog"), or so unlikely as to be useless for a learner ("They eat the telephone slowly").
+
+**How to review:**
+Read each sentence and ask: *Could this sentence plausibly come up in a real conversation or situation?* If not, it should be replaced.
+
+Good sentences for a language learner are:
+- Things you might actually say to someone ("Where is the station?")
+- Things you might actually hear ("The shop is closed on Sunday.")
+- Common everyday situations (greetings, asking directions, ordering food, describing yourself)
+
+**AI prompt for this pass:**
+> You are reviewing sentences in a language learning database for a beginner learner. For each sentence below, decide whether it could plausibly come up in real everyday conversation or a realistic situation.
+>
+> Flag any sentence that is nonsensical, implausible, or so unlikely that a real learner would never encounter it. For each flagged sentence, suggest a replacement that covers similar vocabulary but sounds like something a person would actually say.
+>
+> [list of sentences]
+
+---
+
+### Pass 5 — Missing alternative translations
+
+**The problem:** There is only one accepted translation, but in fact multiple correct translations exist.
+
+Languages often have several valid ways to express the same thing — different word orders, formal and informal registers, regional variants, synonyms, or different but equally natural phrasings. If only one translation is accepted, learners who write a correct but different answer will be marked wrong, which is frustrating and incorrect.
+
+**How to review:**
+For each sentence, ask: *Is there more than one natural and correct way to translate this?* Think about:
+- Formal vs. informal register (different pronouns, different verb forms)
+- Regional or dialectal variants
+- Flexible word order (common in inflected languages — the same meaning can be expressed with several orderings)
+- Synonyms that are equally common and correct
+- Optional subject pronouns (many languages allow dropping the subject when it is clear from context)
+
+**AI prompt for this pass:**
+> For each sentence below, you are given one accepted [language] translation. Your task is to identify any additional correct translations that are missing.
+>
+> Consider: alternative word orders, formal vs. informal register, regional variants, synonymous expressions, and optional subject pronouns.
+>
+> For each sentence where additional correct translations exist, list them.
+>
+> [list of sentences with their current translations]
+
+---
+
+### Suggested review order
+
+These passes are best run in this order, because earlier passes reduce noise for later ones:
+
+1. **Vocabulary constraint** first — fixing unknown words may change sentences significantly, making later passes cleaner.
+2. **Grammar** second — no point polishing an ungrammatical sentence.
+3. **Naturalness** third — once the sentence is grammatically sound, refine the phrasing.
+4. **Plausibility** fourth — once the phrasing is natural, check that the content makes sense.
+5. **Alternatives** last — only add alternatives once the primary translation is correct and natural.
