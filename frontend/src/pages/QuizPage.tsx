@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { QuizSettings, Lesson, Sentence } from '../types';
-import { AlgorithmA, createMultipleChoiceQuestion } from '../utils/QuizAlgorithms';
+import { AlgorithmA, SequentialAlgorithm, StoryByStoryAlgorithm, QuizAlgorithmInstance, createMultipleChoiceQuestion } from '../utils/QuizAlgorithms';
 import { ProgressManager } from '../utils/ProgressManager';
 import { useDatabase } from '../DatabaseContext';
-import { getLangText, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin } from '../utils/ContentFormatter';
+import { getLangText, getSentenceText, checkAnswerWithAlternatives, cyrillicToLatin, getLessonSentences } from '../utils/ContentFormatter';
 
 type QuizState = 'question' | 'correct' | 'incorrect';
 
@@ -78,7 +78,7 @@ function QuizPage() {
   const lesson: Lesson | undefined = lessonData?.lessons[settings?.lessonIndex ?? -1];
   
   // Quiz state
-  const [algorithm, setAlgorithm] = useState<AlgorithmA | null>(null);
+  const [algorithm, setAlgorithm] = useState<QuizAlgorithmInstance | null>(null);
   const [currentSentence, setCurrentSentence] = useState<Sentence | null>(null);
   const [questionText, setQuestionText] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState('');
@@ -124,7 +124,14 @@ function QuizPage() {
     setIsListening(false);
     isListeningRef.current = false;
 
-    const algo = new AlgorithmA(lesson.sentences);
+    let algo: QuizAlgorithmInstance;
+    if (settings?.storyOrder === 'in-order' && lesson.stories) {
+      algo = new SequentialAlgorithm(lesson.stories);
+    } else if (settings?.storyOrder === 'story-by-story' && lesson.stories) {
+      algo = new StoryByStoryAlgorithm(lesson.stories);
+    } else {
+      algo = new AlgorithmA(getLessonSentences(lesson));
+    }
     setAlgorithm(algo);
     loadNextQuestion(algo);
   }, [lessonData, lesson, isIOSSafari, settings?.mode]);
@@ -343,7 +350,7 @@ function QuizPage() {
     }
   }, [userAnswer, quizState, settings?.mode, settings?.direction, currentSentence, algorithm]);
 
-  const loadNextQuestion = (algo: AlgorithmA) => {
+  const loadNextQuestion = (algo: QuizAlgorithmInstance) => {
     const sentence = algo.getNextSentence();
     setCurrentSentence(sentence);
     setUserAnswer('');
@@ -405,7 +412,7 @@ function QuizPage() {
         ? destIndex : sourceIndex;
       const { options, correctIndex } = createMultipleChoiceQuestion(
         sentence,
-        lesson!.sentences,
+        getLessonSentences(lesson!),
         answerLangIdx
       );
       setMultipleChoiceOptions(options);
@@ -450,56 +457,46 @@ function QuizPage() {
     ProgressManager.recordAnswer(getLangText(lesson!.title, sourceIndex), isCorrect);
     algorithm.recordAnswer(isCorrect);
 
+    const answerSpeakLang: 'en' | 'sr' =
+      (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') ? 'sr' : 'en';
+    const answerVoiceName = answerSpeakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
+
     if (isCorrect) {
       setQuizState('correct');
-      
-      // For type mode, speak the correct answer before auto-advancing
-      if (settings.mode === 'type') {
-        let speakLang: 'en' | 'sr';
-        if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
-          speakLang = 'sr';
-        } else {
-          speakLang = 'en';
-        }
-        const voiceName = speakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
-        speak(correctAnswer, speakLang, voiceName, () => {
-          // Auto-advance after speech finishes
+
+      if (settings.mode === 'multiple-choice') {
+        // MC click handler already started speech — just wait for it to finish
+        // Use a listener on speechSynthesis to detect end, with a fallback timeout
+        const waitForSpeech = () => {
+          if (!window.speechSynthesis.speaking) {
+            loadNextQuestion(algorithm);
+          } else {
+            setTimeout(waitForSpeech, 100);
+          }
+        };
+        setTimeout(waitForSpeech, 200);
+      } else if (settings.mode === 'type') {
+        speak(correctAnswer, answerSpeakLang, answerVoiceName, () => {
           loadNextQuestion(algorithm);
         });
       } else {
-        // For other modes, auto-advance after a short delay
+        // speak mode — auto-submit already handled advancement
         setTimeout(() => {
           loadNextQuestion(algorithm);
         }, 500);
       }
     } else {
       setQuizState('incorrect');
-      // For type mode, speak the correct answer aloud
-      if (settings.mode === 'type') {
-        let speakLang: 'en' | 'sr';
-        if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-dest') {
-          speakLang = 'sr';
-        } else {
-          speakLang = 'en';
-        }
+
+      if (settings.mode === 'multiple-choice') {
+        // MC click handler already speaks the correct answer — nothing to do here
+      } else if (settings.mode === 'type') {
         setTimeout(() => {
-          const voiceName = speakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
-          speak(correctAnswer, speakLang, voiceName);
+          speak(correctAnswer, answerSpeakLang, answerVoiceName);
         }, 100);
-      }
-      // For speak mode, speak the correct answer aloud
-      if (settings.mode === 'speak') {
-        let speakLang: 'en' | 'sr';
-        if (settings.direction === 'source-to-dest' || settings.direction === 'dest-to-source') {
-          // Standard translation modes
-          speakLang = settings.direction === 'source-to-dest' ? 'sr' : 'en';
-        } else {
-          // Pronunciation modes
-          speakLang = settings.direction === 'source-to-source' ? 'en' : 'sr';
-        }
+      } else if (settings.mode === 'speak') {
         setTimeout(() => {
-          const voiceName = speakLang === 'en' ? settings.englishVoice : settings.serbianVoice;
-          speak(correctAnswer, speakLang, voiceName);
+          speak(correctAnswer, answerSpeakLang, answerVoiceName);
         }, 100);
       }
     }
@@ -628,8 +625,26 @@ function QuizPage() {
         </div>
       </header>
 
+      {/* Notes */}
+      {(lesson.grammar_note || lesson.cultural_note) && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-2">
+          {lesson.grammar_note && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <span className="text-xs font-semibold text-amber-800">Grammar: </span>
+              <span className="text-sm text-amber-900">{lesson.grammar_note}</span>
+            </div>
+          )}
+          {lesson.cultural_note && (
+            <div className="bg-sky-50 border border-sky-200 rounded-lg p-3">
+              <span className="text-xs font-semibold text-sky-800">Culture: </span>
+              <span className="text-sm text-sky-900">{lesson.cultural_note}</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Quiz Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="bg-white rounded-lg shadow-lg p-8">
           {/* Question */}
           <div className="mb-8">

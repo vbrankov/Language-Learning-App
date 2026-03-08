@@ -4,7 +4,7 @@ import { LessonStats } from '../types';
 import { useDatabase } from '../DatabaseContext';
 import { ProgressManager } from '../utils/ProgressManager';
 import { timeAgo } from '../utils/timeAgo';
-import { getLangText } from '../utils/ContentFormatter';
+import { getLangText, getLessonSentences } from '../utils/ContentFormatter';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ function HomePage() {
     const stats: Record<string, LessonStats> = {};
     for (const lesson of database.lessons) {
       const title = getLangText(lesson.title, sourceIndex);
-      stats[title] = ProgressManager.getLessonStats(title, lesson.sentences.length);
+      stats[title] = ProgressManager.getLessonStats(title, getLessonSentences(lesson).length);
     }
     setLessonStats(stats);
   }, [database]);
@@ -84,7 +84,7 @@ function HomePage() {
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">Lessons</h2>
           <p className="mt-1 text-sm text-gray-500">
-            {database.lessons.length} lessons • {database.lessons.reduce((sum, l) => sum + l.sentences.length, 0)} sentences
+            {database.lessons.length} lessons • {database.lessons.reduce((sum, l) => sum + getLessonSentences(l).length, 0)} sentences
           </p>
         </div>
 

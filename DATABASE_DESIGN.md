@@ -27,6 +27,10 @@ Good sources:
 - **OpenSubtitles frequency lists** — based on movie and TV subtitles, so they reflect spoken language.
 - **Anki decks** — many shared decks for popular language pairs contain curated word lists.
 - **CEFR word lists** — the Common European Framework of Reference (A1, A2, B1…) publishes recommended vocabulary for each level.
+- **Oxford 3000** — Oxford's list of the 3,000 most important words in English, tagged by CEFR level. The A1 subset (~300 words) is an excellent starting point for English-target databases.
+- **CEFR-J** — a Japanese research project that provides finely graded CEFR word lists, with A1 broken into A1.1 and A1.2. More granular than the standard CEFR lists.
+
+For the A1 English-Serbian database, the master word list was built by combining the Oxford 3000 A1 words with the CEFR-J A1 list, giving a combined target of approximately 1,100 words.
 
 ### How many words to aim for
 
@@ -115,7 +119,7 @@ Before writing sentences, list the full vocabulary available at each stage. A si
 - **Write sentences you might actually say or hear.** Avoid combinations that are grammatically correct but would never occur in real life ("The green idea sleeps furiously").
 - **Cover different sentence types.** Include statements, questions, and negatives. Include first, second, and third person. Include singular and plural.
 - **Increase complexity gradually.** Early lessons in a section can have short, simple sentences. Later lessons can combine two clauses, add qualifiers, and so on.
-- **Aim for 10–20 sentences per lesson.** Fewer than 10 gives the learner too little practice. More than 20 becomes repetitive.
+- **Aim for 5–10 sentences per new word introduced.** Each word in the lesson's word list should appear in at least 5 sentences within that lesson, ideally 8–10. A lesson that introduces 8 words should therefore have roughly 40–80 sentences total. This repetition is what builds retention — a word seen once in a sentence is easily forgotten; a word seen 8 times in varied contexts is learned.
 
 ### Using AI to help write sentences
 
@@ -182,6 +186,7 @@ Notice that "and" and "but" are held back until lesson 4 or later — as soon as
 - [ ] Each lesson has 6–12 new words.
 - [ ] Lessons are ordered so that earlier lessons provide the building blocks for later ones.
 - [ ] Every sentence uses only words from this lesson and previous lessons.
+- [ ] Each newly introduced word appears in at least 5 sentences within its lesson (target: 8–10).
 - [ ] Sentences are natural — a native speaker would actually say them.
 - [ ] Translations are grammatically correct, including gender agreement and case.
 - [ ] Common alternatives are listed (formal/informal, regional variants).
@@ -373,6 +378,32 @@ Note that reordering lessons has consequences: if you move a lesson earlier, the
 
 ---
 
+### Pass 8 — Sentence coverage
+
+**The problem:** A word is listed in the lesson's word list but appears in fewer than 5 sentences, giving the learner insufficient exposure to it.
+
+The sentence coverage requirement — 5 to 10 sentences per newly introduced word — is the primary mechanism for building retention. A word that only appears once or twice in a lesson will not be learned; the learner needs to encounter it in different grammatical contexts (statement, question, negative, different subjects, different qualifiers) for the form and meaning to stick.
+
+**How to review:**
+For each lesson, count how many sentences contain each word in the word list. Flag any word that appears fewer than 5 times.
+
+**What to do:**
+Write additional sentences for the under-covered word and add them to the lesson. The new sentences should vary the context — different subject, different sentence type, combined with different words — rather than paraphrasing the same sentence.
+
+**AI prompt for this pass:**
+> I am reviewing a lesson in a language learning database for sentence coverage.
+>
+> The lesson introduces these words:
+> [word list]
+>
+> Here are all the sentences in the lesson:
+> [sentence list]
+>
+> For each word in the word list, count how many sentences it appears in. List any word that appears in fewer than 5 sentences and write 5–8 additional natural sentences that cover the missing word, using only these available vocabulary words:
+> [cumulative word list up to this lesson]
+
+---
+
 ### Suggested review order
 
 These passes are best run in this order, because earlier passes reduce noise for later ones:
@@ -380,7 +411,8 @@ These passes are best run in this order, because earlier passes reduce noise for
 1. **Lesson ordering** first — if lessons are reorganised, everything else may shift.
 2. **Lesson titles** second — once the order is settled, titles can be checked against final content.
 3. **Vocabulary constraint** third — fixing unknown words may change sentences significantly, making later passes cleaner.
-4. **Grammar** fourth — no point polishing an ungrammatical sentence.
-5. **Naturalness** fifth — once the sentence is grammatically sound, refine the phrasing.
-6. **Plausibility** sixth — once the phrasing is natural, check that the content makes sense.
-7. **Alternatives** last — only add alternatives once the primary translation is correct and natural.
+4. **Sentence coverage** fourth — add missing sentences before polishing the ones that exist.
+5. **Grammar** fifth — no point polishing an ungrammatical sentence.
+6. **Naturalness** sixth — once the sentence is grammatically sound, refine the phrasing.
+7. **Plausibility** seventh — once the phrasing is natural, check that the content makes sense.
+8. **Alternatives** last — only add alternatives once the primary translation is correct and natural.

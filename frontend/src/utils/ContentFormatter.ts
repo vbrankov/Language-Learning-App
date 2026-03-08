@@ -4,6 +4,21 @@
  * - Sentence alternatives: string or [alternative1, alternative2, ...]
  */
 
+import { Lesson, Sentence } from '../types';
+
+/**
+ * Get all sentences for a lesson, respecting DB1 (flat) and DB2 (stories) formats.
+ * - DB1: returns lesson.sentences directly
+ * - DB2 with storyIndex: returns that specific story's sentences
+ * - DB2 without storyIndex: merges all stories into a flat array
+ */
+export function getLessonSentences(lesson: Lesson, storyIndex?: number): Sentence[] {
+  if (lesson.sentences) return lesson.sentences;
+  if (!lesson.stories) return [];
+  if (storyIndex !== undefined) return lesson.stories[storyIndex] ?? [];
+  return lesson.stories.flat();
+}
+
 /**
  * Get the text for a given language index from a title or sentence slot.
  * Falls back to the first entry if the index is out of range.

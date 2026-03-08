@@ -37,6 +37,10 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Failed to load database: ${response.status}`);
         const data = await response.json();
+        // Normalize: ensure languages array exists (DB2 format omits it)
+        if (!data.languages) {
+          data.languages = ['English', 'Serbian'];
+        }
         setDatabase(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');

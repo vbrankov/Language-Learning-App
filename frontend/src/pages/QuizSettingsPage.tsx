@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { QuizSettings, QuizDirection, QuizMode, QuizAlgorithm } from '../types';
+import { QuizSettings, QuizDirection, QuizMode } from '../types';
 import { useDatabase } from '../DatabaseContext';
-import { getLangText } from '../utils/ContentFormatter';
+import { getLangText, getLessonSentences } from '../utils/ContentFormatter';
 
 function QuizSettingsPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -100,7 +100,7 @@ function QuizSettingsPage() {
   
   const [direction, setDirection] = useState<QuizDirection>('source-to-dest');
   const [mode, setMode] = useState<QuizMode>('type');
-  const [algorithm] = useState<QuizAlgorithm>('A'); // Only A for now
+  const [storyOrder, setStoryOrder] = useState<'random' | 'in-order' | 'story-by-story'>('story-by-story');
   const [englishVoices, setEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [serbianVoices, setSerbianVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedEnglishVoice, setSelectedEnglishVoice] = useState<string>('');
@@ -211,248 +211,196 @@ function QuizSettingsPage() {
       lessonIndex,
       direction,
       mode,
-      algorithm,
+      algorithm: 'A',
       englishVoice: selectedEnglishVoice,
       serbianVoice: selectedSerbianVoice,
+      storyOrder,
     };
-    
+
     // Pass settings via state
     navigate('/quiz', { state: settings });
   };
+
+  const sourceLang = lessonData.languages[sourceIndex];
+  const destLang = lessonData.languages[destIndex];
+  const hasStories = !!(lesson.stories && lesson.stories.length > 0);
+
+  const toggleBtn = (selected: boolean) =>
+    `px-4 py-2 rounded-lg text-sm font-medium border transition-colors cursor-pointer ${
+      selected
+        ? 'bg-blue-600 text-white border-blue-600'
+        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+    }`;
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <button
             onClick={() => navigate('/')}
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium mb-2"
+            className="text-blue-600 hover:text-blue-700 text-sm font-medium mb-1"
           >
             ← Back to Lessons
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">{getLangText(lesson.title, sourceIndex)}</h1>
-          <div className="text-xl text-gray-700 mt-1">{getLangText(lesson.title, destIndex)}</div>
-          <p className="mt-2 text-sm text-gray-600">
-            Lesson {lessonIndex + 1} • {lesson.sentences.length} sentences
+          <h1 className="text-2xl font-bold text-gray-900">{getLangText(lesson.title, sourceIndex)}</h1>
+          <div className="text-lg text-gray-700">{getLangText(lesson.title, destIndex)}</div>
+          <p className="mt-1 text-sm text-gray-500">
+            Lesson {lessonIndex + 1} • {getLessonSentences(lesson).length} sentences
           </p>
         </div>
       </header>
 
-      {/* Settings Form */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-900">Quiz Settings</h2>
-
-          {/* Direction */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Translation Direction
-            </label>
-            <div className="space-y-2">
-              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="direction"
-                  checked={direction === 'source-to-dest'}
-                  onChange={() => setDirection('source-to-dest')}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="ml-3 text-gray-900">
-                  {lessonData.languages[sourceIndex]} → {lessonData.languages[destIndex]}
-                </span>
-              </label>
-              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="direction"
-                  checked={direction === 'dest-to-source'}
-                  onChange={() => setDirection('dest-to-source')}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="ml-3 text-gray-900">
-                  {lessonData.languages[destIndex]} → {lessonData.languages[sourceIndex]}
-                </span>
-              </label>
-              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="direction"
-                  checked={direction === 'source-to-source'}
-                  onChange={() => setDirection('source-to-source')}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="ml-3 text-gray-900">
-                  {lessonData.languages[sourceIndex]} → {lessonData.languages[sourceIndex]}
-                </span>
-              </label>
-              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="direction"
-                  checked={direction === 'dest-to-dest'}
-                  onChange={() => setDirection('dest-to-dest')}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="ml-3 text-gray-900">
-                  {lessonData.languages[destIndex]} → {lessonData.languages[destIndex]}
-                </span>
-              </label>
+      {/* Settings */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="space-y-5">
+          {/* Row 1: Direction + Mode + Sentence Order */}
+          <div className={`grid gap-4 ${hasStories ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'}`}>
+            {/* Direction */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <div className="text-sm font-medium text-gray-700 mb-2">Direction</div>
+              <div className="flex flex-col gap-2">
+                <button className={toggleBtn(direction === 'source-to-dest')} onClick={() => setDirection('source-to-dest')}>
+                  {sourceLang} → {destLang}
+                </button>
+                <button className={toggleBtn(direction === 'dest-to-source')} onClick={() => setDirection('dest-to-source')}>
+                  {destLang} → {sourceLang}
+                </button>
+                <button className={toggleBtn(direction === 'dest-to-dest')} onClick={() => setDirection('dest-to-dest')}>
+                  {destLang} pronunciation
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {direction === 'source-to-dest' && `Read in ${sourceLang}, answer in ${destLang}`}
+                {direction === 'dest-to-source' && `Read in ${destLang}, answer in ${sourceLang}`}
+                {direction === 'dest-to-dest' && `Listen and repeat in ${destLang}`}
+              </p>
             </div>
-          </div>
 
-          {/* Mode */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Answer Mode
-            </label>
-            <div className="space-y-2">
-              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={mode === 'type'}
-                  onChange={() => setMode('type')}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="ml-3">
-                  <div className="text-gray-900 font-medium">Type Answer</div>
-                  <div className="text-sm text-gray-500">Type the translation manually</div>
-                </span>
-              </label>
-              <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={mode === 'multiple-choice'}
-                  onChange={() => setMode('multiple-choice')}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="ml-3">
-                  <div className="text-gray-900 font-medium">Multiple Choice</div>
-                  <div className="text-sm text-gray-500">Choose from 5 options</div>
-                </span>
-              </label>
-              <label className={`flex items-center p-3 border border-gray-300 rounded-lg ${isSpeakModeDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'}`}>
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={mode === 'speak'}
-                  onChange={() => {
+            {/* Mode */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <div className="text-sm font-medium text-gray-700 mb-2">Answer Mode</div>
+              <div className="flex flex-col gap-2">
+                <button className={toggleBtn(mode === 'multiple-choice')} onClick={() => setMode('multiple-choice')}>
+                  Multiple Choice
+                </button>
+                <button className={toggleBtn(mode === 'type')} onClick={() => setMode('type')}>
+                  Type Answer
+                </button>
+                <button
+                  className={`${toggleBtn(mode === 'speak')} ${isSpeakModeDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={() => {
                     if (isSpeakModeDisabled) {
-                      alert('Serbian/Croatian speech recognition is not supported on iOS Safari.\n\niOS does not support Serbian or Croatian speech recognition at the system level.\n\nTo use speech recognition:\n• Switch to English mode, or\n• Use this feature on Windows or Android (both support Serbian)');
+                      alert('Speech recognition is not supported on this platform for this language.');
                     } else {
                       setMode('speak');
                     }
                   }}
-                  disabled={isSpeakModeDisabled}
-                  className="w-4 h-4 text-blue-600"
-                />
-                <span className="ml-3">
-                  <div className="text-gray-900 font-medium">🎤 Speak Answer</div>
-                  <div className="text-sm text-gray-500">
-                    Say the translation out loud
-                    {isSpeakModeDisabled && (
-                      <span className="block mt-1 text-red-600">⚠️ Not supported on iOS (use Windows/Android)</span>
+                >
+                  Speak
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {mode === 'multiple-choice' && 'Pick the correct translation from 5 options'}
+                {mode === 'type' && 'Type the translation yourself'}
+                {mode === 'speak' && 'Say the translation out loud'}
+              </p>
+            </div>
+
+            {/* Sentence Order */}
+            {hasStories && (
+              <div className="bg-white rounded-lg shadow p-4">
+                <div className="text-sm font-medium text-gray-700 mb-2">Sentence Order</div>
+                <div className="flex flex-col gap-2">
+                  <button className={toggleBtn(storyOrder === 'story-by-story')} onClick={() => setStoryOrder('story-by-story')}>
+                    Story by Story
+                  </button>
+                  <button className={toggleBtn(storyOrder === 'in-order')} onClick={() => setStoryOrder('in-order')}>
+                    In Order
+                  </button>
+                  <button className={toggleBtn(storyOrder === 'random')} onClick={() => setStoryOrder('random')}>
+                    Random
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  {storyOrder === 'story-by-story' && 'One story at a time, drill until all correct, then next story'}
+                  {storyOrder === 'in-order' && 'Pick a random story and go through its sentences in order'}
+                  {storyOrder === 'random' && 'All sentences from all stories mixed together'}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Row 2: Voice Settings */}
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="text-sm font-medium text-gray-700 mb-3">Voice Settings</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">{sourceLang} Region</label>
+                  <select
+                    value={englishLocale}
+                    onChange={(e) => handleLocaleChange(e.target.value)}
+                    className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {englishLocales.map((locale) => (
+                      <option key={locale} value={locale}>{getCountryName(locale)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">{sourceLang} Voice</label>
+                  <select
+                    value={selectedEnglishVoice}
+                    onChange={(e) => setSelectedEnglishVoice(e.target.value)}
+                    className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {filteredEnglishVoices.map((voice) => (
+                      <option key={voice.name} value={voice.name}>{voice.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">{destLang} Region</label>
+                  <select
+                    value={serbianLocale}
+                    onChange={(e) => handleSerbianLocaleChange(e.target.value)}
+                    className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {serbianLocales.map((locale) => (
+                      <option key={locale} value={locale}>{getCountryName(locale)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">{destLang} Voice</label>
+                  <select
+                    value={selectedSerbianVoice}
+                    onChange={(e) => setSelectedSerbianVoice(e.target.value)}
+                    className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    {filteredSerbianVoices.length > 0 ? (
+                      filteredSerbianVoices.map((voice) => (
+                        <option key={voice.name} value={voice.name}>{voice.name}</option>
+                      ))
+                    ) : (
+                      <option value="">No voices found</option>
                     )}
-                  </div>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          {/* Algorithm (informational only for now) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Selection Algorithm
-            </label>
-            <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-              <div className="text-gray-900 font-medium">Algorithm A (Random)</div>
-              <div className="text-sm text-gray-600 mt-1">
-                Randomly selects sentences. Correct answers are removed from the pool, 
-                incorrect ones stay in. Pool refills when empty.
-              </div>
-            </div>
-          </div>
-
-          {/* Voice Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Voice Settings
-            </label>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">English Country/Region</label>
-                <select
-                  value={englishLocale}
-                  onChange={(e) => handleLocaleChange(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {englishLocales.map((locale) => (
-                    <option key={locale} value={locale}>
-                      {getCountryName(locale)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">English Voice</label>
-                <select
-                  value={selectedEnglishVoice}
-                  onChange={(e) => setSelectedEnglishVoice(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {filteredEnglishVoices.map((voice) => (
-                    <option key={voice.name} value={voice.name}>
-                      {voice.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Serbian/Croatian/Bosnian Country/Region</label>
-                <select
-                  value={serbianLocale}
-                  onChange={(e) => handleSerbianLocaleChange(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {serbianLocales.map((locale) => (
-                    <option key={locale} value={locale}>
-                      {getCountryName(locale)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Serbian/Croatian/Bosnian Voice</label>
-                <select
-                  value={selectedSerbianVoice}
-                  onChange={(e) => setSelectedSerbianVoice(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  {filteredSerbianVoices.length > 0 ? (
-                    filteredSerbianVoices.map((voice) => (
-                      <option key={voice.name} value={voice.name}>
-                        {voice.name}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">No voices found - check console for available voices</option>
-                  )}
-                </select>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Start Button */}
-          <div className="pt-4">
-            <button
-              onClick={handleStart}
-              className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Start Quiz
-            </button>
-          </div>
+          <button
+            onClick={handleStart}
+            className="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Start Quiz
+          </button>
         </div>
       </main>
     </div>

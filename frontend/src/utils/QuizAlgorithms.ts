@@ -1,6 +1,12 @@
 import { Sentence } from '../types';
 import { getSentenceText } from './ContentFormatter';
 
+export interface QuizAlgorithmInstance {
+  getNextSentence(): Sentence;
+  recordAnswer(isCorrect: boolean): void;
+  getProgress(): { remaining: number; total: number; completed: number };
+}
+
 /**
  * Algorithm A: Random selection with removal
  *
@@ -9,7 +15,7 @@ import { getSentenceText } from './ContentFormatter';
  * - Wrong answer → keep in set, reinsert at random position
  * - When set is empty → refill with all sentences and continue
  */
-export class AlgorithmA {
+export class AlgorithmA implements QuizAlgorithmInstance {
   private allSentences: Sentence[];
   private remainingSentences: Sentence[];
   private currentSentence: Sentence | null = null;
@@ -62,6 +68,132 @@ export class AlgorithmA {
     this.remainingSentences = [...this.allSentences];
     this.shuffle();
     this.currentSentence = null;
+  }
+}
+
+/**
+ * Sequential Algorithm: works through stories in order.
+ *
+ * - Randomly shuffles the list of stories at the start (and after completing all)
+ * - Within each story, presents sentences in their original order
+ * - Always advances to the next sentence regardless of correct/incorrect
+ * - When a story is finished, moves to the next shuffled story
+ */
+export class SequentialAlgorithm implements QuizAlgorithmInstance {
+  private stories: Sentence[][];
+  private readonly originalStories: Sentence[][];
+  private currentStoryIdx: number = 0;
+  private currentSentenceIdx: number = 0;
+  private completedInRound: number = 0;
+  private readonly totalSentences: number;
+
+  constructor(stories: Sentence[][]) {
+    this.originalStories = stories;
+    this.stories = this.shuffleStories([...stories]);
+    this.totalSentences = stories.reduce((sum, s) => sum + s.length, 0);
+  }
+
+  private shuffleStories(arr: Sentence[][]): Sentence[][] {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  getNextSentence(): Sentence {
+    return this.stories[this.currentStoryIdx][this.currentSentenceIdx];
+  }
+
+  recordAnswer(_isCorrect: boolean): void {
+    this.currentSentenceIdx++;
+    this.completedInRound++;
+    if (this.currentSentenceIdx >= this.stories[this.currentStoryIdx].length) {
+      this.currentStoryIdx++;
+      this.currentSentenceIdx = 0;
+      if (this.currentStoryIdx >= this.stories.length) {
+        this.stories = this.shuffleStories([...this.originalStories]);
+        this.currentStoryIdx = 0;
+        this.completedInRound = 0;
+      }
+    }
+  }
+
+  getProgress(): { remaining: number; total: number; completed: number } {
+    return {
+      total: this.totalSentences,
+      completed: this.completedInRound,
+      remaining: this.totalSentences - this.completedInRound,
+    };
+  }
+}
+
+/**
+ * Story-by-Story Algorithm: AlgorithmA scoped to one story at a time.
+ *
+ * - Shuffles the list of stories
+ * - For the current story, uses AlgorithmA logic (random with removal/reinsertion)
+ * - When all sentences in the current story are answered correctly, advances to next story
+ * - When all stories are done, reshuffles and starts over
+ */
+export class StoryByStoryAlgorithm implements QuizAlgorithmInstance {
+  private readonly originalStories: Sentence[][];
+  private storyQueue: Sentence[][];
+  private currentPool: Sentence[];
+  private currentSentence: Sentence | null = null;
+  private readonly totalSentences: number;
+  private completedInRound: number = 0;
+
+  constructor(stories: Sentence[][]) {
+    this.originalStories = stories;
+    this.totalSentences = stories.reduce((sum, s) => sum + s.length, 0);
+    this.storyQueue = this.shuffleArray([...stories]);
+    this.currentPool = this.shuffleArray([...this.storyQueue[0]]);
+  }
+
+  private shuffleArray<T>(arr: T[]): T[] {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  getNextSentence(): Sentence {
+    if (this.currentPool.length === 0) {
+      // Current story mastered — advance
+      this.storyQueue.shift();
+      if (this.storyQueue.length === 0) {
+        // All stories done — reshuffle and restart
+        this.storyQueue = this.shuffleArray([...this.originalStories]);
+        this.completedInRound = 0;
+      }
+      this.currentPool = this.shuffleArray([...this.storyQueue[0]]);
+    }
+    this.currentSentence = this.currentPool[0];
+    return this.currentSentence;
+  }
+
+  recordAnswer(isCorrect: boolean): void {
+    if (!this.currentSentence) return;
+    if (isCorrect) {
+      this.currentPool = this.currentPool.filter(s => s !== this.currentSentence);
+      this.completedInRound++;
+    } else {
+      const current = this.currentSentence;
+      this.currentPool = this.currentPool.filter(s => s !== current);
+      const idx = Math.floor(Math.random() * (this.currentPool.length + 1));
+      this.currentPool.splice(idx, 0, current);
+    }
+    this.currentSentence = null;
+  }
+
+  getProgress(): { remaining: number; total: number; completed: number } {
+    return {
+      total: this.totalSentences,
+      completed: this.completedInRound,
+      remaining: this.totalSentences - this.completedInRound,
+    };
   }
 }
 
